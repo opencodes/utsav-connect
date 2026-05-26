@@ -46,7 +46,7 @@ export const PlatformHowItWorksSection: React.FC<PlatformHowItWorksSectionProps>
   ];
 
   return (
-    <LandingSection id="how-it-works" tone="sand" showTexture={false} showMandala={false}>
+    <LandingSection id="how-it-works" tone="white" showTexture={false} showMandala={false}>
       <LandingSectionHeader
         eyebrow="One platform, two journeys"
         title="How our app works"

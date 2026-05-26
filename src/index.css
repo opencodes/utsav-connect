@@ -1,0 +1,1098 @@
+/*
+ * Typography — 3 fonts for Shubhe (Indian cultural / ceremony)
+ * 1. DM Serif Display — page & section titles (`.serif`, `font-serif`, `font-display`)
+ * 2. Poppins            — body, UI, nav, buttons, forms
+ * 3. JetBrains Mono     — dates, IDs, planner/admin tables
+ */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;700&display=swap');
+@import "tailwindcss";
+
+/* Class-based dark mode (toggle via `dark` on <html>) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-display: "DM Serif Display", Georgia, "Times New Roman", serif;
+  --font-serif: "DM Serif Display", Georgia, "Times New Roman", serif;
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --color-festive-orange: #C51C13;
+  --color-festive-gold: #FFCB44;
+  --color-gold-deco: #FFCB44;
+  --color-brand-bg: #FFFDF7;
+  --color-brand-dark: #1a1a1a;
+  --color-brand-dark-bg: #1c1917;
+  --color-gold-metallic: #D4AF37;
+
+  /* Redefine orange utility classes to primary #C51C13 (Festive Royal Red) */
+  --color-orange-50: #FFF5F4;
+  --color-orange-100: #FFEAE8;
+  --color-orange-200: #FFCDCB;
+  --color-orange-300: #FFA29D;
+  --color-orange-400: #FD6B63;
+  --color-orange-500: #E52A20;
+  --color-orange-600: #C51C13; /* Primary */
+  --color-orange-700: #A2110A;
+  --color-orange-850: #8C0D09;
+  --color-orange-800: #7F0B05;
+  --color-orange-900: #550200;
+
+  /* Redefine amber utility classes to secondary #FFCB44 */
+  --color-amber-50: #FFFBF0;
+  --color-amber-100: #FFF5D0;
+  --color-amber-200: #FFEAA0;
+  --color-amber-300: #FFDF70;
+  --color-amber-400: #FFD450;
+  --color-amber-500: #FFCB44; /* Secondary */
+  --color-amber-600: #E6B530;
+  --color-amber-700: #C4961E;
+  --color-amber-800: #9B7010;
+  --color-amber-900: #6D4D05;
+}
+
+/* Titles & ceremonial headings (DM Serif Display) */
+@utility serif {
+  font-family: var(--font-display);
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+/* Alias: same as font-sans — use font-sans in new code */
+@utility font-secondary {
+  font-family: var(--font-sans);
+}
+
+@utility festive-gradient {
+  background: linear-gradient(135deg, var(--color-festive-orange) 0%, var(--color-festive-gold) 100%);
+}
+
+@utility festive-text-gradient {
+  background: linear-gradient(135deg, var(--color-festive-orange) 0%, var(--color-festive-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@utility gold-border {
+  border: 2px solid var(--color-gold-metallic);
+}
+
+@utility rangoli-pattern {
+  background-image: radial-gradient(var(--color-gold-metallic) 0.5px, transparent 0.5px);
+  background-size: 10px 10px;
+}
+
+@utility glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid color-mix(in srgb, var(--color-gold-metallic) 20%, transparent);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-brand-bg) !important;
+  color: var(--color-brand-dark);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Dark mode overrides when `dark` is on <html> */
+html.dark body {
+  background-color: var(--color-brand-dark-bg) !important;
+  color: #f5f5f4;
+}
+
+/* Custom gorgeous scrollbar styled to match the theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-brand-bg);
+}
+html.dark ::-webkit-scrollbar-track {
+  background: var(--color-brand-dark-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-festive-orange);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-festive-gold);
+}
+
+/* Ensure all form components (inputs, selects, textareas) have a clean, precise #C5C5CA border color */
+input,
+select,
+textarea {
+  border-color: #C5C5CA !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  font-family: var(--font-sans);
+}
+
+/* Active form component border color should be primary color red */
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--color-festive-orange) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 1px var(--color-festive-orange) !important;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Landing: one continuous gradient behind nav + hero (Shubhe brand) */
+.landing-hero-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top, rgba(255, 203, 68, 0.22) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.landing-hero-shell > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Landing sections — base color + themed CSS texture (Mithila / rangoli / marigold) */
+.landing-section-tone {
+  position: relative;
+  isolation: isolate;
+}
+
+.landing-section-tone::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.landing-section-tone > .landing-section-inner {
+  position: relative;
+  z-index: 10;
+}
+
+/* Solid band only — no texture overlay */
+.landing-section-tone--flat::before {
+  content: none;
+  display: none;
+}
+
+/* Cream — fine rangoli dot grid + soft marigold glow */
+.landing-section-tone--cream {
+  background-color: #fff8f0;
+}
+
+.landing-section-tone--cream::before {
+  background-image:
+    radial-gradient(ellipse 90% 55% at 50% 0%, rgba(255, 203, 68, 0.2), transparent 62%),
+    radial-gradient(circle at 50% 50%, rgba(197, 28, 19, 0.09) 1px, transparent 1px),
+    radial-gradient(circle at 50% 50%, rgba(255, 203, 68, 0.06) 1px, transparent 1px);
+  background-size: 100% 100%, 22px 22px, 22px 22px;
+  background-position: 0 0, 0 0, 11px 11px;
+}
+
+/* Marigold — floral ring repeat */
+.landing-section-tone--marigold {
+  background-color: #ffefc8;
+}
+
+.landing-section-tone--marigold::before {
+  background-image:
+    radial-gradient(circle at 50% 50%, transparent 58%, rgba(197, 28, 19, 0.07) 59%, rgba(197, 28, 19, 0.07) 62%, transparent 63%),
+    radial-gradient(circle at 50% 50%, rgba(255, 203, 68, 0.35) 0%, rgba(255, 203, 68, 0.12) 18%, transparent 42%);
+  background-size: 48px 48px, 48px 48px;
+}
+
+/* Sand — woven linen crosshatch */
+.landing-section-tone--sand {
+  background-color: #e6dfd4;
+}
+
+.landing-section-tone--sand::before {
+  background-image:
+    linear-gradient(
+      45deg,
+      rgba(120, 83, 48, 0.07) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(120, 83, 48, 0.07) 75%
+    ),
+    linear-gradient(
+      -45deg,
+      rgba(120, 83, 48, 0.07) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(120, 83, 48, 0.07) 75%
+    );
+  background-size: 14px 14px;
+}
+
+/* Blush — soft petal blooms */
+.landing-section-tone--blush {
+  background-color: #ffe3d9;
+}
+
+.landing-section-tone--blush::before {
+  background-image:
+    radial-gradient(ellipse 55% 45% at 18% 28%, rgba(197, 28, 19, 0.09), transparent 72%),
+    radial-gradient(ellipse 50% 40% at 82% 68%, rgba(255, 203, 68, 0.14), transparent 70%),
+    radial-gradient(ellipse 45% 38% at 62% 18%, rgba(229, 42, 32, 0.06), transparent 68%),
+    radial-gradient(ellipse 48% 42% at 28% 78%, rgba(255, 203, 68, 0.1), transparent 70%);
+  background-size: 140px 140px;
+}
+
+/* Wine — gold diya dots + subtle festive band */
+.landing-section-tone--wine {
+  background-color: #4a1512;
+}
+
+.landing-section-tone--wine::before {
+  background-image:
+    linear-gradient(
+      180deg,
+      rgba(255, 203, 68, 0.14) 0%,
+      rgba(255, 203, 68, 0.04) 12%,
+      transparent 28%
+    ),
+    radial-gradient(circle at 50% 50%, rgba(255, 203, 68, 0.22) 1.5px, transparent 2px),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.06) 0.5px, transparent 1px);
+  background-size: 100% 100%, 28px 28px, 14px 14px;
+  background-position: 0 0, 0 0, 7px 7px;
+}
+
+/* Parchment — manuscript lines + thread grain */
+.landing-section-tone--parchment {
+  background-color: #f0eae0;
+}
+
+.landing-section-tone--parchment::before {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 31px,
+      rgba(120, 83, 48, 0.07) 31px,
+      rgba(120, 83, 48, 0.07) 32px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 47px,
+      rgba(197, 28, 19, 0.04) 47px,
+      rgba(197, 28, 19, 0.04) 48px
+    ),
+    radial-gradient(rgba(120, 83, 48, 0.05) 0.6px, transparent 0.6px);
+  background-size: 100% 32px, 48px 100%, 8px 8px;
+}
+
+/* Dark mode — toned-down textures on deep bases */
+html.dark .landing-section-tone--cream {
+  background-color: #1c1917;
+}
+
+html.dark .landing-section-tone--cream::before {
+  background-image:
+    radial-gradient(ellipse 90% 55% at 50% 0%, rgba(255, 203, 68, 0.08), transparent 62%),
+    radial-gradient(circle at 50% 50%, rgba(255, 203, 68, 0.12) 1px, transparent 1px);
+  background-size: 100% 100%, 24px 24px;
+}
+
+html.dark .landing-section-tone--marigold {
+  background-color: #1c1810;
+}
+
+html.dark .landing-section-tone--marigold::before {
+  opacity: 0.85;
+  background-image: radial-gradient(circle at 50% 50%, rgba(255, 203, 68, 0.15) 0%, transparent 45%);
+  background-size: 40px 40px;
+}
+
+html.dark .landing-section-tone--sand {
+  background-color: #0c0a09;
+}
+
+html.dark .landing-section-tone--sand::before {
+  opacity: 0.7;
+  background-image: linear-gradient(45deg, rgba(255, 203, 68, 0.06) 25%, transparent 25%, transparent 75%, rgba(255, 203, 68, 0.06) 75%),
+    linear-gradient(-45deg, rgba(255, 203, 68, 0.06) 25%, transparent 25%, transparent 75%, rgba(255, 203, 68, 0.06) 75%);
+  background-size: 16px 16px;
+}
+
+html.dark .landing-section-tone--blush {
+  background-color: #1a1412;
+}
+
+html.dark .landing-section-tone--blush::before {
+  background-image: radial-gradient(ellipse 55% 45% at 20% 30%, rgba(197, 28, 19, 0.12), transparent 72%),
+    radial-gradient(ellipse 50% 40% at 80% 70%, rgba(255, 203, 68, 0.08), transparent 70%);
+  background-size: 160px 160px;
+}
+
+html.dark .landing-section-tone--wine {
+  background-color: #120c0a;
+}
+
+html.dark .landing-section-tone--wine::before {
+  background-image: linear-gradient(180deg, rgba(255, 203, 68, 0.1) 0%, transparent 22%),
+    radial-gradient(circle at 50% 50%, rgba(255, 203, 68, 0.18) 1px, transparent 2px);
+  background-size: 100% 100%, 32px 32px;
+}
+
+html.dark .landing-section-tone--parchment {
+  background-color: #16140f;
+}
+
+html.dark .landing-section-tone--parchment::before {
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 31px, rgba(255, 203, 68, 0.06) 31px, rgba(255, 203, 68, 0.06) 32px),
+    radial-gradient(rgba(255, 203, 68, 0.08) 0.5px, transparent 0.5px);
+  background-size: 100% 32px, 10px 10px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .landing-section-mandala {
+    animation: landing-mandala-drift 48s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes landing-mandala-drift {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+  to {
+    transform: rotate(6deg) scale(1.03);
+  }
+}
+
+/* Footer — full-width app download band */
+.footer-download-banner {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(128deg, #ffcb44 0%, #e52a20 42%, #a2110a 78%, #550200 100%);
+}
+
+.footer-download-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 100% 0%, rgba(255, 255, 255, 0.12), transparent 55%),
+    radial-gradient(ellipse 60% 45% at 0% 100%, rgba(255, 203, 68, 0.2), transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.14) 1px, transparent 2px);
+  background-size: 100% 100%, 100% 100%, 26px 26px;
+}
+
+.footer-download-banner-inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* Phone mockup flush to section bottom */
+.footer-download-phone {
+  line-height: 0;
+  margin-bottom: 0;
+}
+
+.footer-download-phone figure {
+  margin-bottom: 0;
+}
+
+.footer-download-phone img {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .footer-download-phone {
+    min-height: 100%;
+  }
+}
+
+/* Hero headline: fixed 2-line title + 2-line subtitle (no layout shift on tab switch) */
+.hero-headline {
+  display: flex;
+  flex-direction: column;
+  min-height: 5.35rem;
+}
+
+@media (min-width: 640px) {
+  .hero-headline {
+    min-height: 5.85rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-headline {
+    min-height: 6.35rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .hero-headline {
+    min-height: 7.15rem;
+  }
+}
+
+.hero-headline-line {
+  display: block;
+}
+
+.hero-headline-sub {
+  min-height: 2.75rem;
+}
+
+@media (min-width: 640px) {
+  .hero-headline-sub {
+    min-height: 3rem;
+  }
+}
+
+/* Landing hero — search card with integrated tabs */
+#hero-search-form .hero-search-card {
+  background: #ffffff;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+#hero-search-form .hero-search-tabs {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.375rem;
+  background: #f5f5f4;
+  border-bottom: 1px solid #e7e5e4;
+}
+
+#hero-search-form .hero-search-tab {
+  flex: 1;
+  padding: 0.625rem 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: #57534e;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+@media (min-width: 640px) {
+  #hero-search-form .hero-search-tab {
+    font-size: 0.8125rem;
+    padding: 0.6875rem 1rem;
+  }
+}
+
+#hero-search-form .hero-search-tab:hover:not(.hero-search-tab-active) {
+  color: #1c1917;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+#hero-search-form .hero-search-tab-active {
+  background: #ffffff;
+  color: #c51c13;
+  box-shadow: 0 1px 3px rgba(28, 25, 23, 0.1);
+}
+
+#hero-search-form .hero-search-card-body {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Equal-height tab panels (stacked in one grid cell) */
+#hero-search-form .hero-search-panel-body {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+#hero-search-form .hero-search-panel-body > .hero-search-panel {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+
+#hero-search-form .hero-search-panel-hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#hero-search-form .hero-vendor-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #ffffff;
+}
+
+#hero-search-form .hero-vendor-popular {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  padding: 1rem 1.25rem 1.125rem;
+  border-top: 1px solid #e7e5e4;
+  background: #fafaf9;
+}
+
+#hero-search-form .hero-vendor-popular-label {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #78716c;
+}
+
+#hero-search-form .hero-vendor-popular-pills {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 0.375rem 0.5rem;
+}
+
+#hero-search-form .hero-popular-pill-in-card {
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid #e7e5e4;
+  background: #ffffff;
+  color: #44403c;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+#hero-search-form .hero-popular-pill-in-card:hover {
+  border-color: #fdba74;
+  background: #fff7ed;
+  color: #c51c13;
+}
+
+#hero-search-form .hero-popular-pill-in-card-muted {
+  background: transparent;
+  color: #78716c;
+}
+
+#hero-search-form .hero-popular-pill-in-card-muted:hover {
+  background: #ffffff;
+}
+
+/* Vendor search — 2-row grid inside card */
+#hero-search-form .hero-vendor-form {
+  background: #ffffff;
+}
+
+#hero-search-form .hero-vendor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.875rem 1rem;
+  padding: 1.25rem 1.25rem 0.875rem;
+}
+
+#hero-search-form .hero-vendor-field-keyword,
+#hero-search-form .hero-vendor-field-submit {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 640px) {
+  #hero-search-form .hero-vendor-grid {
+    padding: 1.375rem 1.5rem 1rem;
+  }
+
+  #hero-search-form .hero-vendor-field-keyword {
+    grid-column: 1 / 2;
+  }
+
+  #hero-search-form .hero-vendor-field-submit {
+    grid-column: 2 / 3;
+    min-width: 8.75rem;
+  }
+}
+
+#hero-search-form .hero-vendor-input {
+  width: 100%;
+  min-height: 2.875rem;
+  padding: 0.625rem 0.875rem !important;
+  border-radius: 0.625rem !important;
+  border: 1px solid #e7e5e4 !important;
+  background-color: #fafaf9 !important;
+  color: #1c1917 !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  line-height: 1.25rem !important;
+  box-shadow: 0 1px 2px rgba(28, 25, 23, 0.04) !important;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+#hero-search-form .hero-vendor-input::placeholder {
+  color: #a8a29e;
+  font-weight: 400;
+}
+
+#hero-search-form .hero-vendor-input:hover {
+  border-color: #fdba74 !important;
+  background-color: #ffffff !important;
+}
+
+#hero-search-form .hero-vendor-input:focus {
+  outline: none !important;
+  border-color: var(--color-festive-orange) !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(197, 28, 19, 0.12) !important;
+}
+
+#hero-search-form .hero-vendor-input-wrap {
+  position: relative;
+}
+
+#hero-search-form .hero-vendor-input-icon {
+  pointer-events: none;
+  position: absolute;
+  left: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  color: #c51c13;
+  z-index: 1;
+}
+
+#hero-search-form .hero-vendor-input-with-icon {
+  padding-left: 2.5rem !important;
+}
+
+#hero-search-form .hero-vendor-select-wrap {
+  position: relative;
+}
+
+#hero-search-form .hero-vendor-select {
+  appearance: none;
+  cursor: pointer;
+  padding-right: 2.25rem !important;
+}
+
+#hero-search-form .hero-vendor-select-chevron {
+  pointer-events: none;
+  position: absolute;
+  right: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  color: #a8a29e;
+}
+
+#hero-search-form .hero-vendor-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 2.875rem;
+  padding: 0.625rem 1.25rem !important;
+  border: none !important;
+  border-radius: 0.625rem !important;
+  background: linear-gradient(135deg, #c51c13 0%, #a2110a 100%) !important;
+  color: #ffffff !important;
+  font-size: 0.9375rem !important;
+  font-weight: 700 !important;
+  cursor: pointer;
+  box-shadow:
+    0 4px 14px rgba(197, 28, 19, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+  transition:
+    filter 0.15s ease,
+    transform 0.15s ease;
+}
+
+#hero-search-form .hero-vendor-submit:hover {
+  filter: brightness(1.06);
+}
+
+#hero-search-form .hero-vendor-submit:active {
+  transform: scale(0.99);
+}
+
+/* Legacy inline housing bar (unused; kept for reference if needed) */
+#hero-search-form .hero-search-field {
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0.75rem 2rem 0.75rem 0.875rem !important;
+  border-radius: 0 !important;
+  border: none !important;
+  background-color: transparent !important;
+  color: #1c1917 !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  line-height: 1.25rem !important;
+  box-shadow: none !important;
+}
+
+#hero-search-form .hero-search-field-with-icon {
+  padding-left: 2.5rem !important;
+}
+
+#hero-search-form .hero-search-field:focus {
+  outline: none !important;
+  box-shadow: inset 0 0 0 2px rgba(197, 28, 19, 0.2) !important;
+}
+
+#hero-search-form .hero-search-select-wrap {
+  position: relative;
+  height: 100%;
+}
+
+#hero-search-form .hero-search-select-wrap .hero-search-field {
+  appearance: none;
+  cursor: pointer;
+}
+
+#hero-search-form .hero-search-chevron {
+  pointer-events: none;
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  color: #a8a29e;
+}
+
+#hero-search-form .hero-housing-bar {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  #hero-search-form .hero-housing-bar {
+    flex-direction: row;
+    align-items: stretch;
+  }
+}
+
+#hero-search-form .hero-housing-bar-fields {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+@media (min-width: 640px) {
+  #hero-search-form .hero-housing-bar-fields {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+#hero-search-form .hero-housing-bar-cell {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  border-bottom: 1px solid #e7e5e4;
+}
+
+@media (min-width: 640px) {
+  #hero-search-form .hero-housing-bar-cell {
+    border-bottom: none;
+    border-right: 1px solid #e7e5e4;
+    min-width: 7rem;
+  }
+
+  #hero-search-form .hero-housing-bar-cell-grow {
+    flex: 1.4 1 12rem;
+  }
+}
+
+#hero-search-form .hero-housing-bar-icon {
+  position: absolute;
+  left: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #a8a29e;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#hero-search-form .hero-housing-bar-btn {
+  flex-shrink: 0;
+  min-height: 3.25rem;
+  padding: 0 1.75rem !important;
+  border: none !important;
+  border-radius: 0 !important;
+  background: linear-gradient(135deg, #c51c13 0%, #a2110a 100%) !important;
+  box-shadow:
+    0 4px 14px rgba(197, 28, 19, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  font-size: 0.9375rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition:
+    filter 0.15s ease,
+    transform 0.15s ease;
+}
+
+#hero-search-form .hero-housing-bar-btn:hover {
+  filter: brightness(1.06);
+  box-shadow:
+    0 6px 18px rgba(197, 28, 19, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+
+#hero-search-form .hero-housing-bar-btn:active {
+  transform: scale(0.99);
+}
+
+@media (min-width: 640px) {
+  #hero-search-form .hero-housing-bar-btn {
+    min-width: 8.5rem;
+  }
+}
+
+/* Event planner — card grid (not inline housing bar) */
+#hero-search-form .hero-planner-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #ffffff;
+  padding: 1.25rem 1.25rem 1.125rem;
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  #hero-search-form .hero-planner-card {
+    padding: 1.375rem 1.5rem 1.25rem;
+  }
+}
+
+#hero-search-form .hero-planner-card .hero-planner-grid {
+  flex: 1;
+}
+
+#hero-search-form .hero-planner-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem 1.125rem;
+}
+
+@media (min-width: 640px) {
+  #hero-search-form .hero-planner-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+#hero-search-form .hero-planner-field-full {
+  grid-column: 1 / -1;
+}
+
+#hero-search-form .hero-planner-input {
+  width: 100%;
+  min-height: 2.875rem;
+  padding: 0.625rem 0.875rem !important;
+  border-radius: 0.625rem !important;
+  border: 1px solid #e7e5e4 !important;
+  background-color: #fafaf9 !important;
+  color: #1c1917 !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  line-height: 1.25rem !important;
+  box-shadow: 0 1px 2px rgba(28, 25, 23, 0.04) !important;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
+
+#hero-search-form .hero-planner-input::placeholder {
+  color: #a8a29e;
+  font-weight: 400;
+}
+
+#hero-search-form .hero-planner-input:hover {
+  border-color: #fdba74 !important;
+  background-color: #ffffff !important;
+}
+
+#hero-search-form .hero-planner-input:focus {
+  outline: none !important;
+  border-color: var(--color-festive-orange) !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(197, 28, 19, 0.12) !important;
+}
+
+#hero-search-form .hero-planner-input-wrap {
+  position: relative;
+}
+
+#hero-search-form .hero-planner-input-icon {
+  pointer-events: none;
+  position: absolute;
+  left: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  color: #c51c13;
+  z-index: 1;
+}
+
+#hero-search-form .hero-planner-input-with-icon {
+  padding-left: 2.5rem !important;
+}
+
+#hero-search-form .hero-planner-input-date {
+  color-scheme: light;
+}
+
+#hero-search-form .hero-planner-input-date:not(:valid):not(:focus) {
+  color: #a8a29e;
+}
+
+#hero-search-form .hero-planner-select-wrap {
+  position: relative;
+}
+
+#hero-search-form .hero-planner-select {
+  appearance: none;
+  cursor: pointer;
+  padding-right: 2.25rem !important;
+}
+
+#hero-search-form .hero-planner-select:invalid,
+#hero-search-form .hero-planner-select option[value=''] {
+  color: #a8a29e;
+}
+
+#hero-search-form .hero-planner-select-chevron {
+  pointer-events: none;
+  position: absolute;
+  right: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  color: #a8a29e;
+}
+
+#hero-search-form .hero-planner-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin-top: 1.125rem;
+  min-height: 3rem;
+  padding: 0.75rem 1.5rem !important;
+  border: none !important;
+  border-radius: 0.625rem !important;
+  background: linear-gradient(135deg, #c51c13 0%, #a2110a 100%) !important;
+  color: #ffffff !important;
+  font-size: 0.9375rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow:
+    0 4px 14px rgba(197, 28, 19, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+  transition:
+    filter 0.15s ease,
+    transform 0.15s ease;
+}
+
+#hero-search-form .hero-planner-submit:hover {
+  filter: brightness(1.06);
+}
+
+#hero-search-form .hero-planner-submit:active {
+  transform: scale(0.99);
+}
+
+.hero-popular-pill {
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.hero-popular-pill:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 203, 68, 0.45);
+}
+
+.hero-popular-pill-muted {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.hero-image-frame {
+  position: relative;
+  width: min(100%, 380px);
+  transform: rotate(-4deg);
+  border-radius: 1.25rem;
+  padding: 0.35rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 203, 68, 0.35));
+  box-shadow:
+    0 28px 60px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+@media (min-width: 1024px) {
+  .hero-image-frame {
+    width: 100%;
+    max-width: 420px;
+    transform: rotate(-5deg) translateY(0.5rem);
+  }
+}
+
+.hero-image-frame-photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 1rem;
+}
+
+.hero-image-frame-badge {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 1rem;
+  right: 1rem;
+  padding: 0.65rem 1rem;
+  border-radius: 0.75rem;
+  background: rgba(28, 25, 23, 0.82);
+  border: 1px solid rgba(255, 203, 68, 0.25);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}

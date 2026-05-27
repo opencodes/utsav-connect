@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Gift, Plus, Trash2, Calendar, Sparkles, IndianRupee, Award, AlertCircle } from 'lucide-react';
+import { Gift, Plus, Trash2, IndianRupee, Award, Sparkles } from 'lucide-react';
 import { readPlannerStorage } from '../plannerStorage';
 
 interface ChumanGift {
@@ -68,75 +68,79 @@ export const PlannerChuman: React.FC = () => {
     return activeFilter === 'All' || item.type === activeFilter;
   });
 
+  const averageGiftValue =
+    chumanList.length > 0 ? Math.round(totalReceivedCombined / chumanList.length) : 0;
+
   return (
     <div className="space-y-8 pb-12" id="planner-chuman-root">
-      
-      {/* Visual top Ribbon with Maithili explanations */}
-      <div className="bg-gradient-to-tr from-[#C51C13] to-orange-650 rounded-3xl p-6 text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
-        <div className="absolute right-[-20px] bottom-[-20px] opacity-10 pointer-events-none text-9xl">
-          🌸
-        </div>
-        <div>
-          <span className="px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-bold">
-            Traditional Mithila Gifting
-          </span>
-          <h1 className="text-2xl font-semibold mt-1 tracking-tight">Chuman Master Ledger (चुमन पंजी)</h1>
-          <p className="text-stone-100 text-xs mt-1 max-w-xl">
-            Record auspicious cash gifts (*Chuman* / *Shagun*) and register physical wedding gifts with estimated asset valuations to maintain precise family logs.
-          </p>
-        </div>
-        <div className="bg-stone-900/40 backdrop-blur-sm border border-white/20 px-4 py-3 rounded-2xl text-left shrink-0">
-          <span className="text-[10px] font-mono font-bold text-orange-200">Auspicious Blessings Counter</span>
-          <b className="text-xl font-bold block text-white mt-1">₹ {totalReceivedCombined.toLocaleString('en-IN')}</b>
-        </div>
-      </div>
 
-      {/* Visual Aggregate Counters cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4" id="chuman-aggregates">
-        
+      {/* Summary dashboard cards (matches Guests planner layout) */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4" id="chuman-aggregates">
+
         {/* Cash gifts ledger summary */}
         <div className="bg-white dark:bg-stone-800 p-5 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm text-left flex items-center gap-4">
-          <div className="p-3 bg-emerald-100 dark:bg-emerald-500/10 rounded-xl text-emerald-600">
+          <div className="p-3 bg-emerald-100 dark:bg-emerald-500/10 rounded-xl text-emerald-600 dark:text-emerald-400">
             <IndianRupee className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-[10px] text-stone-400 font-bold block">Cash Shagun Gifts (चुमन राशि)</span>
-            <h3 className="text-xl font-semibold text-stone-900 dark:text-white mt-1 leading-none">
+            <span className="text-[10px] text-stone-400 font-bold block">Cash Shagun (चुमन राशि)</span>
+            <h3 className="text-xl font-semibold text-stone-900 dark:text-white leading-none mt-1">
               ₹ {totalCashGiftsSum.toLocaleString('en-IN')}
             </h3>
-            <span className="text-[9px] text-green-600 font-mono font-bold mt-1 block">
-              💸 {cashEntriesCount} Cash envelopes logged
+            <span className="text-[9px] text-green-600 font-bold font-mono mt-0.5 block">
+              💸 {cashEntriesCount} envelopes logged
             </span>
           </div>
         </div>
 
         {/* Physical gifts ledger summary */}
         <div className="bg-white dark:bg-stone-800 p-5 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm text-left flex items-center gap-4">
-          <div className="p-3 bg-rose-100 dark:bg-rose-500/10 rounded-xl text-rose-600">
+          <div className="p-3 bg-rose-100 dark:bg-rose-500/10 rounded-xl text-rose-600 dark:text-rose-400">
             <Gift className="w-6 h-6" />
           </div>
           <div>
             <span className="text-[10px] text-stone-400 font-bold block">Physical Gift Valuation</span>
-            <h3 className="text-xl font-semibold text-stone-900 dark:text-white mt-1 leading-none">
+            <h3 className="text-xl font-semibold text-stone-900 dark:text-white leading-none mt-1">
               ₹ {totalPhysicalEstimatedSum.toLocaleString('en-IN')}
             </h3>
-            <span className="text-[9px] text-orange-600 font-mono font-bold mt-1 block text-left">
-              🎁 {physicalEntriesCount} Assets & ornaments recorded
+            <span className="text-[9px] text-orange-600 font-bold font-mono mt-0.5 block">
+              🎁 {physicalEntriesCount} assets recorded
             </span>
           </div>
         </div>
 
-        {/* Traditional Diya summary info */}
+        {/* Average gift per entry */}
         <div className="bg-white dark:bg-stone-800 p-5 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm text-left flex items-center gap-4">
-          <div className="p-3 bg-orange-100 dark:bg-orange-500/10 rounded-xl text-orange-600">
+          <div className="p-3 bg-orange-100 dark:bg-orange-500/10 rounded-xl text-orange-600 dark:text-orange-400">
             <Award className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-[10px] text-stone-400 font-bold block">Average Gift Multiplier</span>
-            <h3 className="text-xl font-semibold text-stone-900 dark:text-white mt-1 leading-none">
-              ₹ {chumanList.length > 0 ? Math.round(totalReceivedCombined / chumanList.length).toLocaleString('en-IN') : 0}
+            <span className="text-[10px] text-stone-400 font-bold block">Average per Blessing</span>
+            <h3 className="text-xl font-semibold text-stone-900 dark:text-white leading-none mt-1">
+              ₹ {averageGiftValue.toLocaleString('en-IN')}
             </h3>
-            <span className="text-[9px] text-stone-400 block font-mono mt-1">Per individual blessing entry</span>
+            <span className="text-[9px] text-stone-400 font-mono mt-0.5 block">
+              {chumanList.length} total entries in ledger
+            </span>
+          </div>
+        </div>
+
+        {/* Total blessings — accent card (replaces top banner) */}
+        <div className="bg-gradient-to-tr from-[#C51C13] to-orange-600 text-white p-5 rounded-2xl shadow-md text-left flex items-center gap-4 relative overflow-hidden">
+          <div className="absolute right-[-10px] bottom-[-10px] text-white/5 font-semibold text-7xl select-none pointer-events-none">
+            🌸
+          </div>
+          <div className="p-3 bg-white/20 rounded-xl z-10 shrink-0">
+            <Sparkles className="w-6 h-6 text-orange-200" />
+          </div>
+          <div className="z-10 min-w-0">
+            <span className="text-[10px] text-orange-200 font-semibold block">Total Auspicious Blessings</span>
+            <h3 className="text-2xl font-semibold leading-none mt-1">
+              ₹ {totalReceivedCombined.toLocaleString('en-IN')}
+            </h3>
+            <span className="text-[9px] text-stone-100 font-mono italic mt-1 block truncate">
+              Chuman & Shagun — cash + physical valuation
+            </span>
           </div>
         </div>
 

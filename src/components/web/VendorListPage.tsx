@@ -4,6 +4,8 @@ import { APP_NAME } from '../../brand';
 import { AnimatedDiya } from './GoldenDeco';
 import { WEDDING_CATEGORIES } from './VendorCategoryPage/CategoriesGrid';
 import { ALL_MOCK_VENDORS } from './VendorCategoryPage/mockData';
+import { fetchVendors } from '../../api/vendors';
+import type { ListingCardItem } from './VendorCategoryPage/VendorGridCard';
 import { vendorMatchesCity } from './VendorCategoryPage/vendorCityFilter';
 import { HERO_VENDOR_CITIES } from './LandingPage/heroVendorSearch';
 import { PageBanner } from './PageBanner';
@@ -55,6 +57,26 @@ export const VendorListPage: React.FC<VendorListPageProps> = ({
   initialCategoryId = '',
   initialCity = '',
 }) => {
+  const [allVendors, setAllVendors] = useState<ListingCardItem[]>(ALL_MOCK_VENDORS);
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetchVendors({
+      category: initialCategoryId || undefined,
+      city: initialCity || undefined,
+      q: initialSearchQuery || undefined,
+    })
+      .then((list) => {
+        if (!cancelled && list.length > 0) setAllVendors(list);
+      })
+      .catch(() => {
+        if (!cancelled) setAllVendors(ALL_MOCK_VENDORS);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [initialCategoryId, initialCity, initialSearchQuery]);
+
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
   const [selectedCategoryId, setSelectedCategoryId] = useState(initialCategoryId);
   const [selectedCity, setSelectedCity] = useState(initialCity);
@@ -99,7 +121,7 @@ export const VendorListPage: React.FC<VendorListPageProps> = ({
   };
 
   const filteredVendors = useMemo(() => {
-    let list = ALL_MOCK_VENDORS.map(enrichVendorForListing);
+    let list = allVendors.map(enrichVendorForListing);
 
     if (searchQuery.trim() !== '') {
       const q = searchQuery.toLowerCase();

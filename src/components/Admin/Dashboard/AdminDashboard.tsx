@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { EMPTY_ADMIN_STATS } from '../../../adminDefaults';
+import { fetchAdminStats } from '../../../api/admin';
+import type { AdminStats } from '../../../types';
 import { DashboardStatsGrid } from './DashboardStatsGrid';
 import { DiwaliAnalyticsChart } from './DiwaliAnalyticsChart';
 import { TopSellingCategories } from './TopSellingCategories';
@@ -11,8 +13,14 @@ interface AdminDashboardProps {
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab }) => {
-  const stats = EMPTY_ADMIN_STATS;
+  const [stats, setStats] = useState<AdminStats>(EMPTY_ADMIN_STATS);
   const [activeSegment, setActiveSegment] = useState<'revenue' | 'orders'>('revenue');
+
+  useEffect(() => {
+    void fetchAdminStats()
+      .then(setStats)
+      .catch(() => setStats(EMPTY_ADMIN_STATS));
+  }, []);
 
   return (
     <div className="space-y-6 text-left animate-in fade-in duration-300" id="admin-dashboard-tab">

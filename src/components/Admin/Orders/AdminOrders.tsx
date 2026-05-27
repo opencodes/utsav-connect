@@ -1,26 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { fetchAdminOrders, updateAdminOrderStatus, type AdminOrderRow } from '../../../api/admin';
 import { KanbanBoard } from './KanbanBoard';
 import { OrderDetailsDrawer } from './OrderDetailsDrawer';
 import { AssignRiderModal } from './AssignRiderModal';
 import { AdminEmptyState } from '../AdminEmptyState';
 
-interface Order {
-  id: string;
-  customer: string;
-  restaurant: string;
-  items: string;
-  amount: number;
-  status: string;
-  time: string;
-  address: string;
-  phone: string;
-  partner?: string;
-}
-
 export const AdminOrders: React.FC = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<AdminOrderRow[]>([]);
 
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<AdminOrderRow | null>(null);
+
+  const loadOrders = () => {
+    void fetchAdminOrders()
+      .then(setOrders)
+      .catch(() => setOrders([]));
+  };
+
+  useEffect(() => {
+    loadOrders();
+  }, []);
   const [showRiderModal, setShowRiderModal] = useState<string | null>(null);
 
   const ridersList: string[] = [];
@@ -30,13 +28,17 @@ export const AdminOrders: React.FC = () => {
     const idx = kanbanStages.indexOf(currentStatus);
     if (idx < kanbanStages.length - 1) {
       const nextStatus = kanbanStages[idx + 1];
-      const updatedOrders = orders.map((o) => (o.id === orderId ? { ...o, status: nextStatus } : o));
-      setOrders(updatedOrders);
-      
-      // Update selected drawer if open
-      if (selectedOrder && selectedOrder.id === orderId) {
-        setSelectedOrder({ ...selectedOrder, status: nextStatus });
-      }
+      void updateAdminOrderStatus(orderId, nextStatus)
+        .then(() => {
+          const updatedOrders = orders.map((o) =>
+            o.id === orderId ? { ...o, status: nextStatus } : o
+          );
+          setOrders(updatedOrders);
+          if (selectedOrder && selectedOrder.id === orderId) {
+            setSelectedOrder({ ...selectedOrder, status: nextStatus });
+          }
+        })
+        .catch(() => alert('Failed to update order status'));
     }
   };
 

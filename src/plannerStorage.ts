@@ -1,4 +1,8 @@
-/** Planner localStorage — no demo seed fallbacks. */
+/** Planner localStorage — synced to API when authenticated. */
+
+import { getApiToken } from './api/config';
+
+let plannerSaveTimer: ReturnType<typeof setTimeout> | null = null;
 
 /** IDs from legacy `plannerSeed.ts` demo rows. */
 const PLANNER_DEMO_IDS = new Set([
@@ -128,4 +132,28 @@ export function writePlannerStorage<T>(key: string, value: T): void {
   } catch {
     // private mode / quota
   }
+  schedulePlannerApiSave();
+}
+
+function schedulePlannerApiSave(): void {
+  if (!getApiToken()) return;
+  if (plannerSaveTimer) clearTimeout(plannerSaveTimer);
+  plannerSaveTimer = setTimeout(() => {
+    plannerSaveTimer = null;
+    void import('./api/planner')
+      .then(({ readPlannerWorkspaceFromStorage, savePlannerWorkspace }) =>
+        savePlannerWorkspace(readPlannerWorkspaceFromStorage())
+      )
+      .catch(() => {
+        // offline / token expired — local copy remains
+      });
+  }, 900);
+}
+
+/** Load workspace from API into localStorage (call after planner sign-in). */
+export async function hydratePlannerFromApi(): Promise<void> {
+  if (!getApiToken()) return;
+  const { fetchPlannerWorkspace, applyPlannerWorkspaceToStorage } = await import('./api/planner');
+  const workspace = await fetchPlannerWorkspace();
+  applyPlannerWorkspaceToStorage(workspace);
 }

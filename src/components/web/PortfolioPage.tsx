@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { fetchPortfolio } from '../../api/portfolio';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Sparkles, 
@@ -193,14 +194,34 @@ const PORTFOLIO_DATA: PortfolioItem[] = [
 ];
 
 export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) => void }> = ({ onNavigate }) => {
+  const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>(PORTFOLIO_DATA);
+
+  useEffect(() => {
+    void fetchPortfolio()
+      .then((items) => {
+        if (items.length > 0) {
+          setPortfolioItems(items as PortfolioItem[]);
+        }
+      })
+      .catch(() => {
+        // keep static PORTFOLIO_DATA
+      });
+  }, []);
+
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedItem, setSelectedItem] = useState<PortfolioItem | null>(PORTFOLIO_DATA[0]);
   const [searchWord, setSearchWord] = useState<string>('');
 
+  useEffect(() => {
+    if (portfolioItems.length > 0 && !selectedItem) {
+      setSelectedItem(portfolioItems[0]);
+    }
+  }, [portfolioItems, selectedItem]);
+
   // Categories mapping list
   const categories = ['All', 'Royal Palace', 'Mithila Heritage', 'Contemporary', 'Corporate Festive'];
 
-  const filteredItems = PORTFOLIO_DATA.filter((item) => {
+  const filteredItems = portfolioItems.filter((item) => {
     const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory;
     const matchesSearch = 
       item.title.toLowerCase().includes(searchWord.toLowerCase()) ||

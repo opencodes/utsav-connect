@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { FoodItem, CartItem } from '../../types';
+import { FoodItem, CartItem, Restaurant } from '../../types';
 import { MOCK_RESTAURANTS } from '../../data';
+import { fetchRestaurant } from '../../api/restaurants';
 import { RestaurantDetailHero } from './RestaurantDetailPage/RestaurantDetailHero';
 import { MenuCategoryToggleList } from './RestaurantDetailPage/MenuCategoryToggleList';
 import { MenuFoodCard } from './RestaurantDetailPage/MenuFoodCard';
@@ -25,10 +26,44 @@ export const RestaurantDetailPage: React.FC<RestaurantDetailPageProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [isFavorite, setIsFavorite] = useState(false);
   const [menuSearch, setMenuSearch] = useState('');
+  const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const restaurant = useMemo(() => {
-    return MOCK_RESTAURANTS.find((r) => r.id === restaurantId) || MOCK_RESTAURANTS[0];
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    void fetchRestaurant(restaurantId)
+      .then((r) => {
+        if (cancelled) return;
+        if (r) setRestaurant(r);
+        else {
+          setRestaurant(
+            MOCK_RESTAURANTS.find((x) => x.id === restaurantId) ?? MOCK_RESTAURANTS[0]
+          );
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setRestaurant(
+            MOCK_RESTAURANTS.find((x) => x.id === restaurantId) ?? MOCK_RESTAURANTS[0]
+          );
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [restaurantId]);
+
+  if (loading || !restaurant) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-16 text-center text-stone-500">
+        Loading menu…
+      </div>
+    );
+  }
 
   // Unique categories in this restaurant's menu
   const menuCategories = useMemo(() => {

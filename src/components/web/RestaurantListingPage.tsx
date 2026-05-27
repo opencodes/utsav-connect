@@ -1,6 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { ArrowUpDown, Check, Star, Clock, Filter, Sparkles } from 'lucide-react';
 import { MOCK_RESTAURANTS } from '../../data';
+import { fetchRestaurants } from '../../api/restaurants';
+import type { Restaurant } from '../../types';
 import { AnimatedDiya } from './GoldenDeco';
 import { RestaurantListingHero } from './RestaurantListingPage/RestaurantListingHero';
 import { FiltersRibbon } from './RestaurantListingPage/FiltersRibbon';
@@ -12,6 +14,22 @@ interface RestaurantListingPageProps {
 }
 
 export const RestaurantListingPage: React.FC<RestaurantListingPageProps> = ({ onNavigate }) => {
+  const [restaurants, setRestaurants] = useState<Restaurant[]>(MOCK_RESTAURANTS);
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetchRestaurants()
+      .then((list) => {
+        if (!cancelled && list.length > 0) setRestaurants(list);
+      })
+      .catch(() => {
+        if (!cancelled) setRestaurants(MOCK_RESTAURANTS);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCuisine, setSelectedCuisine] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'rating' | 'time' | 'costAsc' | 'costDesc' | 'distance' | null>(null);
@@ -23,12 +41,12 @@ export const RestaurantListingPage: React.FC<RestaurantListingPageProps> = ({ on
   // Available unique cuisines
   const allCuisines = useMemo(() => {
     const set = new Set<string>();
-    MOCK_RESTAURANTS.forEach((r) => r.cuisine.forEach((c) => set.add(c)));
+    restaurants.forEach((r) => r.cuisine.forEach((c) => set.add(c)));
     return Array.from(set);
-  }, []);
+  }, [restaurants]);
 
   const filteredRestaurants = useMemo(() => {
-    let list = [...MOCK_RESTAURANTS];
+    let list = [...restaurants];
 
     // Search query
     if (searchQuery.trim() !== '') {
@@ -70,7 +88,7 @@ export const RestaurantListingPage: React.FC<RestaurantListingPageProps> = ({ on
     }
 
     return list;
-  }, [searchQuery, selectedCuisine, sortBy, filterPureVeg, filterOffers]);
+  }, [searchQuery, selectedCuisine, sortBy, filterPureVeg, filterOffers, restaurants]);
 
   const handleSimulateInfiniteScroll = () => {
     setIsInfiniteScrolling(true);

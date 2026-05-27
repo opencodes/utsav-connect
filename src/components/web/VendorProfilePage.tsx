@@ -26,10 +26,10 @@ import { ServiceImagePicker } from './VendorProfilePage/ServiceImagePicker';
 import { readImageFileAsDataUrl } from './VendorProfilePage/imageUploadUtils';
 import {
   getVendorDashboardListing,
-  MOCK_VENDOR_ENQUIRIES,
   type VendorDashboardSession,
   type VendorEnquiry,
 } from './VendorProfilePage/vendorProfileData';
+import { fetchVendor, fetchVendorEnquiries } from '../../api/vendors';
 
 const DEFAULT_SERVICE_CATEGORIES = [
   'Venue packages',
@@ -70,12 +70,36 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
     [session.vendorId]
   );
 
+  const [enquiries, setEnquiries] = useState<VendorEnquiry[]>([]);
+
   useEffect(() => {
     if (vendor) {
       setServices(vendor.services);
       setProfileImage(vendor.image);
     }
   }, [session.vendorId, vendor]);
+
+  useEffect(() => {
+    void fetchVendorEnquiries(session.vendorId)
+      .then((rows) =>
+        setEnquiries(
+          rows.map((e) => ({
+            id: e.id,
+            guestName: e.guestName,
+            eventType: e.eventType,
+            eventDate: e.eventDate,
+            guests: e.guests,
+            status: (e.status as VendorEnquiry['status']) || 'New',
+            receivedAt: e.receivedAt,
+            message: e.message,
+          }))
+        )
+      )
+      .catch(() => setEnquiries([]));
+    void fetchVendor(session.vendorId).catch(() => {
+      // listing detail optional
+    });
+  }, [session.vendorId]);
 
   const handleProfileImageFile = async (file: File | undefined) => {
     if (!file) return;
@@ -95,7 +119,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
   const categoryName =
     WEDDING_CATEGORIES.find((c) => c.id === vendor?.category)?.name ?? vendor?.category ?? '—';
 
-  const newEnquiryCount = MOCK_VENDOR_ENQUIRIES.filter((e) => e.status === 'New').length;
+  const newEnquiryCount = enquiries.filter((e) => e.status === 'New').length;
 
   const serviceCategoryOptions = useMemo(() => {
     const fromServices = services.map((s) => s.category).filter(Boolean);
@@ -412,7 +436,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                     Recent enquiries
                   </h2>
                   <ul className="divide-y divide-stone-100 dark:divide-stone-700">
-                    {MOCK_VENDOR_ENQUIRIES.slice(0, 2).map((enq) => (
+                    {enquiries.slice(0, 2).map((enq) => (
                       <li key={enq.id} className="py-3 flex flex-wrap items-start justify-between gap-2">
                         <div>
                           <p className="text-sm font-semibold text-stone-900 dark:text-white">
@@ -444,10 +468,10 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
             {activeTab === 'enquiries' && (
               <div className="space-y-4">
                 <h2 className="heading-card text-lg text-stone-900 dark:text-white">
-                  Enquiries ({MOCK_VENDOR_ENQUIRIES.length})
+                  Enquiries ({enquiries.length})
                 </h2>
                 <ul className="space-y-3">
-                  {MOCK_VENDOR_ENQUIRIES.map((enq) => (
+                  {enquiries.map((enq) => (
                     <li
                       key={enq.id}
                       className="rounded-xl border border-stone-200/80 dark:border-stone-700 bg-white dark:bg-stone-800 p-5 space-y-3"

@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Flame, Star, Clock } from 'lucide-react';
 import { MOCK_RESTAURANTS } from '../../../data';
+import { fetchRestaurants } from '../../../api/restaurants';
+import type { Restaurant } from '../../../types';
 import { AnimatedDiya } from '../GoldenDeco';
 
 interface PopularRestaurantsGridProps {
@@ -8,6 +10,18 @@ interface PopularRestaurantsGridProps {
 }
 
 export const PopularRestaurantsGrid: React.FC<PopularRestaurantsGridProps> = ({ onNavigate }) => {
+  const [restaurants, setRestaurants] = useState<Restaurant[]>(MOCK_RESTAURANTS.slice(0, 3));
+
+  useEffect(() => {
+    void fetchRestaurants()
+      .then((list) => {
+        if (list.length > 0) setRestaurants(list.slice(0, 3));
+      })
+      .catch(() => {
+        setRestaurants(MOCK_RESTAURANTS.slice(0, 3));
+      });
+  }, []);
+
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" id="popular-restaurants">
       <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8">
@@ -26,12 +40,12 @@ export const PopularRestaurantsGrid: React.FC<PopularRestaurantsGridProps> = ({ 
           onClick={() => onNavigate('restaurants')}
           className="mt-2 sm:mt-0 text-sm font-bold text-orange-600 dark:text-orange-400 hover:text-orange-700 hover:underline cursor-pointer"
         >
-          Explore All Vendors ({MOCK_RESTAURANTS.length}) &rarr;
+          Explore All Vendors ({restaurants.length}) &rarr;
         </button>
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" id="restaurants-grid">
-        {MOCK_RESTAURANTS.slice(0, 3).map((rest) => (
+        {restaurants.map((rest) => (
           <div
             key={rest.id}
             onClick={() => onNavigate('restaurant-detail', { restaurantId: rest.id })}

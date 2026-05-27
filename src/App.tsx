@@ -63,7 +63,17 @@ import {
   pushRoute,
   replaceRoute,
 } from './routing';
-import { purgeLegacyPlannerSeedData } from './plannerStorage';
+import { hydratePlannerFromApi, purgeLegacyPlannerSeedData } from './plannerStorage';
+import {
+  signInCustomer,
+  signInVendor,
+  registerEventPlanner,
+  clearApiSession,
+} from './api/auth';
+import { getApiToken, setApiToken } from './api/config';
+import { fetchUserProfile } from './api/users';
+import { createOrder } from './api/orders';
+import { ApiError } from './api/client';
 
 function getInitialRoute(): ParsedRoute {
   return parseLocation();
@@ -119,6 +129,13 @@ export default function App() {
   };
 
   const storedAuth = readStoredAuth();
+  const storedToken = (() => {
+    try {
+      return getApiToken();
+    } catch {
+      return null;
+    }
+  })();
 
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isAdminMode, setIsAdminMode] = useState(false);
@@ -138,7 +155,9 @@ export default function App() {
     ...MOCK_USER_PROFILE,
     ...(storedAuth.userProfile ?? {}),
   }));
-  const [isLoggedIn, setIsLoggedIn] = useState(() => Boolean(storedAuth.isLoggedIn));
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    () => Boolean(storedAuth.isLoggedIn && storedToken)
+  );
   const [isVendorLoggedIn, setIsVendorLoggedIn] = useState(() => Boolean(storedAuth.isVendorLoggedIn));
   const isEventPlannerCustomer = isPlannerCustomer(
     isLoggedIn,
@@ -148,7 +167,9 @@ export default function App() {
   const [vendorSession, setVendorSession] = useState<VendorDashboardSession>(() => ({
     ...MOCK_VENDOR_SESSION,
     ...(storedAuth.vendorSession ?? {}),
+    vendorId: (storedAuth.vendorSession as { vendorId?: string })?.vendorId ?? MOCK_VENDOR_SESSION.vendorId,
   }));
+  const [authLoading, setAuthLoading] = useState(false);
   const [vendorSearchFilters, setVendorSearchFilters] = useState({
     search: initialRoute.vendorSearch?.search ?? '',
     categoryId: initialRoute.vendorSearch?.categoryId ?? '',
@@ -177,6 +198,21 @@ export default function App() {
       purgeLegacyPlannerSeedData();
     }
   }, [isAdminMode]);
+
+  useEffect(() => {
+    if (!isLoggedIn || !getApiToken()) return;
+    let cancelled = false;
+    void fetchUserProfile()
+      .then((profile) => {
+        if (!cancelled) setUserProfile(profile);
+      })
+      .catch(() => {
+        // token invalid — user can sign in again
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isLoggedIn]);
 
   // Unified global callbacks & state helpers
   const handleToggleDarkMode = () => {
@@ -239,8 +275,9 @@ export default function App() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setIsVendorLoggedIn(false);
-    setUserProfile((prev) => ({ ...prev, customerType: 'standard' }));
+    setUserProfile({ ...MOCK_USER_PROFILE, customerType: 'standard' });
     setIsAdminMode(false);
+    clearApiSession();
     try {
       window.localStorage.removeItem(AUTH_STORAGE_KEY);
     } catch {
@@ -403,8 +440,16 @@ export default function App() {
     );
   };
 
-  const openPlannerWorkspace = () => {
-    // Ensure planner storage exists and has the user's event (temporary localStorage persistence)
+  const openPlannerWorkspace = async () => {
+    if (getApiToken()) {
+      try {
+        await hydratePlannerFromApi();
+      } catch {
+        // keep local planner data if API unavailable
+      }
+    }
+
+    // Ensure planner storage exists and has the user's event (local + API sync)
     try {
       const eventsKey = 'utsav_planner_events';
       const subKey = 'utsav_planner_sub_events';
@@ -458,19 +503,39 @@ export default function App() {
   const formatCustomerPhone = (phone: string) =>
     phone.startsWith('+') ? phone : `+91 ${phone.replace(/\D/g, '').slice(-10)}`;
 
-  const handleSignIn = ({ phone, email }: { phone: string; email: string }) => {
-    setUserProfile((prev) => ({
-      ...prev,
-      phone: formatCustomerPhone(phone),
-      email,
-      customerType: 'event-planner',
-    }));
-    setIsLoggedIn(true);
-    setIsVendorLoggedIn(false);
-    openPlannerWorkspace();
+  const handleSignIn = async ({
+    phone,
+    email,
+    customerType = 'event-planner',
+  }: {
+    phone: string;
+    email: string;
+    customerType?: CustomerType;
+  }) => {
+    setAuthLoading(true);
+    try {
+      const session = await signInCustomer(phone, email, { customerType });
+      setApiToken(session.token);
+      const profile = await fetchUserProfile();
+      setUserProfile(profile);
+      setIsLoggedIn(true);
+      setIsVendorLoggedIn(false);
+      if (profile.customerType === 'event-planner') {
+        await openPlannerWorkspace();
+      } else {
+        const path = pageToPath('account');
+        pushRoute(path);
+        applyRoute({ page: 'account' });
+      }
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : 'Sign in failed. Is the API running?';
+      alert(msg);
+    } finally {
+      setAuthLoading(false);
+    }
   };
 
-  const handleEventPlannerRegister = (payload: {
+  const handleEventPlannerRegister = async (payload: {
     fullName: string;
     email: string;
     phone: string;
@@ -485,36 +550,73 @@ export default function App() {
       eventType?: string;
     };
   }) => {
-    setUserProfile((prev) => ({
-      ...prev,
-      name: payload.fullName,
-      email: payload.email,
-      phone: formatCustomerPhone(payload.phone),
-      customerType: 'event-planner',
-    }));
-    setIsLoggedIn(true);
-    setIsVendorLoggedIn(false);
-    if (payload.draftEvent) {
-      setEventPlannerSearch({
-        eventName: payload.draftEvent.eventName ?? '',
-        location: payload.draftEvent.location ?? '',
-        date: payload.draftEvent.date ?? '',
-        eventType: payload.draftEvent.eventType ?? payload.primaryEventType,
+    setAuthLoading(true);
+    try {
+      await registerEventPlanner({
+        fullName: payload.fullName,
+        email: payload.email,
+        phone: payload.phone,
+        companyName: payload.companyName,
+        primaryEventType: payload.primaryEventType,
+        city: payload.city,
+        bio: payload.bio,
+        draftEvent: payload.draftEvent
+          ? {
+              eventName: payload.draftEvent.eventName,
+              location: payload.draftEvent.location,
+              date: payload.draftEvent.date,
+              eventType: payload.draftEvent.eventType ?? payload.primaryEventType,
+            }
+          : undefined,
       });
+      const profile = await fetchUserProfile();
+      setUserProfile(profile);
+      setIsLoggedIn(true);
+      setIsVendorLoggedIn(false);
+      if (payload.draftEvent) {
+        setEventPlannerSearch({
+          eventName: payload.draftEvent.eventName ?? '',
+          location: payload.draftEvent.location ?? '',
+          date: payload.draftEvent.date ?? '',
+          eventType: payload.draftEvent.eventType ?? payload.primaryEventType,
+        });
+      }
+      await openPlannerWorkspace();
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : 'Registration failed.';
+      alert(msg);
+    } finally {
+      setAuthLoading(false);
     }
-    openPlannerWorkspace();
   };
 
-  const handleVendorSignIn = ({ phone, email }: { phone: string; email: string }) => {
-    setVendorSession((prev) => ({
-      ...prev,
-      phone: phone.startsWith('+') ? phone : `+91 ${phone.replace(/\D/g, '').slice(-10)}`,
-      email,
-    }));
-    setIsVendorLoggedIn(true);
-    const path = pageToPath('profile');
-    pushRoute(path);
-    applyRoute({ page: 'profile' });
+  const handleVendorSignIn = async ({ phone, email }: { phone: string; email: string }) => {
+    setAuthLoading(true);
+    try {
+      const session = await signInVendor(phone, email, {
+        vendorId: vendorSession.vendorId,
+        businessName: vendorSession.businessName,
+        contactName: vendorSession.contactName,
+      });
+      const vs = session.vendorSession ?? session.user;
+      setVendorSession({
+        vendorId: vs.vendorId ?? vendorSession.vendorId,
+        businessName: vs.businessName ?? vendorSession.businessName,
+        contactName: vs.contactName ?? vendorSession.contactName,
+        email: vs.email ?? email,
+        phone: vs.phone ?? formatCustomerPhone(phone),
+      });
+      setIsVendorLoggedIn(true);
+      setIsLoggedIn(false);
+      const path = pageToPath('profile');
+      pushRoute(path);
+      applyRoute({ page: 'profile' });
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : 'Vendor sign in failed.';
+      alert(msg);
+    } finally {
+      setAuthLoading(false);
+    }
   };
 
   const handleEnterAdmin = () => {
@@ -567,21 +669,31 @@ export default function App() {
     setUserProfile((prev) => ({ ...prev, walletBalance: newBalance }));
   };
 
-  const handleAddOrderToHistory = (items: any[], total: number, restName: string, restImg: string) => {
-    const newOrder = {
-      id: `FED-${Math.floor(Math.random() * 9000) + 1000}-X`,
-      restaurantName: restName,
-      restaurantImage: restImg,
-      date: new Date().toISOString().replace('T', ' ').substring(0, 16),
-      status: 'Pending' as const,
-      items,
-      totalAmount: total,
-    };
-
-    setUserProfile((prev) => ({
-      ...prev,
-      orders: [newOrder, ...prev.orders],
-    }));
+  const handleAddOrderToHistory = async (
+    items: { name: string; quantity: number; price: number }[],
+    total: number,
+    restName: string,
+    restImg: string,
+    restaurantId: string
+  ) => {
+    try {
+      const order = await createOrder({
+        customerName: userProfile.name || 'Guest',
+        restaurantId,
+        restaurantName: restName,
+        restaurantImage: restImg,
+        items,
+        totalAmount: total,
+      });
+      setUserProfile((prev) => ({
+        ...prev,
+        orders: [order, ...prev.orders],
+      }));
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : 'Could not place order.';
+      alert(msg);
+      throw err;
+    }
   };
 
   return (
@@ -688,6 +800,12 @@ export default function App() {
                     userProfile={userProfile}
                     onUpdateWallet={handleUpdateWallet}
                     onAddOrderToHistory={handleAddOrderToHistory}
+                    restaurantId={selectedRestId}
+                    isLoggedIn={isLoggedIn}
+                    onRequireSignIn={() => {
+                      setSignInInitialMode('customer');
+                      handleNavigatePage('sign-in');
+                    }}
                   />
                 )}
 
@@ -697,6 +815,7 @@ export default function App() {
                     onSignIn={handleSignIn}
                     onVendorSignIn={handleVendorSignIn}
                     onNavigate={handleNavigatePage}
+                    isLoading={authLoading}
                   />
                 )}
 

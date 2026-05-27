@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { ShoppingBag, ArrowLeft, Trash2, MapPin, Gift, Plus, Minus, CreditCard, ChevronRight, CalendarCheck, ShieldAlert } from 'lucide-react';
 import { CartItem, SavedAddress, UserProfile } from '../../types';
 import { FESTIVE_COUPONS } from '../../data';
+import { fetchCoupons, type CatalogCoupon } from '../../api/catalog';
 import { AnimatedDiya } from './GoldenDeco';
 
 interface CartPageProps {
@@ -12,7 +13,16 @@ interface CartPageProps {
   onClearCart: () => void;
   userProfile: UserProfile;
   onUpdateWallet: (newBalance: number) => void;
-  onAddOrderToHistory: (items: any[], total: number, restName: string, restImg: string) => void;
+  onAddOrderToHistory: (
+    items: { name: string; quantity: number; price: number }[],
+    total: number,
+    restName: string,
+    restImg: string,
+    restaurantId: string
+  ) => void | Promise<void>;
+  restaurantId: string;
+  isLoggedIn: boolean;
+  onRequireSignIn: () => void;
 }
 
 export const CartPage: React.FC<CartPageProps> = ({
@@ -24,7 +34,24 @@ export const CartPage: React.FC<CartPageProps> = ({
   userProfile,
   onUpdateWallet,
   onAddOrderToHistory,
+  restaurantId,
+  isLoggedIn,
+  onRequireSignIn,
 }) => {
+  const [coupons, setCoupons] = useState<CatalogCoupon[]>(
+    FESTIVE_COUPONS.map((c) => ({ code: c.code, discount: c.discount, desc: c.description }))
+  );
+
+  useEffect(() => {
+    void fetchCoupons()
+      .then((list) => {
+        if (list.length > 0) setCoupons(list);
+      })
+      .catch(() => {
+        // keep FESTIVE_COUPONS fallback
+      });
+  }, []);
+
   const [activeCoupon, setActiveCoupon] = useState<string | null>(null);
   const [selectedAddressId, setSelectedAddressId] = useState<string>(userProfile.addresses[0]?.id || '');
   const [isProcessingCheckout, setIsProcessingCheckout] = useState(false);
@@ -58,7 +85,7 @@ export const CartPage: React.FC<CartPageProps> = ({
 
   const handleApplyCoupon = (code: string) => {
     setCouponError('');
-    const coupon = FESTIVE_COUPONS.find((c) => c.code === code);
+    const coupon = coupons.find((c) => c.code === code);
     if (!coupon) {
       setCouponError('Invalid coupon code!');
       return;
@@ -78,7 +105,12 @@ export const CartPage: React.FC<CartPageProps> = ({
   };
 
   // Checkout trigger
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
+    if (!isLoggedIn) {
+      onRequireSignIn();
+      return;
+    }
+
     if (grandTotal > userProfile.walletBalance) {
       alert(`Insufficient funds in your Shree Wallet (Balance: ₹${userProfile.walletBalance}). Please use the User Profile page settings to top-up, or reduce cart items!`);
       return;
@@ -86,33 +118,30 @@ export const CartPage: React.FC<CartPageProps> = ({
 
     setIsProcessingCheckout(true);
 
-    // Simulate placing order
-    setTimeout(() => {
-      // Deduct from wallet
+    const historyItems = cart.map((c) => ({
+      name: c.foodItem.name,
+      quantity: c.quantity,
+      price: c.foodItem.price,
+    }));
+
+    const restName = cart[0]?.restaurantName || 'Restaurant';
+    const restImg =
+      cart[0]?.foodItem.image ||
+      'https://images.unsplash.com/photo-1587314168485-3236d6710814?w=100&auto=format&fit=crop&q=60';
+    const restId = cart[0]?.restaurantId || restaurantId;
+
+    try {
+      await onAddOrderToHistory(historyItems, grandTotal, restName, restImg, restId);
       const newBalance = userProfile.walletBalance - grandTotal;
       onUpdateWallet(newBalance);
-
-      // Map cart to history format
-      const historyItems = cart.map((c) => ({
-        name: c.foodItem.name,
-        quantity: c.quantity,
-        price: c.foodItem.price,
-      }));
-
-      // Find first rest image/name (since they belong to same restaurant or combined)
-      const restName = cart[0]?.restaurantName || 'Kesaria Golden Sweets';
-      const restImg = 'https://images.unsplash.com/photo-1587314168485-3236d6710814?w=100&auto=format&fit=crop&q=60';
-
-      // Record in history
-      onAddOrderToHistory(historyItems, grandTotal, restName, restImg);
-
-      // Clean Cart
       onClearCart();
-      setIsProcessingCheckout(false);
-
       alert(`🪔 Success! Order placed! ₹${grandTotal} deducted from Shree Wallet.`);
       onNavigate('landing');
-    }, 1500);
+    } catch {
+      // error surfaced by parent
+    } finally {
+      setIsProcessingCheckout(false);
+    }
   };
 
   const activeAddress = userProfile.addresses.find((a) => a.id === selectedAddressId);
@@ -325,7 +354,7 @@ export const CartPage: React.FC<CartPageProps> = ({
                       Click to Apply Golden Deals
                     </span>
                     <div className="grid gap-2">
-                      {FESTIVE_COUPONS.slice(0, 3).map((cpn) => (
+                      {coupons.slice(0, 3).map((cpn) => (
                         <div
                           key={cpn.code}
                           onClick={() => handleApplyCoupon(cpn.code)}

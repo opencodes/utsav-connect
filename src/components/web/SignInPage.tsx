@@ -5,10 +5,15 @@ import { APP_NAME } from '../../brand';
 export type SignInMode = 'customer' | 'vendor';
 
 interface SignInPageProps {
-  onSignIn: (payload: { phone: string; email: string }) => void;
-  onVendorSignIn: (payload: { phone: string; email: string }) => void;
+  onSignIn: (payload: {
+    phone: string;
+    email: string;
+    customerType?: 'standard' | 'event-planner';
+  }) => void | Promise<void>;
+  onVendorSignIn: (payload: { phone: string; email: string }) => void | Promise<void>;
   onNavigate: (page: string, data?: unknown) => void;
   initialMode?: SignInMode;
+  isLoading?: boolean;
 }
 
 export const SignInPage: React.FC<SignInPageProps> = ({
@@ -16,6 +21,7 @@ export const SignInPage: React.FC<SignInPageProps> = ({
   onVendorSignIn,
   onNavigate,
   initialMode = 'customer',
+  isLoading = false,
 }) => {
   const [mode, setMode] = useState<SignInMode>(initialMode);
   const [phone, setPhone] = useState('');
@@ -26,7 +32,7 @@ export const SignInPage: React.FC<SignInPageProps> = ({
     setMode(initialMode);
   }, [initialMode]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const phoneDigits = phone.replace(/\D/g, '');
     if (phoneDigits.length < 10) {
@@ -39,10 +45,14 @@ export const SignInPage: React.FC<SignInPageProps> = ({
     }
     setError('');
     const payload = { phone: phone.trim(), email: email.trim() };
-    if (mode === 'vendor') {
-      onVendorSignIn(payload);
-    } else {
-      onSignIn(payload);
+    try {
+      if (mode === 'vendor') {
+        await onVendorSignIn(payload);
+      } else {
+        await onSignIn({ ...payload, customerType: 'event-planner' });
+      }
+    } catch {
+      setError('Sign in failed. Check the API is running at localhost:8080.');
     }
   };
 
@@ -149,9 +159,10 @@ export const SignInPage: React.FC<SignInPageProps> = ({
 
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white font-semibold text-sm transition-colors cursor-pointer"
+            disabled={isLoading}
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] disabled:opacity-60 text-white font-semibold text-sm transition-colors cursor-pointer"
           >
-            {submitLabel}
+            {isLoading ? 'Signing in…' : submitLabel}
             <ArrowRight className="w-4 h-4" />
           </button>
 

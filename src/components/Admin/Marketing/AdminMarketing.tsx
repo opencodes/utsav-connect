@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import { MarketingCampaign } from '../../../types';
+import { createCampaign, fetchCampaigns } from '../../../api/admin';
 import { MarketingStats } from './MarketingStats';
 import { CampaignGrid } from './CampaignGrid';
 import { CreateCampaignModal } from './CreateCampaignModal';
@@ -9,8 +10,23 @@ export const AdminMarketing: React.FC = () => {
   const [campaigns, setCampaigns] = useState<MarketingCampaign[]>([]);
   const [showCreatorModal, setShowCreatorModal] = useState(false);
 
-  const handleCreateCampaign = (campData: { title: string; code: string; discount: string; type: MarketingCampaign['type'] }) => {
-    const newCamp: MarketingCampaign = {
+  const reload = () => {
+    void fetchCampaigns()
+      .then((list) => setCampaigns(list as MarketingCampaign[]))
+      .catch(() => setCampaigns([]));
+  };
+
+  useEffect(() => {
+    reload();
+  }, []);
+
+  const handleCreateCampaign = (campData: {
+    title: string;
+    code: string;
+    discount: string;
+    type: MarketingCampaign['type'];
+  }) => {
+    void createCampaign({
       id: `camp-${Date.now()}`,
       title: campData.title,
       code: campData.code,
@@ -20,11 +36,13 @@ export const AdminMarketing: React.FC = () => {
       type: campData.type,
       startDate: '2026-05-24',
       endDate: '2026-06-15',
-    };
-
-    setCampaigns([newCamp, ...campaigns]);
-    setShowCreatorModal(false);
-    alert(`Marketing plan "${newCamp.title}" flagged successfully to dispatch queues.`);
+    })
+      .then(() => {
+        reload();
+        setShowCreatorModal(false);
+        alert(`Marketing plan "${campData.title}" flagged successfully to dispatch queues.`);
+      })
+      .catch(() => alert('Failed to create campaign'));
   };
 
   const handleDeleteCampaign = (id: string) => {

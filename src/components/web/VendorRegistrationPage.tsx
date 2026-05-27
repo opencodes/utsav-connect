@@ -16,6 +16,7 @@ import { LandingSection } from './LandingPage/LandingSection';
 import { PageBanner } from './PageBanner';
 import { WEDDING_CATEGORIES } from './VendorCategoryPage/CategoriesGrid';
 import { HERO_VENDOR_CITIES } from './LandingPage/heroVendorSearch';
+import { registerVendor } from '../../api/vendors';
 
 interface VendorRegistrationPageProps {
   onNavigate: (page: string, data?: unknown) => void;
@@ -128,13 +129,27 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
     setStep((s) => Math.max(s - 1, 0));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateStep(2)) return;
-    const randomNum = Math.floor(10000 + Math.random() * 90000);
-    setApplicationId(`VND-${randomNum}`);
-    setIsSubmitted(true);
     setFormError('');
+    try {
+      const vendor = await registerVendor({
+        businessName: formData.businessName,
+        category: formData.categoryId,
+        location: formData.address
+          ? `${formData.address}, ${formData.city}`
+          : formData.city,
+        city: formData.city,
+        email: formData.email,
+        phone: formData.phone,
+        price: 'On request',
+      });
+      setApplicationId(vendor.id ?? `VND-${Date.now()}`);
+      setIsSubmitted(true);
+    } catch {
+      setFormError('Submission failed. Ensure the API is running on port 8080.');
+    }
   };
 
   const resetForm = () => {

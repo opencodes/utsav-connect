@@ -1,7 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { AnimatePresence } from 'motion/react';
 import { ArrowLeft } from 'lucide-react';
 import { ALL_MOCK_VENDORS } from './VendorCategoryPage/mockData';
+import { fetchVendor, submitVendorEnquiry } from '../../api/vendors';
+import type { ListingCardItem } from './VendorCategoryPage/VendorGridCard';
 import { InquiryModal, InquiryFormData } from './VendorCategoryPage/InquiryModal';
 import { VendorDetailHero } from './VendorDetailPage/VendorDetailHero';
 import { ServiceCategoryToggleList } from './VendorDetailPage/ServiceCategoryToggleList';
@@ -39,10 +41,25 @@ export const VendorDetailsPage: React.FC<VendorDetailsPageProps> = ({
   });
   const [showCelebration, setShowCelebration] = useState(false);
 
-  const listing = useMemo(
-    () => ALL_MOCK_VENDORS.find((v) => v.id === vendorId) ?? null,
-    [vendorId]
-  );
+  const [listing, setListing] = useState<ListingCardItem | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetchVendor(vendorId)
+      .then((v) => {
+        if (cancelled) return;
+        if (v) setListing(v);
+        else setListing(ALL_MOCK_VENDORS.find((x) => x.id === vendorId) ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setListing(ALL_MOCK_VENDORS.find((x) => x.id === vendorId) ?? null);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [vendorId]);
 
   const vendor = useMemo(() => {
     if (!listing) return null;
@@ -112,15 +129,26 @@ export const VendorDetailsPage: React.FC<VendorDetailsPageProps> = ({
     setShowInquiryModal(true);
   };
 
-  const handleApplyInquiry = (e: React.FormEvent) => {
+  const handleApplyInquiry = async (e: React.FormEvent) => {
     e.preventDefault();
-    setShowCelebration(true);
-    setTimeout(() => {
-      setShowCelebration(false);
-      setShowInquiryModal(false);
-      setFormData({ name: '', phone: '', date: '', message: '', estimatedGuests: '150-300' });
-      setShortlist({});
-    }, 4500);
+    try {
+      await submitVendorEnquiry(vendorId, {
+        guestName: formData.name,
+        eventType: 'Wedding consultation',
+        eventDate: formData.date,
+        guests: formData.estimatedGuests,
+        message: formData.message,
+      });
+      setShowCelebration(true);
+      setTimeout(() => {
+        setShowCelebration(false);
+        setShowInquiryModal(false);
+        setFormData({ name: '', phone: '', date: '', message: '', estimatedGuests: '150-300' });
+        setShortlist({});
+      }, 4500);
+    } catch {
+      alert('Could not send enquiry. Please try again.');
+    }
   };
 
   if (!vendor) {

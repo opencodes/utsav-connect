@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { fetchAdminCustomers } from '../../../api/admin';
 import { Search } from 'lucide-react';
 import { CustomerTable } from './CustomerTable';
 import { CustomerDetailModal } from './CustomerDetailModal';
@@ -20,6 +21,26 @@ export const AdminCustomers: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    void fetchAdminCustomers()
+      .then((rows) =>
+        setUsers(
+          rows.map((c) => ({
+            id: c.id,
+            name: c.name,
+            email: c.email,
+            phone: c.phone,
+            wallet: 0,
+            loyalty: 0,
+            status: 'Active',
+            orderCount: c.ordersCount,
+            joined: c.customerType,
+          }))
+        )
+      )
+      .catch(() => setUsers([]));
+  }, []);
 
   const sortedAndFiltered = users.filter((u) =>
     u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

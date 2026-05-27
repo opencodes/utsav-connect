@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, CalendarPlus, ChevronDown, MapPin, Calendar } from 'lucide-react';
 import { APP_NAME } from '../../../brand';
 import { RangoliMandala } from '../GoldenDeco';
+import heroBanner from '../../../assets/banner-1.png';
 import {
   HERO_VENDOR_CATEGORIES,
   HERO_VENDOR_CITIES,
@@ -13,6 +14,8 @@ interface HeroSectionProps {
   onNavigate: (page: string, data?: unknown) => void;
   /** Hero sits inside landing-hero-shell; shell provides the gradient */
   embeddedInShell?: boolean;
+  selectedCity: string;
+  onCityChange: (city: string) => void;
 }
 
 type HeroSearchTab = 'vendors' | 'planner';
@@ -32,9 +35,6 @@ const QUICK_VENDOR_TAGS = [
   { label: 'Decor', categoryId: 'planning-decor' },
   { label: 'Photographers', categoryId: 'photographers' },
 ] as const;
-
-const HERO_IMAGE_URL =
-  'https://images.unsplash.com/photo-1606800052052-a08af8340939?auto=format&fit=crop&w=900&q=80';
 
 const plannerFieldLabel =
   'block text-[11px] font-bold uppercase tracking-wide text-stone-500 mb-1.5';
@@ -60,10 +60,12 @@ function HeroSkyline() {
 export const HeroSection: React.FC<HeroSectionProps> = ({
   onNavigate,
   embeddedInShell = false,
+  selectedCity,
+  onCityChange,
 }) => {
   const [activeTab, setActiveTab] = useState<HeroSearchTab>('vendors');
 
-  const [city, setCity] = useState('noida');
+  const [city, setCity] = useState(selectedCity);
   const [categoryId, setCategoryId] = useState('');
   const [keyword, setKeyword] = useState('');
 
@@ -76,13 +78,22 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     HERO_VENDOR_CITIES.find((c) => c.value === city)?.label ?? 'Noida';
 
   useEffect(() => {
-    const onCityChange = (e: Event) => {
+    setCity(selectedCity);
+  }, [selectedCity]);
+
+  useEffect(() => {
+    const onCityChangeEvent = (e: Event) => {
       const detail = (e as CustomEvent<{ city?: string }>).detail;
       if (detail?.city) setCity(detail.city);
     };
-    window.addEventListener('hero-city-change', onCityChange);
-    return () => window.removeEventListener('hero-city-change', onCityChange);
+    window.addEventListener('hero-city-change', onCityChangeEvent);
+    return () => window.removeEventListener('hero-city-change', onCityChangeEvent);
   }, []);
+
+  const updateCity = (cityValue: string) => {
+    setCity(cityValue);
+    onCityChange(cityValue);
+  };
 
   const handleVendorSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,7 +115,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   };
 
   const applyPopularCity = (cityValue: string) => {
-    setCity(cityValue);
+    updateCity(cityValue);
     setActiveTab('vendors');
   };
 
@@ -146,11 +157,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_minmax(280px,42%)] gap-8 lg:gap-6 xl:gap-10 items-center py-10 sm:py-12 lg:py-14 min-h-[min(88vh,720px)] lg:min-h-[520px]">
           {/* Left: copy + search (Housing.com layout) */}
-          <div className="text-left font-sans order-2 lg:order-1">
+          <div className="text-left font-sans order-1">
             <h1 className="hero-headline font-display text-3xl sm:text-4xl lg:text-[2.65rem] xl:text-5xl font-normal text-white leading-[1.12] tracking-tight max-w-xl">
               <span className="hero-headline-line line-clamp-1">
                 {activeTab === 'vendors'
-                  ? 'Vendors  services'
+                  ? 'Vendors & services'
                   : 'Plan your ceremony'}
               </span>
               <span className="hero-headline-line hero-headline-accent line-clamp-1 mt-1 text-[#FFCB44]">
@@ -171,6 +182,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     type="button"
                     role="tab"
                     aria-selected={activeTab === 'vendors'}
+                    aria-controls="hero-vendor-search-panel"
                     id="hero-tab-vendors"
                     className={`hero-search-tab ${activeTab === 'vendors' ? 'hero-search-tab-active' : ''}`}
                     onClick={() => setActiveTab('vendors')}
@@ -181,6 +193,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     type="button"
                     role="tab"
                     aria-selected={activeTab === 'planner'}
+                    aria-controls="hero-planner-search-panel"
                     id="hero-tab-planner"
                     className={`hero-search-tab ${activeTab === 'planner' ? 'hero-search-tab-active' : ''}`}
                     onClick={() => setActiveTab('planner')}
@@ -193,6 +206,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   <div
                     id="hero-vendor-search-panel"
                     role="tabpanel"
+                    aria-labelledby="hero-tab-vendors"
                     aria-hidden={activeTab !== 'vendors'}
                     className={`hero-search-panel hero-vendor-panel ${
                       activeTab !== 'vendors' ? 'hero-search-panel-hidden' : ''
@@ -211,7 +225,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                             <select
                               id="hero-search-city"
                               value={city}
-                              onChange={(e) => setCity(e.target.value)}
+                              onChange={(e) => updateCity(e.target.value)}
                               className="hero-vendor-input hero-vendor-select"
                             >
                               {HERO_VENDOR_CITIES.filter((c) => c.value).map((c) => (
@@ -272,6 +286,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                           </button>
                         </div>
                       </div>
+                      <p className="text-[11px] text-stone-500 mt-2 px-0.5">
+                        Tip: leave keyword empty to browse all vendors in {cityHeadline}.
+                      </p>
                     </form>
 
                     <div className="hero-vendor-popular">
@@ -305,6 +322,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     onSubmit={handleEventPlannerSearch}
                     id="hero-planner-search-panel"
                     role="tabpanel"
+                    aria-labelledby="hero-tab-planner"
                     aria-hidden={activeTab !== 'planner'}
                     className={`hero-search-panel hero-planner-card hero-search-card-body ${
                       activeTab !== 'planner' ? 'hero-search-panel-hidden' : ''
@@ -384,28 +402,25 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       <CalendarPlus className="w-5 h-5 shrink-0" strokeWidth={2.25} />
                       Plan your event
                     </button>
+                    <p className="text-[11px] text-stone-500 mt-2">
+                      Add any details you have — you can refine your event in the planner.
+                    </p>
                   </form>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Right: tilted hero image (Housing.com) */}
-          <div className="relative flex justify-center lg:justify-end order-1 lg:order-2 pt-4 lg:pt-0">
-            <div className="hero-image-frame">
+          {/* Right: branded hero banner */}
+          <div className="relative flex justify-center lg:justify-end order-2 pt-4 lg:pt-0">
+            <div className="hero-image-frame hero-image-frame--banner">
               <img
-                src={HERO_IMAGE_URL}
-                alt="Traditional Indian wedding ceremony celebration"
-                className="hero-image-frame-photo"
+                src={heroBanner}
+                alt={`${APP_NAME} — शुभे हे शुभे, Mithila ceremonies`}
+                className="hero-image-frame-photo hero-image-frame-photo--banner"
                 loading="eager"
                 decoding="async"
               />
-              <div className="hero-image-frame-badge">
-                <span className="text-[#FFCB44] font-bold text-sm sm:text-base leading-snug">
-                  शुभे हे शुभे
-                </span>
-                <span className="text-white/90 text-xs font-medium">Mithila ceremonies</span>
-              </div>
             </div>
           </div>
         </div>

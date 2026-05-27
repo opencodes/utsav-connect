@@ -40,10 +40,10 @@ export const TermsPage: React.FC = () => {
         <div className="flex justify-center mb-3">
           <Scale className="w-10 h-10 text-orange-600 animate-pulse" />
         </div>
-        <span className="text-[10px] uppercase font-mono font-black tracking-widest text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-stone-800 px-3 py-1 rounded-full">
+        <span className="text-[10px] font-mono font-black text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-stone-800 px-3 py-1 rounded-full">
           Legal Agreement // Terms & Conditions
         </span>
-        <h1 className="text-3xl md:text-4xl font-serif font-black text-stone-900 dark:text-white mt-3 uppercase tracking-tight">
+        <h1 className="text-3xl md:text-4xl font-serif font-black text-stone-900 dark:text-white mt-3 tracking-tight">
           Terms of Ceremonial Engagement
         </h1>
         <p className="text-xs text-stone-505 max-w-md mx-auto mt-2 font-sans text-stone-500">
@@ -59,7 +59,7 @@ export const TermsPage: React.FC = () => {
           {/* QUICK SUMMARY COLUMN (Left-aligned 4 columns) */}
           <div className="md:col-span-4 space-y-4">
             <div className="bg-white dark:bg-stone-850 p-5 rounded-2xl border border-stone-100 dark:border-stone-800 shadow-sm space-y-3">
-              <span className="text-[10px] font-mono font-bold tracking-wider text-orange-650 uppercase block">
+              <span className="text-[10px] font-mono font-bold text-orange-650 block">
                 Quick Highlight Summary
               </span>
               <ul className="space-y-3 text-[11px] text-stone-600 dark:text-stone-300 font-sans">
@@ -81,7 +81,7 @@ export const TermsPage: React.FC = () => {
             <div className="bg-amber-500/10 border-l-4 border-amber-500 p-4 rounded-r-xl">
               <div className="flex items-center gap-2 mb-1">
                 <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
-                <h4 className="text-[11px] font-black uppercase text-amber-650 tracking-wider">Sanctity Clause</h4>
+                <h4 className="text-[11px] font-black text-amber-650">Sanctity Clause</h4>
               </div>
               <p className="text-[10px] text-stone-500 dark:text-stone-400 font-sans leading-relaxed">
                 Pandits retain unilateral authority to halt rituals instantly if meat or alcohol is found on physical event grounds.
@@ -98,7 +98,7 @@ export const TermsPage: React.FC = () => {
               >
                 <button
                   onClick={() => setActiveSection(activeSection === idx ? null : idx)}
-                  className="w-full flex items-center justify-between text-left py-2 font-serif font-black text-stone-900 dark:text-white hover:text-orange-600 dark:hover:text-orange-400 font-bold uppercase text-xs md:text-sm transition-colors cursor-pointer select-none"
+                  className="w-full flex items-center justify-between text-left py-2 font-serif font-black text-stone-900 dark:text-white hover:text-orange-600 dark:hover:text-orange-400 font-bold text-xs md:text-sm transition-colors cursor-pointer select-none"
                 >
                   <span>{sec.title}</span>
                   <ChevronRight 

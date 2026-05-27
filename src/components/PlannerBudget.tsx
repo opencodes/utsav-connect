@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Calendar, LayoutGrid, Scale, Activity, CheckCircle, AlertCircle } from 'lucide-react';
+import { readPlannerStorage } from '../plannerStorage';
 
 interface Expense {
   id: string;
@@ -11,24 +12,15 @@ interface Expense {
   paidTo: string; // Beneficiary
 }
 
-const DEFAULT_EXPENSES: Expense[] = [
-  { id: 'exp-1', name: 'Central Mandap Florist Advance', category: 'Decoration', cost: 35000, status: 'Paid', date: '2026-11-05', paidTo: 'Patna Flora Agencies' },
-  { id: 'exp-2', name: 'Gold Silk Benarasi Saree & Dhoti pack', category: 'Attire', cost: 48000, status: 'Paid', date: '2026-11-02', paidTo: 'Zari Silks Emporium' },
-  { id: 'exp-3', name: 'Raw Halwai ingredients (first listing purchase)', category: 'Grocery', cost: 55000, status: 'Paid', date: '2026-11-09', paidTo: 'Ramesh Kirana Merchant' },
-  { id: 'exp-4', name: 'Mithai Box Return Souvenirs Procurement', category: 'Gifts', cost: 24000, status: 'Pending', date: '2026-11-12', paidTo: 'Kesaria Golden Sweets' },
-  { id: 'exp-5', name: 'Sound Systems & Fireworks permission clearances', category: 'Miscellaneous', cost: 12000, status: 'Pending', date: '2026-11-10', paidTo: 'Local Sound & Lightings' }
-];
-
 export const PlannerBudget: React.FC = () => {
   const [masterBudget, setMasterBudget] = useState<number>(() => {
     const saved = localStorage.getItem('utsav_planner_budget_limit');
-    return saved ? parseFloat(saved) : 500000; // 5 Lakhs INR
+    return saved ? parseFloat(saved) : 0;
   });
 
-  const [expenses, setExpenses] = useState<Expense[]>(() => {
-    const saved = localStorage.getItem('utsav_planner_expenses');
-    return saved ? JSON.parse(saved) : DEFAULT_EXPENSES;
-  });
+  const [expenses, setExpenses] = useState<Expense[]>(() =>
+    readPlannerStorage<Expense[]>('utsav_planner_expenses', [])
+  );
 
   // Form Inputs
   const [tempBudgetInput, setTempBudgetInput] = useState('');
@@ -116,13 +108,13 @@ export const PlannerBudget: React.FC = () => {
       
       {/* Graphical Progress & Stats Bar */}
       <div className="bg-white dark:bg-stone-800 p-6 rounded-3xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm text-left">
-        <h2 className="text-sm font-black uppercase text-stone-400 tracking-wider mb-4">Master Financial Ledger Status</h2>
+        <h2 className="text-sm font-semibold text-stone-400 mb-4">Master Financial Ledger Status</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="p-4 bg-stone-50 dark:bg-stone-900 rounded-2xl">
-            <span className="text-[10px] uppercase tracking-wider text-stone-400 font-bold block">Master Event Budget</span>
+            <span className="text-[10px] text-stone-400 font-bold block">Master Event Budget</span>
             <div className="flex items-baseline gap-2 mt-1">
-              <h3 className="text-xl font-black text-stone-900 dark:text-white leading-none">
+              <h3 className="text-xl font-semibold text-stone-900 dark:text-white leading-none">
                 ₹ {masterBudget.toLocaleString('en-IN')}
               </h3>
             </div>
@@ -136,31 +128,31 @@ export const PlannerBudget: React.FC = () => {
                 onChange={e => setTempBudgetInput(e.target.value)}
                 className="px-2 py-1 text-[10px] rounded border w-24 bg-white dark:bg-stone-900 text-stone-950 dark:text-white font-mono"
               />
-              <button type="submit" className="text-[10px] bg-orange-600 text-white px-2 py-1 rounded font-bold uppercase hover:bg-orange-700 transition">
+              <button type="submit" className="text-[10px] bg-orange-600 text-white px-2 py-1 rounded font-bold hover:bg-orange-700 transition">
                 Set
               </button>
             </form>
           </div>
 
           <div className="p-4 bg-stone-50 dark:bg-stone-900 rounded-2xl">
-            <span className="text-[10px] uppercase tracking-wider text-stone-400 font-bold block">Consolidated Outlays</span>
-            <h3 className="text-xl font-black text-orange-600 mt-1 leading-none">
+            <span className="text-[10px] text-stone-400 font-bold block">Consolidated Outlays</span>
+            <h3 className="text-xl font-semibold text-orange-600 mt-1 leading-none">
               ₹ {totalCostCombined.toLocaleString('en-IN')}
             </h3>
             <span className="text-[9px] text-stone-400 block font-mono mt-1">Sum of {expenses.length} distinct lines</span>
           </div>
 
           <div className="p-4 bg-stone-50 dark:bg-stone-900 rounded-2xl">
-            <span className="text-[10px] uppercase tracking-wider text-stone-400 font-bold block">Dues Settled (Paid)</span>
-            <h3 className="text-xl font-black text-emerald-600 dark:text-emerald-400 mt-1 leading-none">
+            <span className="text-[10px] text-stone-400 font-bold block">Dues Settled (Paid)</span>
+            <h3 className="text-xl font-semibold text-emerald-600 dark:text-emerald-400 mt-1 leading-none">
               ₹ {totalPaidSum.toLocaleString('en-IN')}
             </h3>
-            <span className="text-[9px] text-emerald-600 font-bold font-mono uppercase block mt-1">Ready Clearances</span>
+            <span className="text-[9px] text-emerald-600 font-bold font-mono block mt-1">Ready Clearances</span>
           </div>
 
           <div className="p-4 bg-stone-50 dark:bg-stone-900 rounded-2xl">
-            <span className="text-[10px] uppercase tracking-wider text-stone-450 font-bold block">Dues Uncleared (Pending)</span>
-            <h3 className="text-xl font-black text-rose-600 dark:text-rose-450 mt-1 leading-none">
+            <span className="text-[10px] text-stone-450 font-bold block">Dues Uncleared (Pending)</span>
+            <h3 className="text-xl font-semibold text-rose-600 dark:text-rose-450 mt-1 leading-none">
               ₹ {totalPendingSum.toLocaleString('en-IN')}
             </h3>
             <span className="text-[9px] text-rose-500 font-mono block mt-1">Owed to merchant lists</span>
@@ -170,8 +162,8 @@ export const PlannerBudget: React.FC = () => {
         {/* Dynamic Progress indicator */}
         <div className="pt-2 border-t border-stone-100 dark:border-stone-700">
           <div className="flex justify-between items-baseline mb-2 text-xs">
-            <span className="font-extrabold uppercase text-stone-500 text-[10px]">Consolidated Budget Utilization Progress</span>
-            <span className={`font-mono font-bold ${remainingBudgetLeft >= 0 ? 'text-emerald-600' : 'text-red-500 font-black'}`}>
+            <span className="font-extrabold text-stone-500 text-[10px]">Consolidated Budget Utilization Progress</span>
+            <span className={`font-mono font-bold ${remainingBudgetLeft >= 0 ? 'text-emerald-600' : 'text-red-500 font-semibold'}`}>
               {remainingBudgetLeft >= 0 
                 ? `Remaining Balance: ₹ ${remainingBudgetLeft.toLocaleString('en-IN')} (${100 - allocationPercentage}% Left)` 
                 : `💥 OVERBUDGET SLIPPAGE: ₹ ${Math.abs(remainingBudgetLeft).toLocaleString('en-IN')} OVER CONTRACT`
@@ -195,16 +187,16 @@ export const PlannerBudget: React.FC = () => {
 
       {/* Grid: Category Breakdown Ledger Charts */}
       <div className="bg-white dark:bg-stone-800 p-5 rounded-3xl border border-stone-200/60 dark:border-stone-700/60 p-4 shadow-sm text-left">
-        <h4 className="text-xs font-black uppercase text-stone-400 tracking-wider mb-3">CONSOLIDATED CATEGORY PIE SCALE</h4>
+        <h4 className="text-xs font-semibold text-stone-400 mb-3">CONSOLIDATED CATEGORY PIE SCALE</h4>
         <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-3 text-center">
           {uniqueCategories.map(cat => {
             const sum = getCategorySum(cat);
             const ratio = totalCostCombined > 0 ? Math.round((sum / totalCostCombined) * 105) : 0;
             return (
               <div key={cat} className="p-2.5 bg-stone-50 dark:bg-stone-900 rounded-xl flex flex-col justify-between">
-                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-tight truncate block">{cat}</span>
+                <span className="text-[10px] font-bold text-stone-400 tracking-tight truncate block">{cat}</span>
                 <b className="text-xs text-stone-900 dark:text-white block mt-1.5">₹{sum.toLocaleString('en-IN')}</b>
-                {sum > 0 && <span className="text-[8px] font-mono font-bold text-orange-600 mt-1 uppercase">占比 ~{ratio}%</span>}
+                {sum > 0 && <span className="text-[8px] font-mono font-bold text-orange-600 mt-1">占比 ~{ratio}%</span>}
               </div>
             );
           })}
@@ -216,14 +208,14 @@ export const PlannerBudget: React.FC = () => {
         
         {/* Expenditure creation panel */}
         <div className="lg:col-span-1 bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 p-5 shadow-sm text-left">
-          <h3 className="text-sm font-black uppercase text-stone-900 dark:text-white pb-3 border-b border-light-100 flex items-center gap-2 mb-4">
+          <h3 className="text-sm font-semibold text-stone-900 dark:text-white pb-3 border-b border-light-100 flex items-center gap-2 mb-4">
             <Plus className="w-4 h-4 text-orange-600" />
             <span>Record Outflow Line</span>
           </h3>
 
           <form onSubmit={handleAddExpenseSubmit} className="space-y-4">
             <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Expenditure / Line Title</label>
+              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Expenditure / Line Title</label>
               <input
                 type="text"
                 placeholder="e.g. Halwai dry fruits"
@@ -236,7 +228,7 @@ export const PlannerBudget: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Group Category</label>
+                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Group Category</label>
                 <select
                   value={expCategory}
                   onChange={e => setExpCategory(e.target.value as any)}
@@ -248,7 +240,7 @@ export const PlannerBudget: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Total Cost (INR)</label>
+                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Total Cost (INR)</label>
                 <input
                   type="number"
                   placeholder="Cost ₹"
@@ -261,7 +253,7 @@ export const PlannerBudget: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Date of billing</label>
+              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Date of billing</label>
               <input
                 type="date"
                 value={expDate}
@@ -271,7 +263,7 @@ export const PlannerBudget: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Paid to (Supplier/Merchant)</label>
+              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Paid to (Supplier/Merchant)</label>
               <input
                 type="text"
                 placeholder="e.g. Sudha Dairy Agent"
@@ -283,7 +275,7 @@ export const PlannerBudget: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Payment Status</label>
+              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Payment Status</label>
               <select
                 value={expStatus}
                 onChange={e => setExpStatus(e.target.value as any)}
@@ -296,7 +288,7 @@ export const PlannerBudget: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold tracking-wider uppercase transition-colors flex items-center justify-center gap-1.5"
+              className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
               <span>Record Line</span>
@@ -309,7 +301,7 @@ export const PlannerBudget: React.FC = () => {
           <div>
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b">
               <div>
-                <h3 className="text-sm font-black uppercase text-stone-900 dark:text-white">Detailed Expenditure Ledgers</h3>
+                <h3 className="text-sm font-semibold text-stone-900 dark:text-white">Detailed Expenditure Ledgers</h3>
                 <p className="text-[11px] text-stone-400 mt-0.5">Filter outflows chronologically and execute fast clearances directly on un-cleared items.</p>
               </div>
             </div>
@@ -318,7 +310,7 @@ export const PlannerBudget: React.FC = () => {
             <div className="flex gap-2 flex-wrap pt-3">
               <button
                 onClick={() => setActiveCategory('All')}
-                className={`px-3 py-0.8 rounded-full text-[9px] font-black uppercase transition-all tracking-wider border ${
+                className={`px-3 py-0.8 rounded-full text-[9px] font-semibold transition-all border ${
                   activeCategory === 'All'
                     ? 'bg-orange-600 text-white border-orange-600'
                     : 'bg-stone-50 dark:bg-stone-900 text-stone-500 dark:text-stone-300 hover:bg-stone-100 dark:border-stone-700'
@@ -330,7 +322,7 @@ export const PlannerBudget: React.FC = () => {
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-3 py-0.8 rounded-full text-[9px] font-black uppercase transition-all tracking-wider border ${
+                  className={`px-3 py-0.8 rounded-full text-[9px] font-semibold transition-all border ${
                     activeCategory === cat
                       ? 'bg-orange-600 text-white border-orange-600'
                       : 'bg-stone-50 dark:bg-stone-900 text-stone-500 dark:text-stone-300 hover:bg-stone-100 dark:border-stone-700'
@@ -345,7 +337,7 @@ export const PlannerBudget: React.FC = () => {
             <div className="overflow-x-auto rounded-xl mt-4">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] uppercase font-bold text-stone-500 border-b border-stone-200 dark:border-stone-700 font-mono">
+                  <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] font-bold text-stone-500 border-b border-stone-200 dark:border-stone-700 font-mono">
                     <th className="p-3">Reference / Category</th>
                     <th className="p-3">Beneficiary Paid-to</th>
                     <th className="p-3">Billing Date</th>
@@ -357,7 +349,7 @@ export const PlannerBudget: React.FC = () => {
                 <tbody className="divide-y divide-stone-150 text-xs">
                   {filteredExpenses.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="p-8 text-center text-stone-400 font-bold uppercase tracking-widest">
+                      <td colSpan={6} className="p-8 text-center text-stone-400 font-bold">
                         No recorded expenses under this categorical ledger group.
                       </td>
                     </tr>
@@ -394,7 +386,7 @@ export const PlannerBudget: React.FC = () => {
                         <td className="p-3 text-center">
                           <button
                             onClick={() => handleTogglePaidStatus(exp.id)}
-                            className={`px-3 py-1 font-black text-[9px] uppercase tracking-wider rounded-xl border transition-all ${
+                            className={`px-3 py-1 font-semibold text-[9px] rounded-xl border transition-all ${
                               exp.status === 'Paid'
                                 ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600'
                                 : 'bg-red-500/10 border-red-500/30 text-red-605 animate-pulse'

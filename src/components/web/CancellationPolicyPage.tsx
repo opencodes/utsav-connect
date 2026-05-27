@@ -43,10 +43,10 @@ export const CancellationPolicyPage: React.FC = () => {
         <div className="flex justify-center mb-3">
           <FileX className="w-10 h-10 text-orange-655 animate-bounce" />
         </div>
-        <span className="text-[10px] uppercase font-mono font-black tracking-widest text-orange-655 dark:text-orange-400 bg-orange-100 dark:bg-stone-800 px-3 py-1 rounded-full">
+        <span className="text-[10px] font-mono font-black text-orange-655 dark:text-orange-400 bg-orange-100 dark:bg-stone-800 px-3 py-1 rounded-full">
           Refunds & Amendments // Cancellation
         </span>
-        <h1 className="text-3xl md:text-4xl font-serif font-black text-stone-900 dark:text-white mt-3 uppercase tracking-tight">
+        <h1 className="text-3xl md:text-4xl font-serif font-black text-stone-900 dark:text-white mt-3 tracking-tight">
           Cancellation & Refund Policy
         </h1>
         <p className="text-xs text-stone-505 max-w-sm mx-auto mt-2 font-sans text-stone-500">
@@ -63,7 +63,7 @@ export const CancellationPolicyPage: React.FC = () => {
           <div className="md:col-span-7 space-y-6" id="guidelines-tiers">
             
             <div className="bg-white dark:bg-stone-850 rounded-2.5xl p-6 border border-stone-100 dark:border-stone-800 shadow-md space-y-4">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400 font-mono flex items-center gap-2">
+              <h3 className="text-sm font-bold text-orange-600 dark:text-orange-400 font-mono flex items-center gap-2">
                 <CalendarDays className="w-4 h-4 shrink-0" />
                 <span>Ceremony Proximity Windows</span>
               </h3>
@@ -74,7 +74,7 @@ export const CancellationPolicyPage: React.FC = () => {
               <div className="space-y-3 font-mono text-[11px]" id="policy-slabs-list">
                 <div className="p-3 bg-stone-50 dark:bg-stone-900 rounded-xl border border-stone-100 dark:border-stone-800 flex justify-between items-center gap-2">
                   <div>
-                    <span className="font-bold text-green-600 uppercase block">Tier A: More than 30 Days</span>
+                    <span className="font-bold text-green-600 block">Tier A: More than 30 Days</span>
                     <span className="text-[10px] text-stone-450 text-stone-400 block font-sans">90% refund of non-seed booking deposit</span>
                   </div>
                   <span className="bg-green-100 dark:bg-green-950/25 text-green-700 dark:text-green-400 font-black px-2.5 py-1 rounded-lg text-xs">
@@ -84,7 +84,7 @@ export const CancellationPolicyPage: React.FC = () => {
 
                 <div className="p-3 bg-stone-50 dark:bg-stone-900 rounded-xl border border-stone-100 dark:border-stone-800 flex justify-between items-center gap-2">
                   <div>
-                    <span className="font-bold text-amber-600 uppercase block">Tier B: 15 to 30 Days</span>
+                    <span className="font-bold text-amber-600 block">Tier B: 15 to 30 Days</span>
                     <span className="text-[10px] text-stone-450 text-stone-400 block font-sans">50% refund on the overall booking value</span>
                   </div>
                   <span className="bg-amber-100 dark:bg-amber-950/25 text-amber-700 dark:text-amber-400 font-black px-2.5 py-1 rounded-lg text-xs">
@@ -94,7 +94,7 @@ export const CancellationPolicyPage: React.FC = () => {
 
                 <div className="p-3 bg-stone-50 dark:bg-stone-900 rounded-xl border border-stone-100 dark:border-stone-800 flex justify-between items-center gap-2">
                   <div>
-                    <span className="font-bold text-[#C51C13] uppercase block">Tier C: Less than 14 Days</span>
+                    <span className="font-bold text-[#C51C13] block">Tier C: Less than 14 Days</span>
                     <span className="text-[10px] text-stone-450 text-stone-400 block font-sans">No refund; flowers gathered and chefs booked.</span>
                   </div>
                   <span className="bg-red-100 dark:bg-red-950/25 text-[#C51C13] dark:text-red-400 font-black px-2.5 py-1 rounded-lg text-xs">
@@ -106,7 +106,7 @@ export const CancellationPolicyPage: React.FC = () => {
 
             {/* FORCE MAJEURE SPECIFIC CLAUSE */}
             <div className="bg-gradient-to-r from-orange-600/15 via-transparent to-transparent p-5 rounded-r-2xl border-l-4 border-orange-600 shadow-sm space-y-2">
-              <h4 className="text-xs font-black uppercase text-stone-900 dark:text-white flex items-center gap-2">
+              <h4 className="text-xs font-black text-stone-900 dark:text-white flex items-center gap-2">
                 <RefreshCw className="w-3.5 h-3.5 text-orange-600 animate-spin-slow" />
                 <span>Our Free Rescheduling Option</span>
               </h4>
@@ -122,13 +122,13 @@ export const CancellationPolicyPage: React.FC = () => {
             
             <div className="flex items-center gap-2 border-b border-stone-100 dark:border-stone-800 pb-3">
               <Calculator className="w-5 h-5 text-orange-605" />
-              <h4 className="font-serif font-black text-stone-900 dark:text-white uppercase text-xs">Live Refund Estimator</h4>
+              <h4 className="font-serif font-black text-stone-900 dark:text-white text-xs">Live Refund Estimator</h4>
             </div>
 
             <div className="space-y-4 text-xs font-sans">
               
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase text-stone-500 tracking-wider">Estimated Booking Cost (INR)</label>
+                <label className="text-[10px] font-black text-stone-500">Estimated Booking Cost (INR)</label>
                 <input 
                   type="number" 
                   value={bookingAmount}
@@ -139,7 +139,7 @@ export const CancellationPolicyPage: React.FC = () => {
               </div>
 
               <div className="space-y-1">
-                <div className="flex justify-between text-[10px] font-black uppercase text-stone-500 tracking-wider">
+                <div className="flex justify-between text-[10px] font-black text-stone-500">
                   <span>Days Before Ceremony:</span>
                   <span className="font-bold text-orange-600">{daysRemaining} Days</span>
                 </div>
@@ -182,7 +182,7 @@ export const CancellationPolicyPage: React.FC = () => {
 
               <button 
                 onClick={() => alert(`Your cancellation request estimate of ₹${refundDetails.refundAmount.toLocaleString()} is recorded. Please file a formal support request under user profile to clear details.`)}
-                className="w-full py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-mono text-[10px] font-black uppercase tracking-widest rounded-xl transition cursor-pointer"
+                className="w-full py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-mono text-[10px] font-black rounded-xl transition cursor-pointer"
               >
                 File Cancellation Notice
               </button>

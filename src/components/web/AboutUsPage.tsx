@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, Award, Mail, Search, Sparkles, Users } from 'lucide-react';
 import { APP_NAME, SUPPORT_EMAIL } from '../../brand';
 import { LandingSection, LandingSectionHeader } from './LandingPage/LandingSection';
+import { PageBanner } from './PageBanner';
 
 interface AboutUsPageProps {
   onNavigate: (page: string, data?: unknown) => void;
@@ -37,69 +38,44 @@ const VALUES = [
 export const AboutUsPage: React.FC<AboutUsPageProps> = ({ onNavigate }) => {
   return (
     <div className="min-h-screen bg-[#FFFDF7] dark:bg-stone-900" id="about-us-page">
-      {/* Hero */}
-      <section className="border-b border-stone-200/80 dark:border-stone-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-28 pb-14 lg:pb-20">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-            <div className="space-y-6 text-left">
-              <span className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-orange-600 dark:text-amber-400">
-                <span className="h-px w-6 bg-gradient-to-r from-orange-500 to-amber-400" aria-hidden />
-                About {APP_NAME}
-                <span className="h-px w-6 bg-gradient-to-r from-amber-400 to-orange-500" aria-hidden />
-              </span>
-              <h1 className="heading-page text-3xl sm:text-4xl lg:text-[2.75rem] text-[#C51C13] dark:text-white">
-                One place to discover vendors you can trust
-              </h1>
-              <p className="text-sm sm:text-base text-stone-600 dark:text-stone-300 leading-relaxed max-w-xl">
-                {APP_NAME} helps families and hosts compare services, request quotes, and plan weddings and
-                festive events — from banquet halls and halwais to photographers and pandits.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  onClick={() => onNavigate('vendor-categories')}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer"
-                >
-                  Browse categories
-                  <ArrowRight className="w-4 h-4" aria-hidden />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onNavigate('how-it-works')}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-stone-300 dark:border-stone-600 text-stone-800 dark:text-stone-100 text-sm font-semibold hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
-                >
-                  How it works
-                </button>
-              </div>
-            </div>
-
-            <div className="relative rounded-2xl overflow-hidden shadow-lg border border-orange-100/60 dark:border-stone-700 aspect-[4/3] lg:aspect-auto lg:min-h-[320px]">
-              <img
-                src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=900&auto=format&fit=crop&q=80"
-                alt=""
-                className="absolute inset-0 w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-stone-950/50 via-transparent to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-3">
-                {STATS.map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="rounded-xl bg-white/95 dark:bg-stone-900/90 backdrop-blur-sm px-3 py-2 border border-white/40 dark:border-stone-700 shadow-sm"
-                  >
-                    <p className="text-lg font-bold text-[#C51C13] dark:text-orange-400 leading-none">
-                      {stat.value}
-                    </p>
-                    <p className="text-[10px] font-medium text-stone-600 dark:text-stone-400 mt-0.5">
-                      {stat.label}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+      <PageBanner
+        id="about-page-banner"
+        variant="celebration"
+        eyebrow={`About ${APP_NAME}`}
+        title="One place to discover vendors you can trust"
+        description={`${APP_NAME} helps families and hosts compare services, request quotes, and plan weddings and festive events — from banquet halls and halwais to photographers and pandits.`}
+        imageSrc="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1400&auto=format&fit=crop&q=80"
+        imageAlt="Indian wedding celebration"
+      >
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={() => onNavigate('vendor-categories')}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#FFCB44] hover:bg-amber-300 text-stone-900 text-sm font-semibold transition-colors cursor-pointer"
+          >
+            Browse categories
+            <ArrowRight className="w-4 h-4" aria-hidden />
+          </button>
+          <button
+            type="button"
+            onClick={() => onNavigate('how-it-works')}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border-2 border-white/50 bg-white/10 text-white text-sm font-semibold hover:bg-white/20 transition-colors cursor-pointer"
+          >
+            How it works
+          </button>
         </div>
-      </section>
+        <div className="flex flex-wrap gap-3">
+          {STATS.map((stat) => (
+            <div
+              key={stat.label}
+              className="rounded-xl bg-white/95 backdrop-blur-sm px-3 py-2 border border-white/40 shadow-sm min-w-[7rem]"
+            >
+              <p className="text-lg font-bold text-[#C51C13] leading-none">{stat.value}</p>
+              <p className="text-[10px] font-medium text-stone-600 mt-0.5">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      </PageBanner>
 
       {/* Values */}
       <LandingSection id="about-values" tone="white" showTexture={false} showMandala={false}>
@@ -132,7 +108,7 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({ onNavigate }) => {
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <div className="order-2 lg:order-1 space-y-5 text-left">
             <div className="space-y-3">
-              <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-orange-600 dark:text-amber-400">
+              <span className="text-[10px] sm:text-xs font-semibold tracking-[0.2em] text-orange-600 dark:text-amber-400">
                 Our story
               </span>
               <h2 className="heading-section text-2xl sm:text-3xl text-[#C51C13] dark:text-white">

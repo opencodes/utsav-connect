@@ -130,7 +130,7 @@ export const LandingSectionHeader: React.FC<LandingSectionHeaderProps> = ({
         }`}
       >
         <span
-          className={`inline-flex items-center gap-2 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] ${eyebrowColor} ${
+          className={`inline-flex items-center gap-2 text-[10px] sm:text-xs font-semibold tracking-[0.2em] ${eyebrowColor} ${
             isCenter ? 'justify-center' : ''
           }`}
         >

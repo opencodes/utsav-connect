@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Gift, Plus, Trash2, Calendar, Sparkles, IndianRupee, Award, AlertCircle } from 'lucide-react';
+import { readPlannerStorage } from '../plannerStorage';
 
 interface ChumanGift {
   id: string;
@@ -11,18 +12,10 @@ interface ChumanGift {
   notes: string;
 }
 
-const DEFAULT_CHUMAN_ENTRIES: ChumanGift[] = [
-  { id: 'chu-1', guestName: 'Pandey Jha Ji (Mama Ji)', type: 'Cash', amountOrValue: 11000, date: '2026-11-12', notes: 'Given as central Shadi blessings during the main Vedika ceremony.' },
-  { id: 'chu-2', guestName: 'Shree Mukhiya Ji (Village Chief)', type: 'Physical Item', amountOrValue: 7500, itemName: 'Brass Puja Thali & Saffron Shawl', date: '2026-11-12', notes: 'Grand greeting gift presented on stage.' },
-  { id: 'chu-3', guestName: 'Kumari Arati Jha', type: 'Cash', amountOrValue: 5100, date: '2026-11-10', notes: 'Presented during pre-wedding Sangeet and Aarti.' },
-  { id: 'chu-4', guestName: 'Suresh Chandra Mishra', type: 'Physical Item', amountOrValue: 15000, itemName: '24K Gold Plated Silver Coin (50g)', date: '2026-11-12', notes: 'Treasured family collection gift.' }
-];
-
 export const PlannerChuman: React.FC = () => {
-  const [chumanList, setChumanList] = useState<ChumanGift[]>(() => {
-    const saved = localStorage.getItem('utsav_planner_chuman');
-    return saved ? JSON.parse(saved) : DEFAULT_CHUMAN_ENTRIES;
-  });
+  const [chumanList, setChumanList] = useState<ChumanGift[]>(() =>
+    readPlannerStorage<ChumanGift[]>('utsav_planner_chuman', [])
+  );
 
   // Filter type selection
   const [activeFilter, setActiveFilter] = useState<'All' | 'Cash' | 'Physical Item'>('All');
@@ -84,16 +77,16 @@ export const PlannerChuman: React.FC = () => {
           🌸
         </div>
         <div>
-          <span className="px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-bold uppercase tracking-wider">
+          <span className="px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-bold">
             Traditional Mithila Gifting
           </span>
-          <h1 className="text-2xl font-black uppercase mt-1 tracking-tight">Chuman Master Ledger (चुमन पंजी)</h1>
+          <h1 className="text-2xl font-semibold mt-1 tracking-tight">Chuman Master Ledger (चुमन पंजी)</h1>
           <p className="text-stone-100 text-xs mt-1 max-w-xl">
             Record auspicious cash gifts (*Chuman* / *Shagun*) and register physical wedding gifts with estimated asset valuations to maintain precise family logs.
           </p>
         </div>
         <div className="bg-stone-900/40 backdrop-blur-sm border border-white/20 px-4 py-3 rounded-2xl text-left shrink-0">
-          <span className="text-[10px] uppercase font-mono font-bold text-orange-200">Auspicious Blessings Counter</span>
+          <span className="text-[10px] font-mono font-bold text-orange-200">Auspicious Blessings Counter</span>
           <b className="text-xl font-bold block text-white mt-1">₹ {totalReceivedCombined.toLocaleString('en-IN')}</b>
         </div>
       </div>
@@ -107,11 +100,11 @@ export const PlannerChuman: React.FC = () => {
             <IndianRupee className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-[10px] uppercase tracking-wider text-stone-400 font-bold block">Cash Shagun Gifts (चुमन राशि)</span>
-            <h3 className="text-xl font-black text-stone-900 dark:text-white mt-1 leading-none">
+            <span className="text-[10px] text-stone-400 font-bold block">Cash Shagun Gifts (चुमन राशि)</span>
+            <h3 className="text-xl font-semibold text-stone-900 dark:text-white mt-1 leading-none">
               ₹ {totalCashGiftsSum.toLocaleString('en-IN')}
             </h3>
-            <span className="text-[9px] text-green-600 font-mono font-bold mt-1 uppercase block">
+            <span className="text-[9px] text-green-600 font-mono font-bold mt-1 block">
               💸 {cashEntriesCount} Cash envelopes logged
             </span>
           </div>
@@ -123,11 +116,11 @@ export const PlannerChuman: React.FC = () => {
             <Gift className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-[10px] uppercase tracking-wider text-stone-400 font-bold block">Physical Gift Valuation</span>
-            <h3 className="text-xl font-black text-stone-900 dark:text-white mt-1 leading-none">
+            <span className="text-[10px] text-stone-400 font-bold block">Physical Gift Valuation</span>
+            <h3 className="text-xl font-semibold text-stone-900 dark:text-white mt-1 leading-none">
               ₹ {totalPhysicalEstimatedSum.toLocaleString('en-IN')}
             </h3>
-            <span className="text-[9px] text-orange-600 font-mono font-bold mt-1 uppercase block text-left">
+            <span className="text-[9px] text-orange-600 font-mono font-bold mt-1 block text-left">
               🎁 {physicalEntriesCount} Assets & ornaments recorded
             </span>
           </div>
@@ -139,8 +132,8 @@ export const PlannerChuman: React.FC = () => {
             <Award className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-[10px] uppercase tracking-wider text-stone-400 font-bold block">Average Gift Multiplier</span>
-            <h3 className="text-xl font-black text-stone-900 dark:text-white mt-1 leading-none">
+            <span className="text-[10px] text-stone-400 font-bold block">Average Gift Multiplier</span>
+            <h3 className="text-xl font-semibold text-stone-900 dark:text-white mt-1 leading-none">
               ₹ {chumanList.length > 0 ? Math.round(totalReceivedCombined / chumanList.length).toLocaleString('en-IN') : 0}
             </h3>
             <span className="text-[9px] text-stone-400 block font-mono mt-1">Per individual blessing entry</span>
@@ -154,14 +147,14 @@ export const PlannerChuman: React.FC = () => {
         
         {/* LHS addition form */}
         <div className="lg:col-span-1 bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 p-5 shadow-sm text-left">
-          <h3 className="text-sm font-black uppercase text-stone-900 dark:text-white pb-3 border-b border-light-100 flex items-center gap-2 mb-4">
+          <h3 className="text-sm font-semibold text-stone-900 dark:text-white pb-3 border-b border-light-100 flex items-center gap-2 mb-4">
             <Plus className="w-4 h-4 text-orange-600" />
             <span>Record Gift blessing</span>
           </h3>
 
           <form onSubmit={handleAddChumanSubmit} className="space-y-4">
             <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Auspicious Giver (Guest Name)</label>
+              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Auspicious Giver (Guest Name)</label>
               <input
                 type="text"
                 placeholder="Name"
@@ -173,7 +166,7 @@ export const PlannerChuman: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Gift Format Type</label>
+              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Gift Format Type</label>
               <select
                 value={cType}
                 onChange={e => setCType(e.target.value as any)}
@@ -186,7 +179,7 @@ export const PlannerChuman: React.FC = () => {
 
             {cType === 'Physical Item' && (
               <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Gift Item Name / Descriptors</label>
+                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Gift Item Name / Descriptors</label>
                 <input
                   type="text"
                   placeholder="e.g. Gold Plated Silver Coin"
@@ -199,7 +192,7 @@ export const PlannerChuman: React.FC = () => {
             )}
 
             <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">
+              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">
                 {cType === 'Cash' ? 'Auspicious Sum (₹ Cash Amount)' : 'Estimated Market Value (₹ Equivalent)'}
               </label>
               <input
@@ -213,7 +206,7 @@ export const PlannerChuman: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Presented Date</label>
+              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Presented Date</label>
               <input
                 type="date"
                 value={cDate}
@@ -223,7 +216,7 @@ export const PlannerChuman: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Additional blessing / Custom Notes</label>
+              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Additional blessing / Custom Notes</label>
               <textarea
                 placeholder="Details of families background or other descriptions..."
                 value={cNotes}
@@ -235,7 +228,7 @@ export const PlannerChuman: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold tracking-wider uppercase transition-colors flex items-center justify-center gap-1.5"
+              className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
               <span>Record Blessing</span>
@@ -248,7 +241,7 @@ export const PlannerChuman: React.FC = () => {
           <div>
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b">
               <div>
-                <h3 className="text-sm font-black uppercase text-stone-900 dark:text-white">Chuman & Shagun Logs</h3>
+                <h3 className="text-sm font-semibold text-stone-900 dark:text-white">Chuman & Shagun Logs</h3>
                 <p className="text-[11px] text-stone-400 mt-0.5">Categorized list index of all recorded auspicious gifts for ceremony record audit checks.</p>
               </div>
             </div>
@@ -259,7 +252,7 @@ export const PlannerChuman: React.FC = () => {
                 <button
                   key={fil}
                   onClick={() => setActiveFilter(fil)}
-                  className={`px-3 py-1 rounded-full text-[9px] font-black uppercase transition-all tracking-wider border ${
+                  className={`px-3 py-1 rounded-full text-[9px] font-semibold transition-all border ${
                     activeFilter === fil
                       ? 'bg-orange-600 text-white border-orange-600'
                       : 'bg-stone-50 dark:bg-stone-900 text-stone-500 dark:text-stone-300 hover:bg-stone-105'
@@ -274,7 +267,7 @@ export const PlannerChuman: React.FC = () => {
             <div className="overflow-x-auto rounded-xl mt-4">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] uppercase font-bold text-stone-500 border-b border-stone-200 dark:border-stone-700 font-mono">
+                  <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] font-bold text-stone-500 border-b border-stone-200 dark:border-stone-700 font-mono">
                     <th className="p-3 text-left">Blessing Giver Name</th>
                     <th className="p-3 text-left">Gift Format Type</th>
                     <th className="p-3 text-left">Physical Descriptors description</th>
@@ -286,7 +279,7 @@ export const PlannerChuman: React.FC = () => {
                 <tbody className="text-xs divide-y divide-stone-150">
                   {filteredChuman.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="p-8 text-center text-stone-400 font-bold uppercase tracking-wider">
+                      <td colSpan={6} className="p-8 text-center text-stone-400 font-bold">
                         No recorded blessings found under this list filter.
                       </td>
                     </tr>
@@ -302,7 +295,7 @@ export const PlannerChuman: React.FC = () => {
 
                         {/* Format */}
                         <td className="p-3 text-left">
-                          <span className={`px-2 py-0.5 rounded text-[10px] tracking-wider uppercase font-black ${
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
                             item.type === 'Cash'
                               ? 'bg-emerald-500/10 text-emerald-600'
                               : 'bg-orange-500/10 text-orange-600'

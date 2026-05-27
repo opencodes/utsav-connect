@@ -82,10 +82,10 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
         <div className="flex justify-center mb-3">
           <AnimatedDiya className="w-10 h-10 text-orange-600" />
         </div>
-        <span className="text-[10px] uppercase font-mono font-black tracking-widest text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-stone-800 px-3 py-1 rounded-full">
+        <span className="text-[10px] font-mono font-black text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-stone-800 px-3 py-1 rounded-full">
           The Ceremony Blueprint
         </span>
-        <h1 className="text-3xl md:text-4xl font-serif font-black text-stone-900 dark:text-white mt-3 uppercase tracking-tight">
+        <h1 className="text-3xl md:text-4xl font-serif font-black text-stone-900 dark:text-white mt-3 tracking-tight">
           How Ceremony & Utsav Works
         </h1>
         <p className="text-xs text-stone-500 max-w-sm mx-auto mt-2 font-sans">
@@ -110,7 +110,7 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
               }`}
             >
               <div className="text-lg md:text-xl">{st.emoji}</div>
-              <div className="text-[10px] md:text-xs font-bold font-serif uppercase tracking-tight mt-1 line-clamp-1">{st.title.split('. ')[1]}</div>
+              <div className="text-[10px] md:text-xs font-bold font-serif tracking-tight mt-1 line-clamp-1">{st.title.split('. ')[1]}</div>
             </button>
           ))}
         </div>
@@ -119,10 +119,10 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
         <div className="bg-white dark:bg-stone-850 rounded-3xl border border-stone-100 dark:border-stone-800 p-8 shadow-xl grid md:grid-cols-12 gap-8 items-center" id="active-step-panel">
           
           <div className="md:col-span-12 lg:col-span-7 space-y-4">
-            <span className="inline-block text-[10px] font-mono tracking-wider font-extrabold text-orange-600 dark:text-orange-400 uppercase">
+            <span className="inline-block text-[10px] font-mono font-extrabold text-orange-600 dark:text-orange-400">
               {steps[activeStep].subtitle}
             </span>
-            <h2 className="text-2xl font-serif font-black text-stone-900 dark:text-white uppercase">
+            <h2 className="text-2xl font-serif font-black text-stone-900 dark:text-white">
               {steps[activeStep].title}
             </h2>
             <p className="text-xs md:text-sm text-stone-500 dark:text-stone-400 leading-relaxed font-sans mt-2">
@@ -146,7 +146,7 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
             
             <div className="space-y-2">
               <div className="text-4xl">{steps[activeStep].emoji}</div>
-              <h4 className="text-lg font-serif font-bold uppercase tracking-wide">Phase {activeStep + 1} Cleared</h4>
+              <h4 className="text-lg font-serif font-bold tracking-wide">Phase {activeStep + 1} Cleared</h4>
               <p className="text-[11px] text-orange-100 leading-relaxed font-sans">
                 Each operational phase utilizes strict verification checks. We back every wedding vendor milestone with written collateral deposits.
               </p>
@@ -154,7 +154,7 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
 
             <div className="flex items-center gap-1.5 text-xs border-t border-white/20 pt-4 mt-4">
               <Award className="w-4 h-4 text-amber-300" />
-              <span className="font-mono text-[10px] font-bold tracking-widest uppercase">Certified Ceremony Guarantee</span>
+              <span className="font-mono text-[10px] font-bold">Certified Ceremony Guarantee</span>
             </div>
           </div>
 
@@ -168,7 +168,7 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
           
           <div className="text-center mb-8">
             <Calculator className="w-8 h-8 text-orange-650 mx-auto mb-2 animate-bounce" />
-            <h2 className="text-xl md:text-2xl font-serif font-black text-stone-900 dark:text-white uppercase">
+            <h2 className="text-xl md:text-2xl font-serif font-black text-stone-900 dark:text-white">
               Interactive Utsav Cost Estimator
             </h2>
             <p className="text-[11px] text-stone-500 font-sans">
@@ -180,7 +180,7 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
             
             {/* Control Inputs */}
             <div className="space-y-4" id="estimator-inputs">
-              <h3 className="text-xs font-mono font-black uppercase text-orange-650 dark:text-orange-400 tracking-wider">
+              <h3 className="text-xs font-mono font-black text-orange-650 dark:text-orange-400">
                 1. Adjust Event Parameters
               </h3>
 
@@ -201,7 +201,7 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase text-stone-500 tracking-wider">Feast Culinary Package</label>
+                <label className="text-[10px] font-black text-stone-500">Feast Culinary Package</label>
                 <select 
                   value={feastTier} 
                   onChange={(e) => setFeastTier(e.target.value)}
@@ -237,7 +237,7 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
 
             {/* Calculations Breakdown Output */}
             <div className="bg-stone-50 dark:bg-stone-900 p-6 rounded-2xl border border-stone-100 dark:border-stone-800 flex flex-col justify-between" id="estimator-outputs">
-              <h4 className="text-xs font-mono font-black uppercase text-stone-500 tracking-wider mb-2">
+              <h4 className="text-xs font-mono font-black text-stone-500 mb-2">
                 2. Live Estimation Breakdown
               </h4>
 
@@ -271,7 +271,7 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
                 </p>
                 <button 
                   onClick={() => onNavigate('contact')}
-                  className="w-full py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-mono text-[10px] font-black uppercase tracking-widest rounded-xl transition cursor-pointer"
+                  className="w-full py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-mono text-[10px] font-black rounded-xl transition cursor-pointer"
                 >
                   Book Free Culinary Trial
                 </button>

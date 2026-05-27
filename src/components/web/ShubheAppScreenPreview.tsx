@@ -11,7 +11,7 @@ export const ShubheAppScreenPreview: React.FC = () => (
 
     <div className="flex-1 overflow-hidden p-3 space-y-2.5">
       <div className="rounded-xl bg-[#C51C13] p-3 text-white shadow-sm">
-        <p className="text-[10px] text-amber-100/90 uppercase tracking-wide">Upcoming</p>
+        <p className="text-[10px] text-amber-100/90 tracking-wide">Upcoming</p>
         <p className="font-display text-sm mt-0.5 leading-snug">Aarav & Ishani Wedding</p>
         <p className="text-[10px] text-amber-50/90 mt-1">Nov 24 · Udaipur</p>
         <div className="mt-2 flex gap-2 text-center">
@@ -22,14 +22,14 @@ export const ShubheAppScreenPreview: React.FC = () => (
           ].map((item) => (
             <div key={item.l} className="flex-1 rounded-lg bg-white/10 py-1">
               <p className="text-sm font-bold leading-none">{item.n}</p>
-              <p className="text-[8px] uppercase text-amber-100/80">{item.l}</p>
+              <p className="text-[8px] text-amber-100/80">{item.l}</p>
             </div>
           ))}
         </div>
       </div>
 
       <div className="rounded-xl border border-stone-200 bg-white p-2.5">
-        <p className="text-[10px] font-bold text-[#C51C13] uppercase tracking-wide">Planning checklist</p>
+        <p className="text-[10px] font-bold text-[#C51C13] tracking-wide">Planning checklist</p>
         <ul className="mt-2 space-y-1.5">
           {['Book pandit for mahurat', 'Finalize bridal lehenga'].map((task) => (
             <li key={task} className="flex items-start gap-2 text-[10px] text-stone-700 leading-snug">

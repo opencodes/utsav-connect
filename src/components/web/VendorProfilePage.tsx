@@ -157,7 +157,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
           aria-hidden
         />
         <div className="absolute inset-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-20 sm:pt-24 flex flex-col justify-end pb-5 sm:pb-6">
-          <span className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-amber-200/90 mb-2">
+          <span className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-semibold tracking-[0.2em] text-amber-200/90 mb-2">
             <span className="h-px w-6 bg-amber-300/80" aria-hidden />
             Vendor dashboard
             <span className="h-px w-6 bg-amber-300/80" aria-hidden />
@@ -423,7 +423,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                           </p>
                         </div>
                         <span
-                          className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${STATUS_STYLES[enq.status]}`}
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_STYLES[enq.status]}`}
                         >
                           {enq.status}
                         </span>
@@ -462,7 +462,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                           </p>
                         </div>
                         <span
-                          className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${STATUS_STYLES[enq.status]}`}
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${STATUS_STYLES[enq.status]}`}
                         >
                           {enq.status}
                         </span>
@@ -540,7 +540,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                             }
                           />
                           {isCustom && (
-                            <span className="inline-block text-[10px] font-bold uppercase tracking-wide text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950/40 px-2 py-0.5 rounded-full">
+                            <span className="inline-block text-[10px] font-bold tracking-wide text-orange-700 dark:text-orange-300 bg-orange-50 dark:bg-orange-950/40 px-2 py-0.5 rounded-full">
                               New · pending review
                             </span>
                           )}
@@ -559,7 +559,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                               </button>
                             )}
                           </div>
-                          <p className="text-[10px] font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wide">
+                          <p className="text-[10px] font-semibold text-stone-500 dark:text-stone-400 tracking-wide">
                             {service.category}
                           </p>
                           <p className="text-xs text-stone-500 dark:text-stone-400 line-clamp-2">

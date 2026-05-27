@@ -23,14 +23,14 @@ export const StickyCartFooter: React.FC<StickyCartFooterProps> = ({
             </span>
           </div>
           <div className="text-left leading-tight">
-            <span className="text-[10px] uppercase font-bold text-orange-200">Active Festive Basket</span>
+            <span className="text-[10px] font-bold text-orange-200">Active Festive Basket</span>
             <h5 className="font-extrabold text-base">₹{cartTotal} (+ taxes & delivery)</h5>
           </div>
         </div>
 
         <button
           onClick={() => onNavigate('cart')}
-          className="flex items-center gap-1 px-4 py-2 bg-white text-orange-600 dark:text-orange-700 font-extrabold text-xs tracking-wider uppercase rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md cursor-pointer"
+          className="flex items-center gap-1 px-4 py-2 bg-white text-orange-600 dark:text-orange-700 font-extrabold text-xs rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md cursor-pointer"
           id="sticky-cart-checkout-button"
         >
           <span>View Cart</span>

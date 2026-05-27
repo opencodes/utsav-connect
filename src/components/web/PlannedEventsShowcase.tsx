@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Calendar, Users, Check, Search, Plus, Clock, MapPin, Sparkles, X, ChevronRight, Gift, Heart, Utensils, BookOpen, MessageCircle } from 'lucide-react';
 import { MarigoldToran, RangoliMandala, AnimatedDiya } from './GoldenDeco';
 import { HERO_EVENT_TYPES } from './LandingPage/heroEventSearch';
+import { loadPlannerEventsBundle, readPlannerStorage, PLANNER_STORAGE_KEYS } from '../../plannerStorage';
 
 const EVENT_TYPE_KEYWORDS: Record<string, string[]> = {
   wedding: ['wedding', 'shadi', 'ceremony'],
@@ -60,70 +61,6 @@ interface WeddingEvent {
   isActive: boolean;
 }
 
-// Fallback Seeds (to sync with Admin LocalStorage schemas)
-const STATIC_FALLBACK_EVENTS: WeddingEvent[] = [
-  { id: 'evt-1', name: 'Grand Shadi Festival (Main Ceremony)', date: '2026-11-12', description: 'The main wedding event with royal traditional golden themes.', isActive: true },
-  { id: 'evt-2', name: 'Pre-wedding Sangeet & Mehndi Gala', date: '2026-11-10', description: 'Shadi opening cultural feast, choreography dances, and henna setup.', isActive: false },
-  { id: 'evt-3', name: 'Dussehra Community Food Festival', date: '2026-10-25', description: 'Mass Satvik catering and traditional Mithila art bazaar.', isActive: false }
-];
-
-const STATIC_FALLBACK_SUB_EVENTS: SubEvent[] = [
-  { id: 'sub-1', name: 'Baraat Swagat Welcome', time: '17:30', venue: 'Grand Entrance Gateway, Sector 56 Noida', notes: 'Rose petal shower arrangement and dhol players sync.' },
-  { id: 'sub-2', name: 'Mehndi Evening Bazaar', time: '16:00', venue: 'Courtyard Lawn & Gazebo Garden', notes: 'Saffron tea and dry fruits sweet tables operational.' },
-  { id: 'sub-3', name: 'Sangeet Stage Performances', time: '20:00', venue: 'Rooftop Palace Hall', notes: 'Ensure sound check for traditional Maithili geet and folk choreography.' }
-];
-
-const STATIC_FALLBACK_RITUALS: Ritual[] = [
-  { id: 'rit-1', name: 'Dwar Puja Ceremony', description: 'Groom greeting ritual at the main entrance gate with Vedic shlokas.', duration: '45 mins', subEventId: 'sub-1' },
-  { id: 'rit-2', name: 'Gauri Puja & Haldi paste', description: 'Pre-wedding haldi pasting ceremonies with close family members.', duration: '2 hours', subEventId: 'unmapped' },
-  { id: 'rit-3', name: 'Jaimala Varmala Exchange', description: 'Pristine floral garlands exchange on the central amphitheater stage.', duration: '30 mins', subEventId: 'sub-3' }
-];
-
-const STATIC_FALLBACK_GUESTS: Guest[] = [
-  {
-    id: 'gst-1',
-    name: 'Pandey Jha Ji (Mama Ji)',
-    gender: 'Male',
-    age: 58,
-    familyCount: 4,
-    contact: '+91 94312 87654',
-    group: 'Bride Family',
-    rsvpStatus: 'Confirmed',
-    roomAllocated: 'VIP Palace Suite 101',
-    returnGiftItem: 'Premium Silver Diya Set',
-    returnGiftStatus: 'Assigned',
-    notes: 'Requires ground floor accommodations; pure satvik fasting meals.'
-  },
-  {
-    id: 'gst-2',
-    name: 'Sushant Kumar Mishra',
-    gender: 'Male',
-    age: 32,
-    familyCount: 2,
-    contact: '+91 88776 55443',
-    group: 'Groom Family',
-    rsvpStatus: 'Confirmed',
-    roomAllocated: 'Heritage Room 104',
-    returnGiftItem: 'Classic Mithai Box',
-    returnGiftStatus: 'Gifted',
-    notes: 'Driver accompanying; needs separate driver dome spacing.'
-  },
-  {
-    id: 'gst-3',
-    name: 'Apeksha Roy',
-    gender: 'Female',
-    age: 26,
-    familyCount: 0,
-    contact: '+91 74012 32156',
-    group: 'Mutual Friends',
-    rsvpStatus: 'Pending',
-    roomAllocated: 'De-lux Quad 202',
-    returnGiftItem: 'Silk Handloom Stole',
-    returnGiftStatus: 'Pending',
-    notes: 'Sangeet stage presenter; check microphone config on arrival.'
-  }
-];
-
 export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
   onNavigate,
   initialEventName = '',
@@ -178,15 +115,11 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
 
   // Fetch / Sync databases on load
   const loadDatabase = () => {
-    const savedEvents = localStorage.getItem('utsav_planner_events');
-    const savedSubs = localStorage.getItem('utsav_planner_sub_events');
-    const savedRituals = localStorage.getItem('utsav_planner_rituals');
-    const savedGuests = localStorage.getItem('utsav_planner_guests');
-
-    const loadedEvts = savedEvents ? JSON.parse(savedEvents) : STATIC_FALLBACK_EVENTS;
-    const loadedSubs = savedSubs ? JSON.parse(savedSubs) : STATIC_FALLBACK_SUB_EVENTS;
-    const loadedRits = savedRituals ? JSON.parse(savedRituals) : STATIC_FALLBACK_RITUALS;
-    const loadedGsts = savedGuests ? JSON.parse(savedGuests) : STATIC_FALLBACK_GUESTS;
+    const bundle = loadPlannerEventsBundle();
+    const loadedEvts = bundle.events as WeddingEvent[];
+    const loadedSubs = bundle.subEvents as SubEvent[];
+    const loadedRits = bundle.rituals as Ritual[];
+    const loadedGsts = readPlannerStorage<Guest[]>(PLANNER_STORAGE_KEYS.guests, []);
 
     setEvents(loadedEvts);
     setSubEvents(loadedSubs);
@@ -375,16 +308,16 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
           
           <div className="relative z-10 space-y-3 max-w-3xl">
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 text-[10px] font-black tracking-widest bg-[#FFCB44] text-red-950 rounded-full uppercase">
+              <span className="px-3 py-1 text-[10px] font-black bg-[#FFCB44] text-red-950 rounded-full">
                 UTSAV GUEST DIARY
               </span>
-              <span className="text-xs text-orange-200 font-mono tracking-widest uppercase flex items-center gap-1">
+              <span className="text-xs text-orange-200 font-mono flex items-center gap-1">
                 <Sparkles className="w-3.5 h-3.5 text-[#FFCB44]" />
                 Live Celebration Registry
               </span>
             </div>
             
-            <h1 className="text-3xl sm:text-5xl font-black tracking-tight uppercase leading-tight font-sans">
+            <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight font-sans">
               Traditional Celebrations <br className="hidden sm:inline" />Planned on Utsav
             </h1>
             
@@ -407,7 +340,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                 <RangoliMandala className="w-24 h-24" />
               </div>
               <div className="relative z-10 text-stone-900 dark:text-white">
-                <span className="text-[10px] font-bold text-orange-600 block uppercase font-mono tracking-widest">
+                <span className="text-[10px] font-bold text-orange-600 block font-mono">
                   Next Mega Celebration
                 </span>
                 <h4 className="text-base font-black truncate mt-1">
@@ -419,19 +352,19 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                 <div className="grid grid-cols-4 gap-2 mt-4 font-mono font-bold text-center">
                   <div className="bg-[#C51C13] text-white p-2 rounded-xl">
                     <span className="block text-lg font-black">{countdown.days}</span>
-                    <span className="text-[9px] uppercase tracking-wider text-orange-100 font-semibold font-sans">Days</span>
+                    <span className="text-[9px] text-orange-100 font-semibold font-sans">Days</span>
                   </div>
                   <div className="bg-[#C51C13] text-white p-2 rounded-xl">
                     <span className="block text-lg font-black">{countdown.hours}</span>
-                    <span className="text-[9px] uppercase tracking-wider text-orange-100 font-semibold font-sans">Hrs</span>
+                    <span className="text-[9px] text-orange-100 font-semibold font-sans">Hrs</span>
                   </div>
                   <div className="bg-[#C51C13] text-white p-2 rounded-xl">
                     <span className="block text-lg font-black">{countdown.minutes}</span>
-                    <span className="text-[9px] uppercase tracking-wider text-orange-100 font-semibold font-sans">Mins</span>
+                    <span className="text-[9px] text-orange-100 font-semibold font-sans">Mins</span>
                   </div>
                   <div className="bg-[#C51C13] text-white p-2 rounded-xl">
                     <span className="block text-lg font-black">{countdown.seconds}</span>
-                    <span className="text-[9px] uppercase tracking-wider text-orange-100 font-semibold font-sans">Secs</span>
+                    <span className="text-[9px] text-orange-100 font-semibold font-sans">Secs</span>
                   </div>
                 </div>
               </div>
@@ -440,7 +373,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
 
           {/* B. LIST FINDER & FILTERS */}
           <div className="bg-white dark:bg-stone-850 p-5 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-sm space-y-4">
-            <h3 className="text-sm font-black text-stone-950 dark:text-white uppercase flex items-center gap-2">
+            <h3 className="text-sm font-black text-stone-950 dark:text-white flex items-center gap-2">
               <Calendar className="w-4 h-4 text-[#C51C13]" />
               <span>Registered Celebrations ({filteredEvents.length})</span>
             </h3>
@@ -516,7 +449,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                     }`}
                   >
                     <div className="flex justify-between items-start gap-2">
-                      <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded uppercase ${
+                      <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded ${
                         isUpcomingStr ? 'bg-emerald-100 text-emerald-805' : 'bg-stone-200 text-stone-605'
                       }`}>
                         {isUpcomingStr ? 'Upcoming' : 'Concluded'}
@@ -545,7 +478,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
 
           {/* C. INTERACTIVE RSVP INTEGRATED SERVICE */}
           <div className="bg-white dark:bg-stone-850 p-5 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-md space-y-4 text-neutral-800 dark:text-stone-100 block">
-            <h3 className="text-sm font-black text-[#C51C13] dark:text-orange-400 uppercase flex items-center gap-2">
+            <h3 className="text-sm font-black text-[#C51C13] dark:text-orange-400 flex items-center gap-2">
               <Users className="w-4 h-4 text-orange-600" />
               <span>RSVP & Seating Suite</span>
             </h3>
@@ -580,12 +513,12 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                 >
                   <div className="flex justify-between items-start gap-1">
                     <div>
-                      <span className="text-[9px] uppercase font-mono font-bold text-stone-400">Invitation Verified</span>
+                      <span className="text-[9px] font-mono font-bold text-stone-400">Invitation Verified</span>
                       <b className="block text-sm font-black text-stone-905 dark:text-white">{foundGuest.name}</b>
                       <p className="text-[10px] text-stone-500 font-mono">Cluster: {foundGuest.group}</p>
                     </div>
                     
-                    <span className={`text-[9px] px-2 py-0.5 rounded font-black uppercase ${
+                    <span className={`text-[9px] px-2 py-0.5 rounded font-black ${
                       foundGuest.rsvpStatus === 'Confirmed' 
                         ? 'bg-emerald-100 text-emerald-800' 
                         : foundGuest.rsvpStatus === 'Declined' 
@@ -648,13 +581,13 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
             {showSelfRegForm && (
               <form onSubmit={handleSelfRegisterGuest} className="p-4 bg-stone-50 dark:bg-stone-900 hover:bg-stone-100 dark:hover:bg-stone-850/50 border border-stone-200 dark:border-stone-800 rounded-2xl space-y-3">
                 <div className="flex justify-between items-center-inner">
-                  <h4 className="text-xs font-black text-[#C51C13] uppercase">Self-registration Ledger</h4>
+                  <h4 className="text-xs font-black text-[#C51C13]">Self-registration Ledger</h4>
                   <button type="button" onClick={() => setShowSelfRegForm(false)} className="text-stone-400 text-xs">✕</button>
                 </div>
                 
                 <div className="space-y-2 text-xs">
                   <div>
-                    <label className="text-[9px] font-bold text-stone-400 uppercase font-mono block mb-1">Your Full Name</label>
+                    <label className="text-[9px] font-bold text-stone-400 font-mono block mb-1">Your Full Name</label>
                     <input
                       type="text"
                       required
@@ -667,7 +600,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
 
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="text-[9px] font-bold text-stone-400 uppercase font-mono block mb-1">Mobile Contact</label>
+                      <label className="text-[9px] font-bold text-stone-400 font-mono block mb-1">Mobile Contact</label>
                       <input
                         type="tel"
                         placeholder="+91..."
@@ -677,7 +610,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                       />
                     </div>
                     <div>
-                      <label className="text-[9px] font-bold text-stone-400 uppercase font-mono block mb-1">Relation Group</label>
+                      <label className="text-[9px] font-bold text-stone-400 font-mono block mb-1">Relation Group</label>
                       <select
                         value={regGroup}
                         onChange={(e) => setRegGroup(e.target.value as any)}
@@ -694,7 +627,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
 
                 <button
                   type="submit"
-                  className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl uppercase tracking-wider transition shadow cursor-pointer"
+                  className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition shadow cursor-pointer"
                 >
                   Verify and Add My Invitation Card
                 </button>
@@ -727,9 +660,9 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                   <div>
                     <div className="flex items-center gap-1.5 text-[#C51C13] dark:text-orange-400">
                       <Heart className="w-4 h-4 fill-current text-red-500 shrink-0" />
-                      <span className="text-xs uppercase font-black font-mono tracking-widest">Aura Traditional Blueprint</span>
+                      <span className="text-xs font-black font-mono">Aura Traditional Blueprint</span>
                     </div>
-                    <h2 className="text-xl sm:text-2xl font-black text-stone-900 dark:text-white uppercase tracking-tight mt-1">
+                    <h2 className="text-xl sm:text-2xl font-black text-stone-900 dark:text-white tracking-tight mt-1">
                       {selectedEvent.name}
                     </h2>
                     <p className="text-stone-400 text-xs font-mono font-bold mt-1">
@@ -740,7 +673,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                   <div className="flex items-center gap-1 p-2 bg-rose-50 dark:bg-stone-900 rounded-xl border border-rose-100 dark:border-stone-850 leading-none shrink-0 text-left">
                     <span className="w-3 h-3 rounded-full bg-[#C51C13] block shrink-0 animate-ping" />
                     <div>
-                      <b className="text-stone-900 dark:text-white block text-[10px] uppercase font-black font-mono">Live Broadcast</b>
+                      <b className="text-stone-900 dark:text-white block text-[10px] font-black font-mono">Live Broadcast</b>
                       <span className="text-[9px] text-stone-400">Synchronized (UTC)</span>
                     </div>
                   </div>
@@ -754,7 +687,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                 {/* Rituals Subsection: Vedic Align */}
                 <div className="space-y-4">
                   <div className="flex justify-between items-center border-b pb-2 dark:border-stone-800">
-                    <h3 className="text-xs font-black uppercase font-mono tracking-widest text-stone-400">
+                    <h3 className="text-xs font-black font-mono text-stone-400">
                       I. Scheduled Vedic Ceremonies & Rituals
                     </h3>
                     <span className="text-[10px] bg-sky-50 dark:bg-sky-950/20 text-sky-700 px-2.5 py-0.5 rounded font-black font-mono">
@@ -771,13 +704,13 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                       >
                         <div>
                           <div className="flex justify-between items-start gap-1">
-                            <span className="text-[10px] font-mono text-orange-600 font-extrabold uppercase">
+                            <span className="text-[10px] font-mono text-orange-600 font-extrabold">
                               Duration: {rit.duration}
                             </span>
                             <span className="text-stone-300 font-bold">🏵️</span>
                           </div>
                           
-                          <h4 className="text-[#C51C13] dark:text-orange-400 font-black text-sm mt-1 uppercase">
+                          <h4 className="text-[#C51C13] dark:text-orange-400 font-black text-sm mt-1">
                             {rit.name}
                           </h4>
                           
@@ -803,7 +736,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
 
                 {/* Timelines subsection */}
                 <div className="space-y-4">
-                  <h3 className="text-xs font-black uppercase font-mono tracking-widest text-[#C51C13] border-b pb-2 dark:border-stone-800">
+                  <h3 className="text-xs font-black font-mono text-[#C51C13] border-b pb-2 dark:border-stone-800">
                     II. Swagat Entry & Timeline Milestones
                   </h3>
 
@@ -817,10 +750,10 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
 
                         <div>
                           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                            <h4 className="text-stone-900 dark:text-white font-extrabold text-sm uppercase">
+                            <h4 className="text-stone-900 dark:text-white font-extrabold text-sm">
                               {sub.name}
                             </h4>
-                            <span className="text-xs font-black font-mono text-[#C51C13] dark:text-orange-400 uppercase flex items-center gap-1 shrink-0">
+                            <span className="text-xs font-black font-mono text-[#C51C13] dark:text-orange-400 flex items-center gap-1 shrink-0">
                               <Clock className="w-3.5 h-3.5" />
                               <span>{sub.time} IST</span>
                             </span>
@@ -851,7 +784,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                 {/* III. INTEGRATED CATERING CORER */}
                 <div className="space-y-3 p-5 rounded-3xl bg-neutral-50 dark:bg-stone-900 border dark:border-orange-950 border-orange-100">
                   <div className="flex justify-between items-center border-b pb-2.5 mb-2.5 dark:border-stone-800">
-                    <span className="text-xs font-black uppercase text-[#C51C13] dark:text-orange-400 flex items-center gap-1 font-mono">
+                    <span className="text-xs font-black text-[#C51C13] dark:text-orange-400 flex items-center gap-1 font-mono">
                       <Utensils className="w-4 h-4" />
                       <span>Shahi Satvik Feast Catering</span>
                     </span>
@@ -866,7 +799,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                     <span className="text-[10px] text-stone-400 font-bold">Interested in traditional food catering for your guests?</span>
                     <button
                       onClick={() => onNavigate('restaurants')}
-                      className="px-3.5 py-1.5 bg-[#C51C13] hover:bg-orange-700 text-white font-heavy text-[10px] uppercase tracking-wider rounded-lg transition-transform hover:scale-[1.02] active:scale-95 cursor-pointer"
+                      className="px-3.5 py-1.5 bg-[#C51C13] hover:bg-orange-700 text-white font-heavy text-[10px] rounded-lg transition-transform hover:scale-[1.02] active:scale-95 cursor-pointer"
                     >
                       Browse Festive Menus
                     </button>
@@ -903,7 +836,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
 
           {/* QUICK PROSPECTUS INFO */}
           <div className="bg-gradient-to-tr from-[#C51C13]/10 to-transparent p-5 rounded-3xl border border-orange-100 dark:border-stone-800/80 text-left space-y-3">
-            <h4 className="text-xs font-black uppercase text-stone-950 dark:text-white flex items-center gap-1.5">
+            <h4 className="text-xs font-black text-stone-950 dark:text-white flex items-center gap-1.5">
               <Gift className="w-4 h-4 text-[#C51C13]" />
               <span>Planning your own traditional ceremony?</span>
             </h4>

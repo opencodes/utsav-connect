@@ -58,7 +58,7 @@ export const SignInPage: React.FC<SignInPageProps> = ({
     <div className="min-h-[calc(100vh-4rem)] bg-stone-50 dark:bg-stone-900 px-4 py-12 sm:py-16">
       <div className="mx-auto max-w-md">
         <div className="text-center mb-8">
-          <span className="inline-block text-[10px] font-bold uppercase tracking-widest text-[#C51C13] bg-orange-50 dark:bg-stone-800 px-3 py-1 rounded-full">
+          <span className="inline-block text-[10px] font-bold text-[#C51C13] bg-orange-50 dark:bg-stone-800 px-3 py-1 rounded-full">
             Account
           </span>
           <h1 className="font-display text-3xl text-stone-900 dark:text-white mt-3">
@@ -105,7 +105,7 @@ export const SignInPage: React.FC<SignInPageProps> = ({
           className="bg-white dark:bg-stone-850 rounded-2xl border border-stone-200 dark:border-stone-700 p-6 sm:p-8 shadow-sm space-y-5"
         >
           <div>
-            <label htmlFor="signin-phone" className="block text-xs font-bold uppercase tracking-wide text-stone-500 mb-1.5">
+            <label htmlFor="signin-phone" className="block text-xs font-bold tracking-wide text-stone-500 mb-1.5">
               Mobile number
             </label>
             <div className="relative">
@@ -124,7 +124,7 @@ export const SignInPage: React.FC<SignInPageProps> = ({
           </div>
 
           <div>
-            <label htmlFor="signin-email" className="block text-xs font-bold uppercase tracking-wide text-stone-500 mb-1.5">
+            <label htmlFor="signin-email" className="block text-xs font-bold tracking-wide text-stone-500 mb-1.5">
               Email
             </label>
             <div className="relative">
@@ -153,6 +153,15 @@ export const SignInPage: React.FC<SignInPageProps> = ({
           >
             {submitLabel}
             <ArrowRight className="w-4 h-4" />
+          </button>
+
+          <button
+            type="button"
+            onClick={() => window.location.assign('/admin')}
+            className="w-full py-2.5 rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-700 dark:text-stone-200 text-sm font-semibold hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
+            id="btn-open-admin-workspace"
+          >
+            Open admin workspace (temporary)
           </button>
 
           <p className="flex items-start gap-2 text-xs text-stone-500 leading-relaxed">

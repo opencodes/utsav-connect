@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MOCK_ADMIN_STATS } from '../../../data';
+import { EMPTY_ADMIN_STATS } from '../../../adminDefaults';
 import { DashboardStatsGrid } from './DashboardStatsGrid';
 import { DiwaliAnalyticsChart } from './DiwaliAnalyticsChart';
 import { TopSellingCategories } from './TopSellingCategories';
@@ -11,12 +11,18 @@ interface AdminDashboardProps {
 }
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateTab }) => {
-  const stats = MOCK_ADMIN_STATS;
+  const stats = EMPTY_ADMIN_STATS;
   const [activeSegment, setActiveSegment] = useState<'revenue' | 'orders'>('revenue');
 
   return (
     <div className="space-y-6 text-left animate-in fade-in duration-300" id="admin-dashboard-tab">
-      {/* 1. KEY STATS CARDS GRID */}
+      <div className="admin-card p-5">
+        <h2 className="text-lg font-semibold text-stone-900 dark:text-white">Overview</h2>
+        <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
+          Commerce snapshot — revenue, orders, customers, and kitchens for today.
+        </p>
+      </div>
+
       <DashboardStatsGrid stats={stats} />
 
       {/* 2. SALES CHANNELS GRAPH & CATEGORIES SALES */}

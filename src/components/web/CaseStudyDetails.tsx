@@ -40,11 +40,11 @@ export const CaseStudyDetails: React.FC<CaseStudyDetailsProps> = ({ selectedItem
       {/* Header info */}
       <div className="border-b pb-5 dark:border-stone-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <span className="text-[10px] font-bold text-orange-600 dark:text-orange-400 font-mono tracking-widest uppercase flex items-center gap-1.5">
+          <span className="text-[10px] font-bold text-orange-600 dark:text-orange-400 font-mono flex items-center gap-1.5">
             <Award className="w-3.5 h-3.5 fill-[#C51C13] text-transparent" />
             <span>Case Summary Highlight</span>
           </span>
-          <h2 className="text-xl sm:text-2xl font-black text-stone-900 dark:text-white uppercase tracking-tight mt-1">
+          <h2 className="text-xl sm:text-2xl font-black text-stone-900 dark:text-white tracking-tight mt-1">
             {selectedItem.title}
           </h2>
           <p className="text-stone-400 text-xs font-mono font-bold mt-1">
@@ -52,14 +52,14 @@ export const CaseStudyDetails: React.FC<CaseStudyDetailsProps> = ({ selectedItem
           </p>
         </div>
 
-        <span className="px-3 py-1 bg-rose-50 dark:bg-stone-900 border border-rose-100 dark:border-stone-800 text-[#C51C13] dark:text-orange-400 font-black text-[10px] rounded-lg tracking-wider uppercase font-mono shrink-0">
+        <span className="px-3 py-1 bg-rose-50 dark:bg-stone-900 border border-rose-100 dark:border-stone-800 text-[#C51C13] dark:text-orange-400 font-black text-[10px] rounded-lg font-mono shrink-0">
           {selectedItem.category}
         </span>
       </div>
 
       {/* Narrative overview */}
       <div className="space-y-2">
-        <h4 className="text-xs font-black uppercase text-stone-400 font-mono tracking-widest flex items-center gap-1.5">
+        <h4 className="text-xs font-black text-stone-400 font-mono flex items-center gap-1.5">
           <BookOpen className="w-3.5 h-3.5" />
           <span>The Client Vision and Backstory</span>
         </h4>
@@ -70,7 +70,7 @@ export const CaseStudyDetails: React.FC<CaseStudyDetailsProps> = ({ selectedItem
 
       {/* Decor secret specs */}
       <div className="bg-orange-600/5 dark:bg-orange-950/10 p-5 rounded-2xl border border-orange-200/50 space-y-3">
-        <h4 className="text-xs font-black uppercase text-[#C51C13] dark:text-orange-400 font-mono flex items-center gap-1.5">
+        <h4 className="text-xs font-black text-[#C51C13] dark:text-orange-400 font-mono flex items-center gap-1.5">
           <Sparkles className="w-4 h-4 text-[#C51C13]" />
           <span>Traditional Décor Specifications</span>
         </h4>
@@ -90,7 +90,7 @@ export const CaseStudyDetails: React.FC<CaseStudyDetailsProps> = ({ selectedItem
       {/* Grand food highlights spotlight */}
       <div className="space-y-4">
         <div className="flex justify-between items-center border-b pb-2 dark:border-stone-800">
-          <h4 className="text-xs font-black uppercase text-stone-400 font-mono tracking-widest flex items-center gap-1.5">
+          <h4 className="text-xs font-black text-stone-400 font-mono flex items-center gap-1.5">
             <Utensils className="w-4 h-4" />
             <span>Shahi Traditional Feast Banquet Spotlight</span>
           </h4>
@@ -108,7 +108,7 @@ export const CaseStudyDetails: React.FC<CaseStudyDetailsProps> = ({ selectedItem
             <div key={idx} className="p-3 bg-stone-50 dark:bg-stone-900 border dark:border-stone-800 rounded-xl leading-snug flex items-center gap-2">
               <span className="text-lg">🍲</span>
               <div>
-                <b className="text-stone-900 dark:text-white block font-sans uppercase font-black text-[11px]">{dish.split(' (')[0]}</b>
+                <b className="text-stone-900 dark:text-white block font-sans font-black text-[11px]">{dish.split(' (')[0]}</b>
                 <span className="text-[10px] text-stone-400 font-medium">{dish.includes('(') ? dish.substring(dish.indexOf('(')) : 'Organic pure butter ghee'}</span>
               </div>
             </div>
@@ -118,7 +118,7 @@ export const CaseStudyDetails: React.FC<CaseStudyDetailsProps> = ({ selectedItem
 
       {/* Timeline execution milestones */}
       <div className="space-y-4">
-        <h4 className="text-xs font-black uppercase text-[#C51C13] border-b pb-2 dark:border-stone-800 font-mono tracking-widest flex items-center gap-1.5">
+        <h4 className="text-xs font-black text-[#C51C13] border-b pb-2 dark:border-stone-800 font-mono flex items-center gap-1.5">
           <Clock className="w-4 h-4" />
           <span>Fine-Tuned Execution Checklist & Timeline</span>
         </h4>
@@ -130,8 +130,8 @@ export const CaseStudyDetails: React.FC<CaseStudyDetailsProps> = ({ selectedItem
               <div className="absolute -left-[2px] -translate-x-[20px] top-1.5 w-2 h-2 rounded-full bg-[#C51C13]" />
               
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center-inner">
-                <span className="text-[10px] font-bold font-mono text-[#C51C13] dark:text-orange-400 uppercase">{mile.time}</span>
-                <span className="text-stone-900 dark:text-white font-black ml-1 uppercase">{mile.ritual}</span>
+                <span className="text-[10px] font-bold font-mono text-[#C51C13] dark:text-orange-400">{mile.time}</span>
+                <span className="text-stone-900 dark:text-white font-black ml-1">{mile.ritual}</span>
               </div>
             </div>
           ))}

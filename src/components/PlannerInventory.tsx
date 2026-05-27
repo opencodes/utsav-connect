@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { readPlannerStorage } from '../plannerStorage';
 import { Package, Plus, Trash2, Calendar, ClipboardList, CheckCircle, Flame, AlertCircle } from 'lucide-react';
 
 interface MiscItem {
@@ -29,38 +30,22 @@ interface GasCylinder {
   returnStatus: 'Received Full' | 'Empty Returned';
 }
 
-const DEFAULT_MISC: MiscItem[] = [
-  { id: 'misc-1', name: 'Decorative Marigold Toran strings (ext. pack)', quantity: 150, source: 'Local Phool Bazaar', cost: 4500, notes: 'Needed for gate garlands backup styling.' },
-  { id: 'misc-2', name: 'Altar Puja Red Velvet spread clothing', quantity: 6, source: 'Mukhiya Textiles', cost: 2400, notes: 'For Vedika mandap setup.' }
-];
 
-const DEFAULT_BARTAN: BartanUtensil[] = [
-  { id: 'bar-1', utensilName: 'Massive Patila Degchi (For Biryani slow-cook)', quantity: 4, dateTaken: '2026-11-09', source: 'Laljee Tent House', status: 'Received' },
-  { id: 'bar-2', utensilName: 'Brass Halwai Karahi (Extra Large Sweet pots)', quantity: 3, dateTaken: '2026-11-08', source: 'Mukhiya Ji Guesthouse', status: 'Received' },
-  { id: 'bar-3', utensilName: 'Decorative Brass Serving spoons & Thalis set', quantity: 120, dateTaken: '2026-11-09', source: 'Ramesh Renter Store', status: 'Returned' }
-];
 
-const DEFAULT_CYLINDERS: GasCylinder[] = [
-  { id: 'cyl-1', vendor: 'HP Gas Agencies (Manoj Agency)', quantity: 8, price: 9200, dateReceived: '2026-11-09', paymentStatus: 'Paid', returnStatus: 'Received Full' },
-  { id: 'cyl-2', vendor: 'Indane Gas Suppliers District Hub', quantity: 4, price: 4600, dateReceived: '2026-11-05', paymentStatus: 'Pending', returnStatus: 'Empty Returned' }
-];
 
 export const PlannerInventory: React.FC = () => {
   // Persistence states
-  const [miscItems, setMiscItems] = useState<MiscItem[]>(() => {
-    const saved = localStorage.getItem('utsav_planner_misc');
-    return saved ? JSON.parse(saved) : DEFAULT_MISC;
-  });
+  const [miscItems, setMiscItems] = useState<MiscItem[]>(() =>
+    readPlannerStorage<MiscItem[]>('utsav_planner_misc', [])
+  );
 
-  const [bartans, setBartans] = useState<BartanUtensil[]>(() => {
-    const saved = localStorage.getItem('utsav_planner_bartan');
-    return saved ? JSON.parse(saved) : DEFAULT_BARTAN;
-  });
+  const [bartans, setBartans] = useState<BartanUtensil[]>(() =>
+    readPlannerStorage<BartanUtensil[]>('utsav_planner_bartan', [])
+  );
 
-  const [cylinders, setCylinders] = useState<GasCylinder[]>(() => {
-    const saved = localStorage.getItem('utsav_planner_cylinders');
-    return saved ? JSON.parse(saved) : DEFAULT_CYLINDERS;
-  });
+  const [cylinders, setCylinders] = useState<GasCylinder[]>(() =>
+    readPlannerStorage<GasCylinder[]>('utsav_planner_cylinders', [])
+  );
 
   // Active Sub Tab: 'misc' | 'bartan' | 'cylinder'
   const [activeTab, setActiveTab] = useState<'misc' | 'bartan' | 'cylinder'>('bartan');
@@ -199,7 +184,7 @@ export const PlannerInventory: React.FC = () => {
       <div className="flex bg-white dark:bg-stone-800 p-2 rounded-2xl border border-stone-200/60 dark:border-stone-700 max-w-lg mb-4 text-xs font-bold gap-2 select-none">
         <button
           onClick={() => setActiveTab('bartan')}
-          className={`px-4 py-2.5 rounded-xl uppercase tracking-wider flex items-center gap-2 flex-grow transition-colors ${
+          className={`px-4 py-2.5 rounded-xl flex items-center gap-2 flex-grow transition-colors ${
             activeTab === 'bartan'
               ? 'bg-orange-600 text-white'
               : 'text-stone-500 hover:text-stone-900 bg-transparent'
@@ -210,7 +195,7 @@ export const PlannerInventory: React.FC = () => {
         </button>
         <button
           onClick={() => setActiveTab('cylinder')}
-          className={`px-4 py-2.5 rounded-xl uppercase tracking-wider flex items-center gap-2 flex-grow transition-colors ${
+          className={`px-4 py-2.5 rounded-xl flex items-center gap-2 flex-grow transition-colors ${
             activeTab === 'cylinder'
               ? 'bg-orange-600 text-white'
               : 'text-stone-500 hover:text-stone-900 bg-transparent'
@@ -221,7 +206,7 @@ export const PlannerInventory: React.FC = () => {
         </button>
         <button
           onClick={() => setActiveTab('misc')}
-          className={`px-4 py-2.5 rounded-xl uppercase tracking-wider flex items-center gap-2 flex-grow transition-colors ${
+          className={`px-4 py-2.5 rounded-xl flex items-center gap-2 flex-grow transition-colors ${
             activeTab === 'misc'
               ? 'bg-orange-600 text-white'
               : 'text-stone-500 hover:text-stone-900 bg-transparent'
@@ -238,14 +223,14 @@ export const PlannerInventory: React.FC = () => {
           
           {/* Form */}
           <div className="bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 p-5 shadow-sm space-y-4 font-sans h-max">
-            <h3 className="text-sm font-black uppercase text-stone-900 dark:text-white pb-3 border-b flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-stone-900 dark:text-white pb-3 border-b flex items-center gap-2">
               <ClipboardList className="w-4 h-4 text-orange-600" />
               <span>Record Rent Bartan</span>
             </h3>
 
             <form onSubmit={handleAddBartan} className="space-y-4">
               <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Utensil / Plate Item Name</label>
+                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Utensil / Plate Item Name</label>
                 <input
                   type="text"
                   placeholder="e.g. Copper Patila 50KG capacity"
@@ -258,7 +243,7 @@ export const PlannerInventory: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Quantity</label>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Quantity</label>
                   <input
                     type="number"
                     value={bQty}
@@ -268,7 +253,7 @@ export const PlannerInventory: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Date taken</label>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Date taken</label>
                   <input
                     type="date"
                     value={bDate}
@@ -279,7 +264,7 @@ export const PlannerInventory: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Source / Outfitter (From Whom)</label>
+                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Source / Outfitter (From Whom)</label>
                 <input
                   type="text"
                   placeholder="e.g. Saffron Tents & Supples Ltd"
@@ -291,7 +276,7 @@ export const PlannerInventory: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Operational Status</label>
+                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Operational Status</label>
                 <select
                   value={bStatus}
                   onChange={e => setBStatus(e.target.value as any)}
@@ -304,7 +289,7 @@ export const PlannerInventory: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold uppercase transition flex items-center justify-center gap-1.5"
+                className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5"
               >
                 <Plus className="w-4 h-4" />
                 <span>Record Rent Entry</span>
@@ -314,7 +299,7 @@ export const PlannerInventory: React.FC = () => {
 
           {/* Directory */}
           <div className="lg:col-span-3 bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 p-5 shadow-sm space-y-4">
-            <h3 className="text-sm font-black uppercase text-stone-900 dark:text-white pb-3 border-b flex justify-between items-center">
+            <h3 className="text-sm font-semibold text-stone-900 dark:text-white pb-3 border-b flex justify-between items-center">
               <span>Utensils & Rent Bartan Ledger Directory</span>
               <span className="text-[10px] font-mono text-orange-600">Total Lines: {bartans.length}</span>
             </h3>
@@ -323,7 +308,7 @@ export const PlannerInventory: React.FC = () => {
             <div className="overflow-x-auto rounded-xl">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] uppercase font-bold text-stone-500 border-b font-mono">
+                  <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] font-bold text-stone-500 border-b font-mono">
                     <th className="p-3">Utensil Particulars</th>
                     <th className="p-3 text-center">Rental Volume</th>
                     <th className="p-3">Sourced Rent Supplier</th>
@@ -335,7 +320,7 @@ export const PlannerInventory: React.FC = () => {
                 <tbody className="divide-y divide-stone-150 text-xs text-stone-900 dark:text-stone-100">
                   {bartans.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="p-8 text-center text-stone-400 font-bold uppercase">No utensil registries active.</td>
+                      <td colSpan={6} className="p-8 text-center text-stone-400 font-bold">No utensil registries active.</td>
                     </tr>
                   ) : (
                     bartans.map(b => (
@@ -349,7 +334,7 @@ export const PlannerInventory: React.FC = () => {
                         <td className="p-3 text-center">
                           <button
                             onClick={() => handleToggleBartanStatus(b.id)}
-                            className={`px-3 py-1 font-black text-[9px] uppercase tracking-wider rounded-xl border ${
+                            className={`px-3 py-1 font-semibold text-[9px] rounded-xl border ${
                               b.status === 'Returned'
                                 ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600'
                                 : 'bg-orange-500/10 border-orange-500/30 text-orange-600 animate-pulse'
@@ -380,14 +365,14 @@ export const PlannerInventory: React.FC = () => {
           
           {/* Form */}
           <div className="bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 p-5 shadow-sm space-y-4 font-sans h-max">
-            <h3 className="text-sm font-black uppercase text-stone-900 dark:text-white pb-3 border-b flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-stone-900 dark:text-white pb-3 border-b flex items-center gap-2">
               <Flame className="w-4 h-4 text-orange-600" />
               <span>Record Cylinder Supply</span>
             </h3>
 
             <form onSubmit={handleAddCylinder} className="space-y-4">
               <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Gas Vendor / Agency</label>
+                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Gas Vendor / Agency</label>
                 <input
                   type="text"
                   placeholder="e.g. Indane Manoj Agencies Ltd"
@@ -400,7 +385,7 @@ export const PlannerInventory: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Cylinders Count</label>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Cylinders Count</label>
                   <input
                     type="number"
                     value={cQty}
@@ -410,7 +395,7 @@ export const PlannerInventory: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Total Bill Price</label>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Total Bill Price</label>
                   <input
                     type="number"
                     placeholder="Total ₹"
@@ -424,7 +409,7 @@ export const PlannerInventory: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Date Received</label>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Date Received</label>
                   <input
                     type="date"
                     value={cDate}
@@ -433,7 +418,7 @@ export const PlannerInventory: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Payment State</label>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Payment State</label>
                   <select
                     value={cPayStatus}
                     onChange={e => setCPayStatus(e.target.value as any)}
@@ -446,7 +431,7 @@ export const PlannerInventory: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Cylinder empty states</label>
+                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Cylinder empty states</label>
                 <select
                   value={cReturn}
                   onChange={e => setCReturn(e.target.value as any)}
@@ -459,7 +444,7 @@ export const PlannerInventory: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold uppercase transition flex items-center justify-center gap-1.5"
+                className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5"
               >
                 <Plus className="w-4 h-4" />
                 <span>Save Cylinder Log</span>
@@ -469,16 +454,16 @@ export const PlannerInventory: React.FC = () => {
 
           {/* Directory */}
           <div className="lg:col-span-3 bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 p-5 shadow-sm space-y-4">
-            <h3 className="text-sm font-black uppercase text-stone-900 dark:text-white pb-3 border-b flex justify-between items-center">
+            <h3 className="text-sm font-semibold text-stone-900 dark:text-white pb-3 border-b flex justify-between items-center">
               <span>Gas Cylinders Logs & Return Registry</span>
-              <span className="text-[10px] font-mono text-orange-600 font-extrabold uppercase">Active cylinders fuel trackers</span>
+              <span className="text-[10px] font-mono text-orange-600 font-extrabold">Active cylinders fuel trackers</span>
             </h3>
 
             {/* Table */}
             <div className="overflow-x-auto rounded-xl">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] uppercase font-bold text-stone-500 border-b font-mono">
+                  <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] font-bold text-stone-500 border-b font-mono">
                     <th className="p-3">Agency Vendor Sourced</th>
                     <th className="p-3 text-center">Procured Volume</th>
                     <th className="p-3 text-right">Invoiced Price</th>
@@ -491,7 +476,7 @@ export const PlannerInventory: React.FC = () => {
                 <tbody className="divide-y divide-stone-150 text-xs text-stone-900 dark:text-stone-100">
                   {cylinders.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="p-8 text-center text-stone-400 font-bold uppercase">No cylinder tracking logs found.</td>
+                      <td colSpan={7} className="p-8 text-center text-stone-400 font-bold">No cylinder tracking logs found.</td>
                     </tr>
                   ) : (
                     cylinders.map(c => (
@@ -503,7 +488,7 @@ export const PlannerInventory: React.FC = () => {
                         <td className="p-3 text-center">
                           <button
                             onClick={() => handleToggleCylinderPay(c.id)}
-                            className={`px-3 py-1 rounded-xl text-[9px] font-black uppercase border ${
+                            className={`px-3 py-1 rounded-xl text-[9px] font-semibold border ${
                               c.paymentStatus === 'Paid'
                                 ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30'
                                 : 'bg-red-500/10 text-red-650 border-red-500/30'
@@ -515,7 +500,7 @@ export const PlannerInventory: React.FC = () => {
                         <td className="p-3 text-center">
                           <button
                             onClick={() => handleToggleCylinderReturn(c.id)}
-                            className={`px-3 py-1 rounded-xl text-[9px] font-black uppercase border ${
+                            className={`px-3 py-1 rounded-xl text-[9px] font-semibold border ${
                               c.returnStatus === 'Empty Returned'
                                 ? 'bg-stone-100 text-stone-505 dark:bg-stone-900'
                                 : 'bg-orange-500/10 text-orange-600 border-orange-500/30'
@@ -546,14 +531,14 @@ export const PlannerInventory: React.FC = () => {
           
           {/* Form */}
           <div className="bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 p-5 shadow-sm space-y-4 font-sans h-max">
-            <h3 className="text-sm font-black uppercase text-stone-900 dark:text-white pb-3 border-b flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-stone-900 dark:text-white pb-3 border-b flex items-center gap-2">
               <Package className="w-4 h-4 text-orange-600" />
               <span>Record Misc Item</span>
             </h3>
 
             <form onSubmit={handleAddMisc} className="space-y-4">
               <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Item Title / Specifics</label>
+                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Item Title / Specifics</label>
                 <input
                   type="text"
                   placeholder="e.g. Red Halwai Mandap fabrics"
@@ -566,7 +551,7 @@ export const PlannerInventory: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Quantity</label>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Quantity</label>
                   <input
                     type="number"
                     value={mQty}
@@ -576,7 +561,7 @@ export const PlannerInventory: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Cost (₹)</label>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Cost (₹)</label>
                   <input
                     type="number"
                     placeholder="Value ₹"
@@ -589,7 +574,7 @@ export const PlannerInventory: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Supplied / Borrowed Source</label>
+                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Supplied / Borrowed Source</label>
                 <input
                   type="text"
                   placeholder="From whom obtained"
@@ -601,7 +586,7 @@ export const PlannerInventory: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Operational descriptors</label>
+                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Operational descriptors</label>
                 <textarea
                   placeholder="Notes or warehouse placement location..."
                   value={mNotes}
@@ -613,7 +598,7 @@ export const PlannerInventory: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold uppercase transition flex items-center justify-center gap-1.5"
+                className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5"
               >
                 <Plus className="w-4 h-4" />
                 <span>Save Entry line</span>
@@ -623,7 +608,7 @@ export const PlannerInventory: React.FC = () => {
 
           {/* Directory */}
           <div className="lg:col-span-3 bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 p-5 shadow-sm space-y-4">
-            <h3 className="text-sm font-black uppercase text-stone-900 dark:text-white pb-3 border-b flex justify-between items-center">
+            <h3 className="text-sm font-semibold text-stone-900 dark:text-white pb-3 border-b flex justify-between items-center">
               <span>Miscellaneous Event Materials Inventory</span>
               <span className="text-[10px] font-mono text-orange-650">Total list: {miscItems.length} lines</span>
             </h3>
@@ -632,7 +617,7 @@ export const PlannerInventory: React.FC = () => {
             <div className="overflow-x-auto rounded-xl">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] uppercase font-bold text-stone-500 border-b font-mono">
+                  <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] font-bold text-stone-500 border-b font-mono">
                     <th className="p-3">Material Specified details</th>
                     <th className="p-3 text-center">Rental Volume</th>
                     <th className="p-3 text-right">Equivalent cost (₹)</th>
@@ -644,7 +629,7 @@ export const PlannerInventory: React.FC = () => {
                 <tbody className="divide-y divide-stone-150 text-xs text-stone-900 dark:text-stone-100">
                   {miscItems.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="p-8 text-center text-stone-400 font-bold uppercase">No recorded miscellaneous item lines.</td>
+                      <td colSpan={6} className="p-8 text-center text-stone-400 font-bold">No recorded miscellaneous item lines.</td>
                     </tr>
                   ) : (
                     miscItems.map(m => (

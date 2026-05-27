@@ -24,12 +24,12 @@ export const ServiceOfferingCard: React.FC<ServiceOfferingCardProps> = ({
         <div className="space-y-1">
           <div className="flex items-center gap-1.5 flex-wrap">
             {service.isFestiveSpecial && (
-              <span className="text-[9px] font-bold uppercase tracking-wider text-amber-600 bg-amber-50 dark:bg-amber-950/30 px-2 py-0.5 rounded flex items-center gap-0.5 border border-amber-204/10">
+              <span className="text-[9px] font-bold text-amber-600 bg-amber-50 dark:bg-amber-950/30 px-2 py-0.5 rounded flex items-center gap-0.5 border border-amber-204/10">
                 🪔 FESTIVE OFFER
               </span>
             )}
             {service.isPopular && (
-              <span className="text-[9px] font-bold uppercase tracking-wider text-red-600 bg-red-50 dark:bg-red-950/20 px-2 py-0.5 rounded">
+              <span className="text-[9px] font-bold text-red-600 bg-red-50 dark:bg-red-950/20 px-2 py-0.5 rounded">
                 ⭐ POPULAR
               </span>
             )}
@@ -68,7 +68,7 @@ export const ServiceOfferingCard: React.FC<ServiceOfferingCardProps> = ({
             <button
               type="button"
               onClick={() => onAdd(service)}
-              className="w-full text-center py-1 bg-white hover:bg-orange-50 dark:bg-stone-800 dark:hover:bg-stone-700 text-orange-600 dark:text-amber-400 text-xs font-black uppercase tracking-wider rounded cursor-pointer"
+              className="w-full text-center py-1 bg-white hover:bg-orange-50 dark:bg-stone-800 dark:hover:bg-stone-700 text-orange-600 dark:text-amber-400 text-xs font-black rounded cursor-pointer"
             >
               ADD +
             </button>

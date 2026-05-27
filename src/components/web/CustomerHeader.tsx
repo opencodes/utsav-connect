@@ -15,6 +15,7 @@ import {
   Store,
 } from 'lucide-react';
 import LogoSvg from '../../assets/logo.svg';
+import LogoLightSvg from '../../assets/logo-light.svg';
 import { APP_NAME } from '../../brand';
 import { HERO_VENDOR_CITIES } from './LandingPage/heroVendorSearch';
 
@@ -70,6 +71,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
   } | null>(null);
 
   const onHeroGradient = blendWithHero && !scrolledPastHero;
+  const logoSrc = onHeroGradient ? LogoSvg : LogoLightSvg;
 
   useEffect(() => {
     if (!blendWithHero) {
@@ -196,7 +198,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
               aria-label={`${APP_NAME} home`}
             >
               <img
-                src={LogoSvg}
+                src={logoSrc}
                 alt={APP_NAME}
                 className="h-8 sm:h-9 w-auto select-none transition-transform duration-200 group-hover:scale-[1.02]"
                 referrerPolicy="no-referrer"
@@ -315,7 +317,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
                 {isVendorLoggedIn ? 'Vendor dashboard' : 'List your service'}
               </span>
               <span className="xl:hidden">{isVendorLoggedIn ? 'Dashboard' : 'List service'}</span>
-              <span className="text-[10px] font-black uppercase bg-[#FFCB44] text-red-950 px-1.5 py-0.5 rounded">
+              <span className="text-[10px] font-black bg-[#FFCB44] text-red-950 px-1.5 py-0.5 rounded">
                 Free
               </span>
             </button>
@@ -542,7 +544,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
                 onNavigate('event-planner-register');
                 setMobileMenuOpen(false);
               }}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold uppercase text-amber-800 bg-amber-50 border border-amber-200 dark:bg-stone-800 dark:border-stone-700 dark:text-amber-400"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold text-amber-800 bg-amber-50 border border-amber-200 dark:bg-stone-800 dark:border-stone-700 dark:text-amber-400"
             >
               <Landmark className="w-4 h-4" />
               Become an event planner

@@ -140,7 +140,7 @@ export const CartPage: React.FC<CartPageProps> = ({
           </p>
           <button
             onClick={() => onNavigate('restaurants')}
-            className="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs tracking-wider uppercase rounded-xl shadow transition"
+            className="px-6 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded-xl shadow transition"
           >
             Start Ordering Feasts
           </button>
@@ -250,7 +250,7 @@ export const CartPage: React.FC<CartPageProps> = ({
                     />
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-black text-white bg-orange-600 px-2 py-0.5 rounded uppercase">
+                        <span className="text-xs font-black text-white bg-orange-600 px-2 py-0.5 rounded">
                           {addr.type}
                         </span>
                         {addr.landmark && (
@@ -308,11 +308,11 @@ export const CartPage: React.FC<CartPageProps> = ({
                       placeholder="ENTER COUPON CODE"
                       value={customCouponInput}
                       onChange={(e) => setCustomCouponInput(e.target.value.toUpperCase())}
-                      className="flex-1 px-3 py-2 border rounded-lg text-xs font-mono font-bold uppercase placeholder-stone-400 dark:border-stone-700 text-stone-900 dark:text-white dark:bg-stone-800"
+                      className="flex-1 px-3 py-2 border rounded-lg text-xs font-mono font-bold placeholder-stone-400 dark:border-stone-700 text-stone-900 dark:text-white dark:bg-stone-800"
                     />
                     <button
                       onClick={() => handleApplyCoupon(customCouponInput)}
-                      className="px-4 py-2 bg-orange-600 text-white font-bold text-xs rounded-lg hover:bg-orange-700 uppercase"
+                      className="px-4 py-2 bg-orange-600 text-white font-bold text-xs rounded-lg hover:bg-orange-700"
                     >
                       Apply
                     </button>
@@ -321,7 +321,7 @@ export const CartPage: React.FC<CartPageProps> = ({
 
                   {/* Quick select coupons list */}
                   <div className="space-y-2 pt-2">
-                    <span className="text-[10px] font-black text-stone-400 uppercase tracking-widest font-mono">
+                    <span className="text-[10px] font-black text-stone-400 font-mono">
                       Click to Apply Golden Deals
                     </span>
                     <div className="grid gap-2">
@@ -385,7 +385,7 @@ export const CartPage: React.FC<CartPageProps> = ({
                 )}
 
                 <div className="border-t border-dashed border-stone-200 dark:border-stone-700 pt-4 flex justify-between text-sm text-stone-900 dark:text-white font-black leading-none">
-                  <span className="uppercase text-xs tracking-wider">Grand Total (Incl. GST)</span>
+                  <span className="text-xs">Grand Total (Incl. GST)</span>
                   <span className="text-orange-600 dark:text-orange-400 text-lg">₹{grandTotal}</span>
                 </div>
               </div>
@@ -416,7 +416,7 @@ export const CartPage: React.FC<CartPageProps> = ({
                 <button
                   onClick={handleCheckout}
                   disabled={isProcessingCheckout || userProfile.walletBalance < grandTotal}
-                  className="w-full py-4 text-center font-black tracking-wider text-xs uppercase text-white bg-orange-600 hover:bg-orange-700 rounded-xl shadow-lg hover:shadow-xl active:scale-95 disabled:bg-stone-300 dark:disabled:bg-stone-800 disabled:text-stone-400 disabled:scale-100 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                  className="w-full py-4 text-center font-black text-xs text-white bg-orange-600 hover:bg-orange-700 rounded-xl shadow-lg hover:shadow-xl active:scale-95 disabled:bg-stone-300 dark:disabled:bg-stone-800 disabled:text-stone-400 disabled:scale-100 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                   id="checkout-trigger-button"
                 >
                   {isProcessingCheckout ? (

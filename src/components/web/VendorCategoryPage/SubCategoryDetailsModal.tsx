@@ -44,7 +44,7 @@ export const SubCategoryDetailsModal: React.FC<SubCategoryDetailsModalProps> = (
         </div>
 
         <div className="p-6 sm:p-8 space-y-4 text-left">
-          <h4 className="font-bold text-xs uppercase text-amber-600 tracking-wider">Auspicious Category Detail</h4>
+          <h4 className="font-bold text-xs text-amber-600">Auspicious Category Detail</h4>
           <p className="text-xs text-stone-605 dark:text-stone-300 leading-relaxed">
             We have cataloged 24 premier customized traditional providers matching the <b>{category.name}</b> category in Noida and adjoining NCR suburbs. They provide satvik standards, tailored multi-day packages, and high-performance execution.
           </p>

@@ -26,7 +26,7 @@ export const WeddingDirectoryBannerPromo: React.FC<WeddingDirectoryBannerPromoPr
         <button
           type="button"
           onClick={() => onNavigate('vendor-categories')}
-          className="relative z-10 px-6 py-3.5 bg-[#C51C13] hover:bg-[#A2110A] text-white font-semibold text-sm uppercase tracking-wide rounded-lg transition-colors inline-flex items-center gap-2 cursor-pointer"
+          className="relative z-10 px-6 py-3.5 bg-[#C51C13] hover:bg-[#A2110A] text-white font-semibold text-sm tracking-wide rounded-lg transition-colors inline-flex items-center gap-2 cursor-pointer"
         >
           <Sparkles className="w-4 h-4" />
           Search all vendors

@@ -85,7 +85,7 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavig
           <div className="footer-download-banner-inner mx-auto max-w-7xl px-4 sm:px-6 lg:px-10 pt-12 md:pt-16 pb-0">
             <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-end md:items-stretch">
               <div className="space-y-4 pb-12 md:pb-16">
-                <span className="inline-block text-xs font-bold text-amber-200 uppercase tracking-widest bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+                <span className="inline-block text-xs font-bold text-amber-200 bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
                   Har Traditional Function Ka Smart Planning Partner
                 </span>
                 <h3
@@ -151,7 +151,7 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavig
                       <path d="M5 3c-.22 0-.43.06-.61.18L12.52 12l-8.13 8.81c.18.12.39.19.61.19.18 0 .35-.04.51-.13l13.79-7.23c.44-.23.7-.84.7-1.54s-.26-1.31-.7-1.54L5.51 3.13C5.35 3.04 5.18 3 5 3z" />
                     </svg>
                     <div className="text-left leading-none">
-                      <span className="text-[9px] text-stone-400 font-bold tracking-wider block uppercase">
+                      <span className="text-[9px] text-stone-400 font-bold block">
                         Coming soon
                       </span>
                       <span className="text-sm font-extrabold tracking-tight block mt-0.5 font-sans">Google Play</span>
@@ -167,7 +167,7 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavig
                       <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-48.4-19.1-77.1-19.1-37.4 0-77.5 21.8-97.6 57.2-40 70.2-10.2 175 28.7 230 19.1 27.2 41.5 57.4 71.3 56.2 28.7-1.1 39.6-18.5 74.3-18.5 34.7 0 45.1 18.5 74.8 17.9 30.3-.6 50.1-27.2 69-54.6 21.8-31.5 30.8-62 31.1-63.6-1-.5-60.1-23.1-60.3-91.4zM269.4 90.1c19.1-23.1 31.9-55.2 28.4-87.1-27.4 1.1-60.4 18.2-80.1 41-16.7 18.8-31.3 51.3-27.3 82.9 30.6 2.3 61.4-14.7 79-36.8z" />
                     </svg>
                     <div className="text-left leading-none">
-                      <span className="text-[9px] text-stone-400 font-bold tracking-wider block uppercase font-sans">
+                      <span className="text-[9px] text-stone-400 font-bold block font-sans">
                         Coming soon
                       </span>
                       <span className="text-sm font-extrabold tracking-tight block mt-0.5 font-sans">App Store</span>
@@ -233,7 +233,7 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavig
             </div>
 
             <div className="space-y-4">
-              <h4 className="text-stone-500 font-bold text-sm tracking-wider uppercase mb-3">
+              <h4 className="text-stone-500 font-bold text-sm mb-3">
                 Explore features
               </h4>
               <ul className="space-y-2 text-sm text-stone-400">
@@ -295,7 +295,7 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavig
             </div>
 
             <div className="space-y-4">
-              <h4 className="text-stone-500 font-bold text-sm tracking-wider uppercase mb-3">
+              <h4 className="text-stone-500 font-bold text-sm mb-3">
                 Useful links
               </h4>
               <ul className="space-y-2 text-sm text-stone-400">
@@ -328,7 +328,7 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavig
             </div>
 
             <div className="space-y-4">
-              <h4 className="text-stone-500 font-bold text-sm tracking-wider uppercase mb-3">
+              <h4 className="text-stone-500 font-bold text-sm mb-3">
                 Contact us
               </h4>
               <ul className="space-y-3 text-sm text-stone-400">
@@ -352,7 +352,7 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavig
             </div>
 
             <div className="space-y-4">
-              <h4 className="text-stone-500 font-bold text-sm tracking-wider uppercase mb-3">
+              <h4 className="text-stone-500 font-bold text-sm mb-3">
                 More pages
               </h4>
               <ul className="space-y-2 text-sm text-stone-400">

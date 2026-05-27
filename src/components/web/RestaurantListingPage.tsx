@@ -163,7 +163,7 @@ export const RestaurantListingPage: React.FC<RestaurantListingPageProps> = ({ on
             <button
               onClick={handleSimulateInfiniteScroll}
               disabled={isInfiniteScrolling}
-              className="px-6 py-2.5 bg-white dark:bg-stone-800 hover:bg-orange-50 dark:hover:bg-amber-950/20 text-stone-800 dark:text-stone-200 hover:text-orange-600 dark:hover:text-amber-400 font-extrabold text-xs tracking-wider uppercase border border-orange-100 dark:border-stone-800 rounded-full shadow-md hover:shadow-lg disabled:opacity-50 transition-all flex items-center gap-2 cursor-pointer"
+              className="px-6 py-2.5 bg-white dark:bg-stone-800 hover:bg-orange-50 dark:hover:bg-amber-950/20 text-stone-800 dark:text-stone-200 hover:text-orange-600 dark:hover:text-amber-400 font-extrabold text-xs border border-orange-100 dark:border-stone-800 rounded-full shadow-md hover:shadow-lg disabled:opacity-50 transition-all flex items-center gap-2 cursor-pointer"
             >
               {isInfiniteScrolling ? (
                 <>

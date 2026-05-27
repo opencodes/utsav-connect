@@ -84,7 +84,7 @@ export const VendorFiltersRibbon: React.FC<VendorFiltersRibbonProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-1">
-          <span className="text-[11px] font-bold text-stone-400 dark:text-stone-500 uppercase font-mono mr-1">
+          <span className="text-[11px] font-bold text-stone-400 dark:text-stone-500 font-mono mr-1">
             Categories:
           </span>
           <button

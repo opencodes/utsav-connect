@@ -78,7 +78,7 @@ export const FeaturedOffersSection: React.FC<FeaturedOffersSectionProps> = ({ on
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-orange-500"></span>
               </span>
-              <span className="text-[11px] font-extrabold tracking-widest text-amber-500 uppercase font-mono">
+              <span className="text-[11px] font-extrabold text-amber-500 font-mono">
                 Interactive Guest & RSVP Suite
               </span>
             </div>
@@ -204,7 +204,7 @@ export const FeaturedOffersSection: React.FC<FeaturedOffersSectionProps> = ({ on
 
           {/* RIGHT COLUMN: Splendid Events & Timelines Showcase (7 Cols) */}
           <div className="lg:col-span-7 space-y-4">
-            <h4 className="text-xs font-bold text-stone-450 uppercase tracking-widest flex items-center gap-1.5">
+            <h4 className="text-xs font-bold text-stone-450 flex items-center gap-1.5">
               <Clock className="w-4 h-4 text-amber-500" />
               Featured Wedding Events & Feast Menu Highlights
             </h4>
@@ -215,7 +215,7 @@ export const FeaturedOffersSection: React.FC<FeaturedOffersSectionProps> = ({ on
               <div className="bg-stone-950/80 p-4 rounded-2xl border border-stone-850 hover:border-amber-550/20 shadow-sm transition-all duration-300 flex flex-col justify-between group">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-extrabold text-amber-500 bg-amber-500/10 px-2.5 py-0.5 rounded-full font-mono uppercase">
+                    <span className="text-[10px] font-extrabold text-amber-500 bg-amber-500/10 px-2.5 py-0.5 rounded-full font-mono">
                       Day 1 Ritual
                     </span>
                     <AnimatedDiya className="w-5 h-5 filter drop-shadow animate-pulse" />
@@ -240,7 +240,7 @@ export const FeaturedOffersSection: React.FC<FeaturedOffersSectionProps> = ({ on
               <div className="bg-stone-950/80 p-4 rounded-2xl border border-stone-850 hover:border-amber-550/20 shadow-sm transition-all duration-300 flex flex-col justify-between group">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-extrabold text-orange-500 bg-orange-500/10 px-2.5 py-0.5 rounded-full font-mono uppercase">
+                    <span className="text-[10px] font-extrabold text-orange-500 bg-orange-500/10 px-2.5 py-0.5 rounded-full font-mono">
                       Day 2 Main
                     </span>
                     <AnimatedDiya className="w-5 h-5 filter drop-shadow animate-pulse" style={{ animationDelay: '0.5s' }} />
@@ -265,7 +265,7 @@ export const FeaturedOffersSection: React.FC<FeaturedOffersSectionProps> = ({ on
               <div className="bg-stone-950/80 p-4 rounded-2xl border border-stone-850 hover:border-amber-550/20 shadow-sm transition-all duration-300 flex flex-col justify-between group">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-extrabold text-emerald-500 bg-emerald-500/10 px-2.5 py-0.5 rounded-full font-mono uppercase">
+                    <span className="text-[10px] font-extrabold text-emerald-500 bg-emerald-500/10 px-2.5 py-0.5 rounded-full font-mono">
                       Day 3 Bhoj
                     </span>
                     <AnimatedDiya className="w-5 h-5 filter drop-shadow animate-pulse" style={{ animationDelay: '1s' }} />

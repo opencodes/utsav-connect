@@ -1,4 +1,5 @@
 import React from 'react';
+import { AdminEmptyState } from '../AdminEmptyState';
 
 interface RecentOrder {
   id: string;
@@ -17,17 +18,25 @@ interface RecentOrdersTableProps {
 
 export const RecentOrdersTable: React.FC<RecentOrdersTableProps> = ({ recentOrders, onNavigateTab }) => {
   return (
-    <div className="lg:col-span-3 bg-white dark:bg-stone-850 rounded-2xl border border-orange-100/40 dark:border-stone-800 shadow-sm overflow-hidden text-left space-y-4 p-5">
+    <div className="admin-card lg:col-span-3 overflow-hidden text-left space-y-4 p-5">
       <div className="flex justify-between items-center">
-        <h3 className="text-base font-black text-stone-950 dark:text-white">Recent Festive Orders Index</h3>
+        <h3 className="text-base font-semibold text-stone-900 dark:text-white">Recent orders</h3>
         <button
+          type="button"
           onClick={() => onNavigateTab('orders')}
-          className="text-xs font-bold text-orange-600 dark:text-orange-400 hover:underline cursor-pointer"
+          className="text-xs font-medium text-[#C51C13] hover:underline cursor-pointer"
         >
-          Master Orders Queue &rarr;
+          View all orders →
         </button>
       </div>
 
+      {recentOrders.length === 0 ? (
+        <AdminEmptyState
+          title="No recent orders"
+          description="New orders will show up here."
+          className="border-0 shadow-none"
+        />
+      ) : (
       <div className="overflow-x-auto">
         <table className="w-full text-xs text-left text-stone-700 dark:text-stone-300">
           <thead className="text-[10px] font-bold text-stone-400 bg-stone-50 dark:bg-stone-900/50">
@@ -51,7 +60,7 @@ export const RecentOrdersTable: React.FC<RecentOrdersTableProps> = ({ recentOrde
                 <td className="p-3 font-bold text-stone-900 dark:text-white">₹{ord.amount}</td>
                 <td className="p-3">
                   <span
-                    className={`text-[9px] font-bold px-2 py-0.5 rounded uppercase ${
+                    className={`text-[9px] font-bold px-2 py-0.5 rounded ${
                       ord.status === 'Delivered'
                         ? 'bg-green-100 text-green-700'
                         : ord.status === 'Cancelled'
@@ -68,6 +77,7 @@ export const RecentOrdersTable: React.FC<RecentOrdersTableProps> = ({ recentOrde
           </tbody>
         </table>
       </div>
+      )}
     </div>
   );
 };

@@ -85,7 +85,7 @@ export const TrendingVendorsSection: React.FC<TrendingVendorsSectionProps> = ({
       <div className="space-y-1">
         <div className="flex items-center gap-2">
           <Flame className="w-5 h-5 text-orange-600 dark:text-orange-400 shrink-0" aria-hidden />
-          <span className="text-[10px] font-extrabold uppercase tracking-widest text-orange-600 dark:text-orange-400">
+          <span className="text-[10px] font-extrabold text-orange-600 dark:text-orange-400">
             Trending vendors
           </span>
         </div>

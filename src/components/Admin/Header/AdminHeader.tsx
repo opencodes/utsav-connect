@@ -6,15 +6,16 @@ const ADMIN_TAB_TITLES: Record<string, string> = {
   dashboard: 'Dashboard',
   restaurants: 'Products & Stores',
   orders: 'Order Logs',
-  customers: 'Customers Sync',
-  marketing: 'Marketing & Campaigns',
-  'planner-events': 'Events & Rituals',
+  customers: 'Customers',
+  marketing: 'Marketing',
+  'planner-dashboard': 'Dashboard',
+  'planner-events': 'Event details',
   'planner-guests': 'Guests & RSVP',
   'planner-feast': 'Feast & Catering',
-  'planner-vendors': 'Vendors Directory',
+  'planner-vendors': 'Vendors',
   'planner-budget': 'Budget & Expenses',
   'planner-chuman': 'Chuman (Gifts)',
-  'planner-inventory': 'Bartan & Cylinders',
+  'planner-inventory': 'Inventory',
 };
 
 function tabTitle(tabId: string): string {
@@ -33,92 +34,56 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
   const [showNotifications, setShowNotifications] = useState(false);
   const displayTitle = tabTitle(currentTabName);
 
-  const notifications = plannerWorkspace
-    ? [
-        {
-          title: 'Upcoming: Tilak ceremony',
-          detail: 'Guest list draft ready — 42 confirmed of 60 invited',
-          time: 'Just now',
-          unread: true,
-        },
-        {
-          title: 'Vendor quote received',
-          detail: 'Catering partner replied for feast planning',
-          time: '2h ago',
-          unread: true,
-        },
-        {
-          title: 'Budget reminder',
-          detail: 'Chuman allocation at 78% of planned spend',
-          time: 'Yesterday',
-          unread: false,
-        },
-      ]
-    : [
-        {
-          title: 'New Multi-item Order Placed',
-          detail: 'OrderID: FED-9831 by Aishwarya, value ₹560',
-          time: 'Just now',
-          unread: true,
-        },
-        {
-          title: 'Diwali Campaign Alert',
-          detail: 'Coupon DIWALISWEET conversion rate crossed 80%',
-          time: '10m ago',
-          unread: true,
-        },
-        {
-          title: 'Approval Required',
-          detail: 'New menu item: "Dry Fruit Shrikhand" needs kitchen review',
-          time: '1h ago',
-          unread: false,
-        },
-      ];
+  const notifications: {
+    title: string;
+    detail: string;
+    time: string;
+    unread: boolean;
+  }[] = [];
 
   return (
-    <header
-      className="sticky top-0 z-40 bg-white/95 dark:bg-stone-900/95 border-b border-orange-100/40 dark:border-stone-800 p-4 flex items-center justify-between gap-4 shadow-sm"
-      id="admin-top-header"
-      style={{ contentVisibility: 'auto' }}
-    >
-      <div className="flex items-center gap-4">
-        <h2 className="text-lg font-black tracking-tight text-stone-900 dark:text-white">
+    <header id="admin-top-header">
+      <div className="admin-header-leading">
+        <h1 className="admin-page-title">
           {plannerWorkspace ? (
             <>
-              {APP_NAME}{' '}
-              <span className="text-orange-600 font-sans font-bold">/ {displayTitle}</span>
+              {APP_NAME}
+              <span> / {displayTitle}</span>
             </>
           ) : (
             <>
-              Root // <span className="text-orange-600 font-sans">{displayTitle}</span>
+              Admin
+              <span> / {displayTitle}</span>
             </>
           )}
-        </h2>
+        </h1>
 
-        <div className="hidden md:flex relative max-w-xs text-left">
-          <input
-            type="text"
-            placeholder={
-              plannerWorkspace ? 'Search events, guests, vendors…' : 'Search master indexes...'
-            }
-            className="pl-8 pr-3 py-1.5 text-xs rounded-xl border bg-stone-50 dark:bg-stone-850 dark:border-stone-800 focus:outline-none focus:ring-1 focus:ring-orange-500 text-stone-900 dark:text-white"
+        <div className="admin-search-wrap">
+          <label htmlFor="admin-header-search" className="sr-only">
+            Search workspace
+          </label>
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 pointer-events-none"
+            aria-hidden
           />
-          <Search className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-stone-400" />
+          <input
+            id="admin-header-search"
+            type="search"
+            placeholder={plannerWorkspace ? 'Search events, guests…' : 'Search orders, stores…'}
+            className="admin-search-input"
+          />
         </div>
       </div>
 
-      <div className="flex items-center gap-4 select-none">
+      <div className="admin-header-actions">
         <button
           type="button"
           onClick={() =>
-            alert(
-              plannerWorkspace
-                ? 'Planner data synced (demo).'
-                : 'Database index synchronized with Live Cloud Run container.'
-            )
+            alert(plannerWorkspace ? 'Planner data synced (demo).' : 'Data refreshed (demo).')
           }
-          className="p-2 text-stone-400 hover:text-orange-650 rounded-full hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors cursor-pointer"
-          title="Click to Resync Nodes"
+          className="admin-icon-btn"
+          title="Refresh"
+          aria-label="Refresh data"
         >
           <RefreshCw className="w-4 h-4" />
         </button>
@@ -127,67 +92,68 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
           <button
             type="button"
             onClick={() => setShowNotifications(!showNotifications)}
-            className="p-2 text-stone-400 hover:text-orange-655 rounded-full hover:bg-stone-55 dark:hover:bg-stone-800 transition-colors relative cursor-pointer"
-            title="Read announcements"
+            className="admin-icon-btn relative"
+            title="Notifications"
+            aria-expanded={showNotifications}
+            aria-label="Notifications"
           >
             <Bell className="w-4 h-4" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-600 rounded-full animate-ping" />
+            {notifications.length > 0 ? (
+              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full" aria-hidden />
+            ) : null}
           </button>
 
           {showNotifications && (
-            <div className="absolute top-full right-0 mt-2 w-80 rounded-2xl bg-white dark:bg-stone-800 shadow-2xl border border-orange-100 dark:border-stone-700 p-3 z-50 text-left animate-in fade-in slide-in-from-top-2 duration-150">
-              <div className="flex justify-between items-center pb-2 border-b border-light-100 dark:border-stone-700 mb-2">
-                <span className="text-xs font-black text-stone-400 tracking-wider">
-                  {plannerWorkspace ? 'Planner updates' : 'Live System Logs'}
+            <div
+              className="admin-notify-panel absolute top-full right-0 mt-2 w-80 rounded-xl bg-white dark:bg-stone-800 shadow-lg border border-stone-200 dark:border-stone-700 p-3 z-50 text-left"
+              role="dialog"
+              aria-label="Notifications"
+            >
+              <div className="flex justify-between items-center pb-2 mb-2 border-b border-stone-200 dark:border-stone-700">
+                <span className="text-xs font-semibold text-stone-500 tracking-wide">
+                  Notifications
                 </span>
                 <button
                   type="button"
-                  onClick={() => alert('Announcements flagged as completed.')}
-                  className="text-[10px] text-orange-600 hover:underline font-bold cursor-pointer"
+                  onClick={() => alert('All notifications marked as read (demo).')}
+                  className="text-xs font-medium text-[#C51C13] hover:underline cursor-pointer"
                 >
-                  Clear All
+                  Clear all
                 </button>
               </div>
 
-              <div className="space-y-2 font-semibold">
-                {notifications.map((not, idx) => (
-                  <div
-                    key={idx}
-                    className={`p-2.5 rounded-xl border text-xs text-left ${
+              <ul className="space-y-2 max-h-64 overflow-y-auto">
+                {notifications.length === 0 ? (
+                  <li className="py-6 text-center text-xs text-stone-500">No notifications</li>
+                ) : null}
+                {notifications.map((not) => (
+                  <li
+                    key={not.title}
+                    className={`p-2.5 rounded-lg border text-left ${
                       not.unread
-                        ? 'bg-orange-600/5 border-orange-600/20'
-                        : 'bg-transparent border-transparent'
+                        ? 'bg-orange-50 dark:bg-orange-950/30 border-orange-100 dark:border-orange-900/50'
+                        : 'border-transparent'
                     }`}
                   >
                     <div className="flex justify-between items-start gap-2">
-                      <b className="font-extrabold text-stone-900 dark:text-white font-sans">
-                        {not.title}
-                      </b>
-                      <span className="text-[9px] text-stone-400 shrink-0 font-mono font-bold">
-                        {not.time}
-                      </span>
+                      <p className="text-sm font-medium text-stone-900 dark:text-stone-100">{not.title}</p>
+                      <span className="text-[10px] text-stone-400 shrink-0 font-mono">{not.time}</span>
                     </div>
-                    <p className="text-stone-500 dark:text-stone-300 text-[11px] mt-0.5">
-                      {not.detail}
-                    </p>
-                  </div>
+                    <p className="text-xs text-stone-500 dark:text-stone-400 mt-0.5">{not.detail}</p>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
           )}
         </div>
 
-        <div className="flex items-center gap-2 border-l pl-4 border-stone-105 dark:border-stone-850">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-orange-600 to-orange-700 flex items-center justify-center text-sm">
-            📯
+        <div className="admin-user-chip hidden sm:flex">
+          <div className="admin-user-avatar" aria-hidden>
+            {plannerWorkspace ? 'EP' : 'AD'}
           </div>
-          <div className="text-left leading-none hidden sm:block">
-            <h4 className="text-xs font-black text-stone-900 dark:text-white">
-              {plannerWorkspace ? 'Customer account' : 'Admin Core'}
-            </h4>
-            <span className="text-[9px] font-mono font-bold text-green-700 dark:text-green-400">
-              {plannerWorkspace ? 'Workspace active' : 'Server Online'}
-            </span>
+          <div>
+            <p className="admin-user-name">{plannerWorkspace ? 'Planner account' : 'Admin'}</p>
+            <p className="admin-user-status">Active</p>
           </div>
         </div>
       </div>

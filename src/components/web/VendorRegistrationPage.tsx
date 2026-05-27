@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { APP_NAME, SUPPORT_EMAIL } from '../../brand';
 import { LandingSection } from './LandingPage/LandingSection';
+import { PageBanner } from './PageBanner';
 import { WEDDING_CATEGORIES } from './VendorCategoryPage/CategoriesGrid';
 import { HERO_VENDOR_CITIES } from './LandingPage/heroVendorSearch';
 
@@ -151,24 +152,30 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
 
   return (
     <div className="min-h-screen bg-[#FFFDF7] dark:bg-stone-900" id="vendor-registration-page">
-      <section className="border-b border-stone-200/80 dark:border-stone-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-28 pb-10 lg:pb-14">
-          <div className="max-w-2xl space-y-4 text-left">
-            <span className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-orange-600 dark:text-amber-400">
-              <span className="h-px w-6 bg-gradient-to-r from-orange-500 to-amber-400" aria-hidden />
-              List your service
-              <span className="h-px w-6 bg-gradient-to-r from-amber-400 to-orange-500" aria-hidden />
-            </span>
-            <h1 className="heading-page text-3xl sm:text-4xl text-[#C51C13] dark:text-white">
-              Register as a vendor on {APP_NAME}
-            </h1>
-            <p className="text-sm sm:text-base text-stone-600 dark:text-stone-300 leading-relaxed">
-              Tell us about your business — venues, catering, decor, photography, pandits, and more.
-              Listing is free; our team reviews applications before your profile goes live.
-            </p>
-          </div>
+      <PageBanner
+        id="vendor-registration-banner"
+        variant="vendor"
+        eyebrow="List your service"
+        title={`Register as a vendor on ${APP_NAME}`}
+        description="Tell us about your business — venues, catering, decor, photography, pandits, and more. Listing is free; our team reviews applications before your profile goes live."
+        imageSrc="https://images.unsplash.com/photo-1555244162-803834f70033?w=1400&auto=format&fit=crop&q=80"
+        imageAlt="Wedding catering and celebration feast"
+      >
+        <div className="flex flex-wrap gap-2 sm:gap-3">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white">
+            <Store className="w-3.5 h-3.5 text-[#FFCB44] shrink-0" aria-hidden />
+            Free vendor listing
+          </span>
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white">
+            <Building2 className="w-3.5 h-3.5 text-[#FFCB44] shrink-0" aria-hidden />
+            {STEPS.length}-step application
+          </span>
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white">
+            <Clock className="w-3.5 h-3.5 text-[#FFCB44] shrink-0" aria-hidden />
+            Review in 2–3 business days
+          </span>
         </div>
-      </section>
+      </PageBanner>
 
       <LandingSection tone="white" showTexture={false} showMandala={false} innerClassName="py-10 sm:py-14">
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-start">

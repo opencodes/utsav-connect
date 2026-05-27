@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { APP_NAME, SUPPORT_EMAIL } from '../../brand';
 import { LandingSection } from './LandingPage/LandingSection';
+import { PageBanner } from './PageBanner';
 import { HERO_VENDOR_CITIES } from './LandingPage/heroVendorSearch';
 import { HERO_EVENT_TYPES } from './LandingPage/heroEventSearch';
 
@@ -236,24 +237,30 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
 
   return (
     <div className="min-h-screen bg-[#FFFDF7] dark:bg-stone-900" id="event-planner-registration-page">
-      <section className="border-b border-stone-200/80 dark:border-stone-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-28 pb-10 lg:pb-14">
-          <div className="max-w-2xl space-y-4 text-left">
-            <span className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-orange-600 dark:text-amber-400">
-              <span className="h-px w-6 bg-gradient-to-r from-orange-500 to-amber-400" aria-hidden />
-              Event planner
-              <span className="h-px w-6 bg-gradient-to-r from-amber-400 to-orange-500" aria-hidden />
-            </span>
-            <h1 className="heading-page text-3xl sm:text-4xl text-[#C51C13] dark:text-white">
-              Register as a {APP_NAME} customer for event planning
-            </h1>
-            <p className="text-sm sm:text-base text-stone-600 dark:text-stone-300 leading-relaxed">
-              Step 1: tell us about your event. Step 2: create your customer login — then open your
-              planning workspace.
-            </p>
-          </div>
+      <PageBanner
+        id="event-planner-register-banner"
+        variant="planner"
+        eyebrow="Event planner"
+        title={`Register as a ${APP_NAME} customer for event planning`}
+        description="Step 1: tell us about your event. Step 2: create your customer login — then open your planning workspace."
+        imageSrc="https://images.unsplash.com/photo-1530103862673-de8c9a59d780?w=1400&auto=format&fit=crop&q=80"
+        imageAlt="Festive event celebration"
+      >
+        <div className="flex flex-wrap gap-2 sm:gap-3">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white">
+            <CalendarPlus className="w-3.5 h-3.5 text-[#FFCB44] shrink-0" aria-hidden />
+            {STEPS[0]} → {STEPS[1]}
+          </span>
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white">
+            <LayoutDashboard className="w-3.5 h-3.5 text-[#FFCB44] shrink-0" aria-hidden />
+            Free planning workspace
+          </span>
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white">
+            <User className="w-3.5 h-3.5 text-[#FFCB44] shrink-0" aria-hidden />
+            For hosts &amp; planners
+          </span>
         </div>
-      </section>
+      </PageBanner>
 
       <LandingSection tone="white" showTexture={false} showMandala={false} innerClassName="py-10 sm:py-14">
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-start">

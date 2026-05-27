@@ -1,4 +1,5 @@
 import React from 'react';
+import { AdminEmptyState } from '../AdminEmptyState';
 
 interface RevenueTrendPoint {
   date: string;
@@ -20,39 +21,44 @@ export const DiwaliAnalyticsChart: React.FC<DiwaliAnalyticsChartProps> = ({
   const chartHeight = 160;
   const chartWidth = 500;
   const numDataPoints = revenueTrend.length;
+  const hasChartData = numDataPoints >= 2;
 
-  const pointsString = revenueTrend
-    .map((point, idx) => {
-      const x = (idx / (numDataPoints - 1)) * chartWidth;
-      const maxVal = 250000;
-      const y = chartHeight - (point.revenue / maxVal) * chartHeight;
-      return `${x},${y}`;
-    })
-    .join(' ');
+  const pointsString = hasChartData
+    ? revenueTrend
+        .map((point, idx) => {
+          const x = (idx / (numDataPoints - 1)) * chartWidth;
+          const maxVal = 250000;
+          const y = chartHeight - (point.revenue / maxVal) * chartHeight;
+          return `${x},${y}`;
+        })
+        .join(' ')
+    : '';
 
-  const pointsOrdersString = revenueTrend
-    .map((point, idx) => {
-      const x = (idx / (numDataPoints - 1)) * chartWidth;
-      const maxVal = 900;
-      const y = chartHeight - (point.orders / maxVal) * chartHeight;
-      return `${x},${y}`;
-    })
-    .join(' ');
+  const pointsOrdersString = hasChartData
+    ? revenueTrend
+        .map((point, idx) => {
+          const x = (idx / (numDataPoints - 1)) * chartWidth;
+          const maxVal = 900;
+          const y = chartHeight - (point.orders / maxVal) * chartHeight;
+          return `${x},${y}`;
+        })
+        .join(' ')
+    : '';
 
   return (
-    <div className="lg:col-span-2 bg-white dark:bg-stone-850 p-6 rounded-2xl border border-orange-100/40 dark:border-stone-800 shadow-sm space-y-4">
-      <div className="flex justify-between items-center border-b pb-3 border-stone-105 dark:border-stone-800">
+    <div className="admin-card lg:col-span-2 p-6 space-y-4">
+      <div className="flex justify-between items-center border-b pb-3 border-stone-200 dark:border-stone-700">
         <div className="text-left">
-          <h3 className="text-base font-black text-stone-950 dark:text-white">
-            Live Peak Diwali Analytics Graph
+          <h3 className="text-base font-semibold text-stone-900 dark:text-white">
+            Revenue & orders
           </h3>
-          <p className="text-[11px] text-stone-400 font-medium">Comparing real-time revenue cycles across Noida Zones</p>
+          <p className="text-xs text-stone-500 font-medium">Last 7 days across active zones</p>
         </div>
 
         <div className="flex gap-2">
           <button
             onClick={() => setActiveSegment('revenue')}
-            className={`px-2.5 py-1 rounded text-[10px] font-bold tracking-wider uppercase transition-colors cursor-pointer ${
+            className={`px-2.5 py-1 rounded text-[10px] font-bold transition-colors cursor-pointer ${
               activeSegment === 'revenue' ? 'bg-orange-600 text-white' : 'bg-stone-100 dark:bg-stone-900 text-stone-400'
             }`}
           >
@@ -60,7 +66,7 @@ export const DiwaliAnalyticsChart: React.FC<DiwaliAnalyticsChartProps> = ({
           </button>
           <button
             onClick={() => setActiveSegment('orders')}
-            className={`px-2.5 py-1 rounded text-[10px] font-bold tracking-wider uppercase transition-colors cursor-pointer ${
+            className={`px-2.5 py-1 rounded text-[10px] font-bold transition-colors cursor-pointer ${
               activeSegment === 'orders' ? 'bg-orange-600 text-white' : 'bg-stone-100 dark:bg-stone-900 text-stone-400'
             }`}
           >
@@ -69,6 +75,13 @@ export const DiwaliAnalyticsChart: React.FC<DiwaliAnalyticsChartProps> = ({
         </div>
       </div>
 
+      {!hasChartData ? (
+        <AdminEmptyState
+          title="No chart data yet"
+          description="Revenue and order trends will display once activity is recorded."
+          className="border-0 shadow-none bg-stone-50 dark:bg-stone-900/40"
+        />
+      ) : (
       <div className="relative pt-4 overflow-hidden rounded-xl">
         <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="w-full h-44 overflow-visible">
           {/* Back grid lines */}
@@ -116,6 +129,7 @@ export const DiwaliAnalyticsChart: React.FC<DiwaliAnalyticsChartProps> = ({
           {revenueTrend.map((pt, i) => <span key={i}>{pt.date}</span>)}
         </div>
       </div>
+      )}
     </div>
   );
 };

@@ -36,6 +36,7 @@ import { LANDING_HERO_SHELL_CLASS } from './components/web/landingHeroShell';
 import { AdminSidebar } from './components/Admin/Sidebar/AdminSidebar';
 import { AdminHeader } from './components/Admin/Header/AdminHeader';
 import { AdminDashboard } from './components/Admin/Dashboard/AdminDashboard';
+import { PlannerDashboard } from './components/PlannerDashboard';
 import { AdminManagement } from './components/Admin/Management/AdminManagement';
 import { AdminOrders } from './components/Admin/Orders/AdminOrders';
 import { AdminCustomers } from './components/Admin/Customers/AdminCustomers';
@@ -62,6 +63,7 @@ import {
   pushRoute,
   replaceRoute,
 } from './routing';
+import { purgeLegacyPlannerSeedData } from './plannerStorage';
 
 function getInitialRoute(): ParsedRoute {
   return parseLocation();
@@ -76,7 +78,7 @@ const COMMERCE_ADMIN_TABS = new Set([
 ]);
 
 function plannerDefaultTab(current: string): string {
-  return COMMERCE_ADMIN_TABS.has(current) ? 'planner-events' : current;
+  return COMMERCE_ADMIN_TABS.has(current) ? 'planner-dashboard' : current;
 }
 
 function isPlannerCustomer(loggedIn: boolean, customerType?: CustomerType): boolean {
@@ -85,6 +87,38 @@ function isPlannerCustomer(loggedIn: boolean, customerType?: CustomerType): bool
 
 export default function App() {
   const initialRoute = getInitialRoute();
+
+  const AUTH_STORAGE_KEY = 'utsav.auth.v1';
+
+  const readStoredAuth = (): {
+    isLoggedIn?: boolean;
+    isVendorLoggedIn?: boolean;
+    userProfile?: Partial<UserProfile>;
+    vendorSession?: Partial<VendorDashboardSession>;
+  } => {
+    try {
+      const raw = window.localStorage.getItem(AUTH_STORAGE_KEY);
+      if (!raw) return {};
+      const parsed = JSON.parse(raw) as Record<string, unknown>;
+      return {
+        isLoggedIn: typeof parsed.isLoggedIn === 'boolean' ? parsed.isLoggedIn : undefined,
+        isVendorLoggedIn:
+          typeof parsed.isVendorLoggedIn === 'boolean' ? parsed.isVendorLoggedIn : undefined,
+        userProfile:
+          parsed.userProfile && typeof parsed.userProfile === 'object'
+            ? (parsed.userProfile as Partial<UserProfile>)
+            : undefined,
+        vendorSession:
+          parsed.vendorSession && typeof parsed.vendorSession === 'object'
+            ? (parsed.vendorSession as Partial<VendorDashboardSession>)
+            : undefined,
+      };
+    } catch {
+      return {};
+    }
+  };
+
+  const storedAuth = readStoredAuth();
 
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isAdminMode, setIsAdminMode] = useState(false);
@@ -100,16 +134,21 @@ export default function App() {
   );
   const [selectedVendorId, setSelectedVendorId] = useState<string>(initialRoute.vendorId || '');
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [userProfile, setUserProfile] = useState<UserProfile>(MOCK_USER_PROFILE);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isVendorLoggedIn, setIsVendorLoggedIn] = useState(false);
+  const [userProfile, setUserProfile] = useState<UserProfile>(() => ({
+    ...MOCK_USER_PROFILE,
+    ...(storedAuth.userProfile ?? {}),
+  }));
+  const [isLoggedIn, setIsLoggedIn] = useState(() => Boolean(storedAuth.isLoggedIn));
+  const [isVendorLoggedIn, setIsVendorLoggedIn] = useState(() => Boolean(storedAuth.isVendorLoggedIn));
   const isEventPlannerCustomer = isPlannerCustomer(
     isLoggedIn,
     userProfile.customerType
   );
   const [signInInitialMode, setSignInInitialMode] = useState<SignInMode>('customer');
-  const [vendorSession, setVendorSession] =
-    useState<VendorDashboardSession>(MOCK_VENDOR_SESSION);
+  const [vendorSession, setVendorSession] = useState<VendorDashboardSession>(() => ({
+    ...MOCK_VENDOR_SESSION,
+    ...(storedAuth.vendorSession ?? {}),
+  }));
   const [vendorSearchFilters, setVendorSearchFilters] = useState({
     search: initialRoute.vendorSearch?.search ?? '',
     categoryId: initialRoute.vendorSearch?.categoryId ?? '',
@@ -133,6 +172,12 @@ export default function App() {
   // Admin dynamic states
   const [currentAdminTab, setCurrentAdminTab] = useState<string>('dashboard');
 
+  useEffect(() => {
+    if (isAdminMode) {
+      purgeLegacyPlannerSeedData();
+    }
+  }, [isAdminMode]);
+
   // Unified global callbacks & state helpers
   const handleToggleDarkMode = () => {
     setIsDarkMode((prev) => !prev);
@@ -150,6 +195,7 @@ export default function App() {
           }
           return;
         }
+        purgeLegacyPlannerSeedData();
         setCurrentAdminTab((tab) => plannerDefaultTab(tab));
         setIsAdminMode(true);
         return;
@@ -195,10 +241,40 @@ export default function App() {
     setIsVendorLoggedIn(false);
     setUserProfile((prev) => ({ ...prev, customerType: 'standard' }));
     setIsAdminMode(false);
+    try {
+      window.localStorage.removeItem(AUTH_STORAGE_KEY);
+    } catch {
+      // ignore storage errors (private mode / blocked)
+    }
     const path = pageToPath('landing');
     pushRoute(path);
     applyRoute({ page: 'landing' });
   };
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        AUTH_STORAGE_KEY,
+        JSON.stringify({
+          isLoggedIn,
+          isVendorLoggedIn,
+          userProfile: {
+            name: userProfile.name,
+            email: userProfile.email,
+            phone: userProfile.phone,
+            customerType: userProfile.customerType,
+            walletBalance: userProfile.walletBalance,
+          },
+          vendorSession: {
+            phone: vendorSession.phone,
+            email: vendorSession.email,
+          },
+        })
+      );
+    } catch {
+      // ignore storage errors (private mode / blocked)
+    }
+  }, [isLoggedIn, isVendorLoggedIn, userProfile, vendorSession]);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDarkMode);
@@ -328,7 +404,52 @@ export default function App() {
   };
 
   const openPlannerWorkspace = () => {
-    setCurrentAdminTab('planner-events');
+    // Ensure planner storage exists and has the user's event (temporary localStorage persistence)
+    try {
+      const eventsKey = 'utsav_planner_events';
+      const subKey = 'utsav_planner_sub_events';
+      const ritKey = 'utsav_planner_rituals';
+
+      const existingEventsRaw = window.localStorage.getItem(eventsKey);
+      const existingEvents = existingEventsRaw ? (JSON.parse(existingEventsRaw) as any[]) : [];
+      if (!existingEventsRaw) {
+        window.localStorage.setItem(eventsKey, JSON.stringify([]));
+      }
+      if (!window.localStorage.getItem(subKey)) {
+        window.localStorage.setItem(subKey, JSON.stringify([]));
+      }
+      if (!window.localStorage.getItem(ritKey)) {
+        window.localStorage.setItem(ritKey, JSON.stringify([]));
+      }
+
+      const hasEventDraft =
+        eventPlannerSearch.eventName || eventPlannerSearch.location || eventPlannerSearch.date || eventPlannerSearch.eventType;
+
+      if (hasEventDraft) {
+        const current = existingEventsRaw ? existingEvents : [];
+        const newId = 'evt-user';
+        const descParts = [
+          eventPlannerSearch.location ? `Location: ${eventPlannerSearch.location}` : '',
+          eventPlannerSearch.eventType ? `Type: ${eventPlannerSearch.eventType}` : '',
+        ].filter(Boolean);
+
+        const userEvent = {
+          id: newId,
+          name: eventPlannerSearch.eventName || 'My event',
+          date: eventPlannerSearch.date || new Date().toISOString().slice(0, 10),
+          description: descParts.join(' · '),
+          isActive: true,
+        };
+
+        const without = current.filter((e) => e?.id !== newId).map((e) => ({ ...e, isActive: false }));
+        window.localStorage.setItem(eventsKey, JSON.stringify([userEvent, ...without]));
+      }
+    } catch {
+      // ignore storage errors (private mode / blocked)
+    }
+
+    purgeLegacyPlannerSeedData();
+    setCurrentAdminTab('planner-dashboard');
     setIsAdminMode(true);
     pushRoute('/admin');
     applyRoute({ page: 'landing', admin: true });
@@ -404,6 +525,7 @@ export default function App() {
       setSignInInitialMode('customer');
       return;
     }
+    purgeLegacyPlannerSeedData();
     setCurrentAdminTab((tab) => plannerDefaultTab(tab));
     setIsAdminMode(true);
     pushRoute('/admin');
@@ -701,8 +823,7 @@ export default function App() {
       ) : (
         
         /* ================= ENTERPRISE ADMIN PANEL INTERFACE ================= */
-        <div className="flex h-screen overflow-hidden bg-stone-100 dark:bg-stone-900" id="admin-portal-view">
-          
+        <div id="admin-portal-view">
           <AdminSidebar
             currentAdminTab={currentAdminTab}
             onSelectTab={setCurrentAdminTab}
@@ -710,16 +831,13 @@ export default function App() {
             plannerWorkspace={isEventPlannerCustomer}
           />
 
-          {/* Main workspace container (Header + body) */}
-          <div className="flex-1 flex flex-col overflow-hidden relative">
-            
+          <div id="admin-main">
             <AdminHeader
               currentTabName={currentAdminTab}
               plannerWorkspace={isEventPlannerCustomer}
             />
 
-            {/* Admin view Router */}
-            <main className="flex-1 p-6 overflow-y-auto space-y-6">
+            <main>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentAdminTab}
@@ -747,6 +865,10 @@ export default function App() {
 
                   {currentAdminTab === 'marketing' && (
                     <AdminMarketing />
+                  )}
+
+                  {currentAdminTab === 'planner-dashboard' && (
+                    <PlannerDashboard onNavigateTab={setCurrentAdminTab} />
                   )}
 
                   {currentAdminTab === 'planner-events' && (

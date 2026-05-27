@@ -60,7 +60,7 @@ export const FiltersRibbon: React.FC<FiltersRibbonProps> = ({
 
         {/* Quick Cuisine Selection */}
         <div className="flex flex-wrap items-center gap-1">
-          <span className="text-[11px] font-bold text-stone-400 dark:text-stone-500 uppercase font-mono mr-1">Cuisines:</span>
+          <span className="text-[11px] font-bold text-stone-400 dark:text-stone-500 font-mono mr-1">Cuisines:</span>
           <button
             onClick={() => setSelectedCuisine(null)}
             className={`px-2.5 py-1 rounded-full text-xs font-bold transition-all cursor-pointer ${

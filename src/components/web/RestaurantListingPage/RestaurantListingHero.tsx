@@ -13,7 +13,7 @@ export const RestaurantListingHero: React.FC<RestaurantListingHeroProps> = ({
   return (
     <div className="bg-gradient-to-r from-orange-600 via-amber-600 to-red-600 rounded-2xl p-6 sm:p-10 shadow-lg text-white flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden" id="listing-hero">
       <div className="space-y-2 text-center md:text-left z-10">
-        <span className="text-yellow-300 font-extrabold text-xs uppercase tracking-widest bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+        <span className="text-yellow-300 font-extrabold text-xs bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
           🪔 Dussehra & Diwali Food Bazaar 🪔
         </span>
         <h2 className="serif text-2xl sm:text-3xl font-black italic tracking-normal leading-none">

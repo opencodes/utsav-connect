@@ -24,7 +24,7 @@ export const StickyInquiryFooter: React.FC<StickyInquiryFooterProps> = ({
             </span>
           </div>
           <div className="text-left leading-tight">
-            <span className="text-[10px] uppercase font-bold text-orange-200">Quote shortlist</span>
+            <span className="text-[10px] font-bold text-orange-200">Quote shortlist</span>
             <h5 className="font-extrabold text-base">
               {selectedCount} service{selectedCount !== 1 ? 's' : ''} selected
             </h5>
@@ -34,7 +34,7 @@ export const StickyInquiryFooter: React.FC<StickyInquiryFooterProps> = ({
         <button
           type="button"
           onClick={onRequestQuote}
-          className="flex items-center gap-1 px-4 py-2 bg-white text-orange-600 font-extrabold text-xs tracking-wider uppercase rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md cursor-pointer"
+          className="flex items-center gap-1 px-4 py-2 bg-white text-orange-600 font-extrabold text-xs rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md cursor-pointer"
           id="sticky-inquiry-request-button"
         >
           <span>Get quote</span>

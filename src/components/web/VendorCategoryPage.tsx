@@ -29,7 +29,7 @@ export const VendorCategoryPage: React.FC<VendorCategoryPageProps> = ({
     <div className="min-h-screen bg-stone-50 dark:bg-stone-900" id="vendor-category-page">
       <div className="bg-gradient-to-br from-[#C51C13] via-stone-900 to-amber-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-[#FFCB44]">
+          <p className="text-[10px] font-semibold text-[#FFCB44]">
             {APP_NAME} marketplace
           </p>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mt-2">

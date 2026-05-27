@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { readPlannerStorage } from '../plannerStorage';
 import { Truck, Plus, Trash2, Phone, IndianRupee, ListChecks, CheckCircle, HelpCircle, AlertTriangle } from 'lucide-react';
 
 interface Vendor {
@@ -12,44 +13,11 @@ interface Vendor {
   status: 'Contract Created' | 'Advance Paid' | 'Partially Paid' | 'Settle on Completion';
 }
 
-const DEFAULT_VENDORS: Vendor[] = [
-  {
-    id: 'ven-1',
-    name: 'Mithila Halshali Flour Mills (Ramesh Jha)',
-    category: 'Kirana / Grocery',
-    serviceDetails: 'Basmati Rice Dubar (15 bags), High-grade Sugar flour, Pure Cow Ghee buckets supply.',
-    pricing: 45000,
-    advancePaid: 15000,
-    contact: '+91 98450 12345',
-    status: 'Partially Paid'
-  },
-  {
-    id: 'ven-2',
-    name: 'Sudha Dairy Co-Op Transit Agency',
-    category: 'Milk Supplier',
-    serviceDetails: '250 Litres whole-fat milk packets and cream deliveries for Sangeet & Shadi days.',
-    pricing: 18000,
-    advancePaid: 18000,
-    contact: '+91 99312 88776',
-    status: 'Advance Paid'
-  },
-  {
-    id: 'ven-3',
-    name: 'Laljee tents & Lightings, Sector 56',
-    category: 'Tent / Catering Support',
-    serviceDetails: 'Maharaja stage setups, gold steel marigold hanging poles, 450 cushion golden chairs.',
-    pricing: 85000,
-    advancePaid: 25000,
-    contact: '+91 91024 43221',
-    status: 'Partially Paid'
-  }
-];
 
 export const PlannerVendors: React.FC = () => {
-  const [vendors, setVendors] = useState<Vendor[]>(() => {
-    const saved = localStorage.getItem('utsav_planner_vendors');
-    return saved ? JSON.parse(saved) : DEFAULT_VENDORS;
-  });
+  const [vendors, setVendors] = useState<Vendor[]>(() =>
+    readPlannerStorage<Vendor[]>('utsav_planner_vendors', [])
+  );
 
   // Category filter
   const [activeCategory, setActiveCategory] = useState('All');
@@ -141,11 +109,11 @@ export const PlannerVendors: React.FC = () => {
             <Truck className="w-6 h-6 animate-pulse" />
           </div>
           <div>
-            <span className="text-[10px] uppercase tracking-wider text-stone-400 font-bold block">Assigned Suppliers</span>
-            <h3 className="text-xl font-black text-stone-900 dark:text-white mt-1 leading-none">
+            <span className="text-[10px] text-stone-400 font-bold block">Assigned Suppliers</span>
+            <h3 className="text-xl font-semibold text-stone-900 dark:text-white mt-1 leading-none">
               {totalVendorsCount} <span className="text-xs font-normal text-stone-500">Contractors</span>
             </h3>
-            <span className="text-[9px] text-orange-600 font-mono font-bold mt-1 uppercase block">🟢 Active Logistics</span>
+            <span className="text-[9px] text-orange-600 font-mono font-bold mt-1 block">🟢 Active Logistics</span>
           </div>
         </div>
 
@@ -155,11 +123,11 @@ export const PlannerVendors: React.FC = () => {
             <IndianRupee className="w-6 h-6 text-emerald-500" />
           </div>
           <div>
-            <span className="text-[10px] uppercase tracking-wider text-stone-400 font-bold block">Total Service Budgets</span>
-            <h3 className="text-xl font-black text-stone-900 dark:text-white mt-1 leading-none">
+            <span className="text-[10px] text-stone-400 font-bold block">Total Service Budgets</span>
+            <h3 className="text-xl font-semibold text-stone-900 dark:text-white mt-1 leading-none">
               ₹ {totalContractVal.toLocaleString('en-IN')}
             </h3>
-            <span className="text-[9px] text-stone-500 mt-1 uppercase block font-mono">Consolidated Bids</span>
+            <span className="text-[9px] text-stone-500 mt-1 block font-mono">Consolidated Bids</span>
           </div>
         </div>
 
@@ -169,11 +137,11 @@ export const PlannerVendors: React.FC = () => {
             <CheckCircle className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-[10px] uppercase tracking-wider text-stone-400 font-bold block">Total Paid Advance</span>
-            <h3 className="text-xl font-black text-stone-900 dark:text-white mt-1 leading-none">
+            <span className="text-[10px] text-stone-400 font-bold block">Total Paid Advance</span>
+            <h3 className="text-xl font-semibold text-stone-900 dark:text-white mt-1 leading-none">
               ₹ {totalAdvancesPaid.toLocaleString('en-IN')}
             </h3>
-            <span className="text-[9px] text-green-600 font-mono font-bold mt-1 uppercase block">🛡️ Guaranteed Deposits</span>
+            <span className="text-[9px] text-green-600 font-mono font-bold mt-1 block">🛡️ Guaranteed Deposits</span>
           </div>
         </div>
 
@@ -183,11 +151,11 @@ export const PlannerVendors: React.FC = () => {
             <AlertTriangle className="w-6 h-6" />
           </div>
           <div>
-            <span className="text-[10px] uppercase tracking-wider text-rose-800 dark:text-rose-400 font-bold block">Outstanding Balances due</span>
-            <h3 className="text-xl font-black text-rose-700 dark:text-rose-400 mt-1 leading-none">
+            <span className="text-[10px] text-rose-800 dark:text-rose-400 font-bold block">Outstanding Balances due</span>
+            <h3 className="text-xl font-semibold text-rose-700 dark:text-rose-400 mt-1 leading-none">
               ₹ {totalOutstandingBal.toLocaleString('en-IN')}
             </h3>
-            <span className="text-[9px] text-rose-600 hover:underline font-mono uppercase mt-1 block font-bold cursor-help" onClick={() => alert('Settle these dues directly inside active rows below.')}>
+            <span className="text-[9px] text-rose-600 hover:underline font-mono mt-1 block font-bold cursor-help" onClick={() => alert('Settle these dues directly inside active rows below.')}>
               ⏳ Settle post ceremony ➔
             </span>
           </div>
@@ -198,14 +166,14 @@ export const PlannerVendors: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Left add supplier form */}
         <div className="bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 p-5 shadow-sm text-left">
-          <h3 className="text-sm font-black uppercase text-stone-900 dark:text-white pb-3 border-b border-light-100 flex items-center gap-2 mb-4">
+          <h3 className="text-sm font-semibold text-stone-900 dark:text-white pb-3 border-b border-light-100 flex items-center gap-2 mb-4">
             <Plus className="w-4 h-4 text-orange-600" />
             <span>Select & Add Vendor</span>
           </h3>
 
           <form onSubmit={handleAddVendorSubmit} className="space-y-4">
             <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Supplier Category</label>
+              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Supplier Category</label>
               <select
                 value={vCategory}
                 onChange={e => setVCategory(e.target.value as any)}
@@ -221,7 +189,7 @@ export const PlannerVendors: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Vendor/Merchant Name</label>
+              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Vendor/Merchant Name</label>
               <input
                 type="text"
                 placeholder="e.g. Sudha milk distributors Co-op"
@@ -233,7 +201,7 @@ export const PlannerVendors: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Contact Phone</label>
+              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Contact Phone</label>
               <input
                 type="text"
                 placeholder="+91 xxxxx xxxxx"
@@ -246,7 +214,7 @@ export const PlannerVendors: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Contract Price</label>
+                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Contract Price</label>
                 <input
                   type="number"
                   placeholder="Total ₹"
@@ -257,7 +225,7 @@ export const PlannerVendors: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Paid Deposit</label>
+                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Paid Deposit</label>
                 <input
                   type="number"
                   placeholder="Paid ₹"
@@ -269,7 +237,7 @@ export const PlannerVendors: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Service particulars / Items list</label>
+              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Service particulars / Items list</label>
               <textarea
                 placeholder="List specific ingredients weights or material counts..."
                 value={vService}
@@ -281,7 +249,7 @@ export const PlannerVendors: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold tracking-wider uppercase transition-all flex items-center justify-center gap-1.5"
+              className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
               <span>Record Vendor Link</span>
@@ -294,7 +262,7 @@ export const PlannerVendors: React.FC = () => {
           <div>
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b">
               <div>
-                <h3 className="text-sm font-black uppercase text-stone-900 dark:text-white">Active Service Logistics</h3>
+                <h3 className="text-sm font-semibold text-stone-900 dark:text-white">Active Service Logistics</h3>
                 <p className="text-[11px] text-stone-400 mt-0.5">Maintain supplier pricing, verify advance deposits status, and settle pending payments.</p>
               </div>
             </div>
@@ -305,7 +273,7 @@ export const PlannerVendors: React.FC = () => {
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-3 py-0.8 rounded-full text-[10px] font-bold uppercase transition-all border ${
+                  className={`px-3 py-0.8 rounded-full text-[10px] font-bold transition-all border ${
                     activeCategory === cat
                       ? 'bg-orange-600 text-white border-orange-600 font-extrabold'
                       : 'bg-stone-50 dark:bg-stone-900 text-stone-500 dark:text-stone-300 hover:bg-stone-100 dark:border-stone-700'
@@ -320,7 +288,7 @@ export const PlannerVendors: React.FC = () => {
             <div className="overflow-x-auto rounded-xl mt-4">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] uppercase font-bold text-stone-500 border-b border-stone-200 dark:border-stone-700 font-mono">
+                  <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] font-bold text-stone-500 border-b border-stone-200 dark:border-stone-700 font-mono">
                     <th className="p-3 text-left">Vendor particulars</th>
                     <th className="p-3 text-left">Service details</th>
                     <th className="p-3 text-right">Contract Dues</th>
@@ -332,7 +300,7 @@ export const PlannerVendors: React.FC = () => {
                 <tbody className="text-xs divide-y divide-stone-150 dark:divide-stone-700">
                   {filteredVendors.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="p-8 text-center text-stone-400 font-semibold uppercase tracking-wider">
+                      <td colSpan={6} className="p-8 text-center text-stone-400 font-semibold">
                         No active vendors match this logistics node category.
                       </td>
                     </tr>
@@ -367,7 +335,7 @@ export const PlannerVendors: React.FC = () => {
                             <span className={`font-mono font-bold ${balance > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
                               ₹ {balance.toLocaleString('en-IN')}
                             </span>
-                            <span className={`text-[8px] font-black uppercase tracking-wider block ${balance > 0 ? 'text-rose-500' : 'text-emerald-500 font-mono'}`}>
+                            <span className={`text-[8px] font-semibold block ${balance > 0 ? 'text-rose-500' : 'text-emerald-500 font-mono'}`}>
                               {balance === 0 ? 'Fully Settled' : 'Dues Pending'}
                             </span>
                           </td>
@@ -375,7 +343,7 @@ export const PlannerVendors: React.FC = () => {
                           {/* Quick Payment action buttons */}
                           <td className="p-3 text-center">
                             {balance === 0 ? (
-                              <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">💰 Closed Contract</span>
+                              <span className="text-[10px] font-bold text-emerald-600">💰 Closed Contract</span>
                             ) : (
                               <div className="flex gap-1 justify-center">
                                 <button
@@ -387,7 +355,7 @@ export const PlannerVendors: React.FC = () => {
                                 </button>
                                 <button
                                   onClick={() => handleQuickAdvanceSettle(v.id, balance)}
-                                  className="px-2 py-1 bg-emerald-600 text-white text-[10px] font-bold rounded hover:bg-emerald-700 transition-all uppercase tracking-tight"
+                                  className="px-2 py-1 bg-emerald-600 text-white text-[10px] font-bold rounded hover:bg-emerald-700 transition-all tracking-tight"
                                   title="Settle all contract dues"
                                 >
                                   Settle All

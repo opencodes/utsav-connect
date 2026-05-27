@@ -1,4 +1,5 @@
 import React from 'react';
+import { AdminEmptyState } from '../AdminEmptyState';
 
 interface CategorySale {
   category: string;
@@ -11,11 +12,18 @@ interface TopSellingCategoriesProps {
 
 export const TopSellingCategories: React.FC<TopSellingCategoriesProps> = ({ categorySales }) => {
   return (
-    <div className="bg-white dark:bg-stone-850 p-6 rounded-2xl border border-orange-100/40 dark:border-stone-800 shadow-sm space-y-4">
-      <h3 className="text-base font-black text-stone-950 dark:text-white border-b pb-3 border-stone-105 dark:border-stone-800 text-left">
-        Top Selling Categories
+    <div className="admin-card p-6 space-y-4">
+      <h3 className="text-base font-semibold text-stone-900 dark:text-white border-b pb-3 border-stone-200 dark:border-stone-700 text-left">
+        Top categories
       </h3>
       
+      {categorySales.length === 0 ? (
+        <AdminEmptyState
+          title="No category sales yet"
+          description="Top categories will appear when orders are placed."
+          className="border-0 shadow-none bg-transparent p-6"
+        />
+      ) : (
       <div className="space-y-4 pt-1">
         {categorySales.map((cat, idx) => (
           <div key={idx} className="space-y-1.5 text-left">
@@ -33,6 +41,7 @@ export const TopSellingCategories: React.FC<TopSellingCategoriesProps> = ({ cate
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 };

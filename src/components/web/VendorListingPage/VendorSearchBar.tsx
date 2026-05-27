@@ -38,20 +38,56 @@ export const VendorSearchBar: React.FC<VendorSearchBarProps> = ({
   };
 
   const hasDraftFilters = Boolean(
-    draft.categoryId || draft.city || draft.sortBy || draft.ratingFilter || draft.offersFilter
+    draft.query.trim() ||
+      draft.categoryId ||
+      draft.city ||
+      draft.sortBy ||
+      draft.ratingFilter ||
+      draft.offersFilter
   );
+
+  const inputClass =
+    'w-full pl-10 pr-10 py-2.5 text-sm rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 text-stone-900 dark:text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500';
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="sticky top-20 z-40 bg-white/95 dark:bg-stone-900/95 backdrop-blur shadow-sm p-4 rounded-xl border border-orange-100/40 dark:border-stone-800 flex flex-wrap items-center justify-between gap-4"
+      className="sticky top-20 z-40 bg-white/95 dark:bg-stone-900/95 backdrop-blur shadow-sm p-4 rounded-xl border border-orange-100/40 dark:border-stone-800 flex flex-col gap-4"
       id="vendor-filters-ribbon"
       aria-labelledby="vendor-filters-ribbon-heading"
     >
       <h2 id="vendor-filters-ribbon-heading" className="sr-only">
-        Filter vendors
+        Search and filter vendors
       </h2>
 
+      <div className="relative w-full">
+        <label htmlFor="vendor-filter-search" className="sr-only">
+          Search vendors
+        </label>
+        <Search
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#C51C13] dark:text-orange-400 pointer-events-none"
+          aria-hidden
+        />
+        <input
+          id="vendor-filter-search"
+          type="search"
+          value={draft.query}
+          onChange={(e) => patch({ query: e.target.value })}
+          placeholder="Search vendor name, service, or locality..."
+          className={inputClass}
+        />
+        {draft.query ? (
+          <button
+            type="button"
+            onClick={() => patch({ query: '' })}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 cursor-pointer"
+          >
+            Clear
+          </button>
+        ) : null}
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-4">
       <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
@@ -86,7 +122,7 @@ export const VendorSearchBar: React.FC<VendorSearchBarProps> = ({
         </button>
 
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[11px] font-bold text-stone-400 dark:text-stone-500 uppercase font-mono">
+          <span className="text-[11px] font-bold text-stone-400 dark:text-stone-500 font-mono">
             Category:
           </span>
           <select
@@ -106,7 +142,7 @@ export const VendorSearchBar: React.FC<VendorSearchBarProps> = ({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[11px] font-bold text-stone-400 dark:text-stone-500 uppercase font-mono">
+          <span className="text-[11px] font-bold text-stone-400 dark:text-stone-500 font-mono">
             City:
           </span>
           <select
@@ -162,9 +198,10 @@ export const VendorSearchBar: React.FC<VendorSearchBarProps> = ({
             onClick={onClear}
             className="text-xs font-bold text-red-600 dark:text-red-400 hover:underline cursor-pointer"
           >
-            Reset filters
+            Reset all
           </button>
         )}
+      </div>
       </div>
     </form>
   );

@@ -13,7 +13,7 @@ export const RestaurantSearchBar: React.FC<RestaurantSearchBarProps> = ({
   onOpenAddModal,
 }) => {
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white dark:bg-stone-850 p-4 rounded-xl border border-orange-100/40 dark:border-stone-800 shadow-sm">
+    <div className="admin-card flex flex-col sm:flex-row justify-between items-center gap-4 p-4">
       {/* Inner search query list */}
       <div className="relative w-full sm:max-w-xs text-left">
         <input
@@ -30,11 +30,11 @@ export const RestaurantSearchBar: React.FC<RestaurantSearchBarProps> = ({
       <div className="flex gap-2 w-full sm:w-auto">
         <button
           onClick={onOpenAddModal}
-          className="flex-1 sm:flex-initial px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow transition flex items-center justify-center gap-1.5 cursor-pointer"
+          className="admin-btn-primary flex-1 sm:flex-initial"
           id="admin-btn-add-restaurant"
         >
-          <Plus className="w-4 h-4" />
-          <span>Add Restaurant Store</span>
+          <Plus className="w-4 h-4" aria-hidden />
+          <span>Add store</span>
         </button>
       </div>
     </div>

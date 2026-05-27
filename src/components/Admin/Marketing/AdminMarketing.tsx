@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { Plus } from 'lucide-react';
-import { MOCK_MARKETING_CAMPAIGNS } from '../../../data';
 import { MarketingCampaign } from '../../../types';
 import { MarketingStats } from './MarketingStats';
 import { CampaignGrid } from './CampaignGrid';
 import { CreateCampaignModal } from './CreateCampaignModal';
 
 export const AdminMarketing: React.FC = () => {
-  const [campaigns, setCampaigns] = useState<MarketingCampaign[]>(MOCK_MARKETING_CAMPAIGNS);
+  const [campaigns, setCampaigns] = useState<MarketingCampaign[]>([]);
   const [showCreatorModal, setShowCreatorModal] = useState(false);
 
   const handleCreateCampaign = (campData: { title: string; code: string; discount: string; type: MarketingCampaign['type'] }) => {
@@ -38,22 +37,23 @@ export const AdminMarketing: React.FC = () => {
     <div className="space-y-6 text-left animate-in fade-in duration-300" id="admin-marketing-tab">
       
       {/* Promotion top statistics indicators */}
-      <MarketingStats />
+      <MarketingStats campaigns={campaigns} />
 
       {/* Campaign List Control panel */}
-      <div className="flex flex-col sm:flex-row justify-between items-center bg-white dark:bg-stone-850 p-4 rounded-xl border border-orange-100/40 dark:border-stone-800 shadow-sm gap-4">
+      <div className="admin-card flex flex-col sm:flex-row justify-between items-center p-4 gap-4">
         <div className="text-left">
-          <h3 className="font-extrabold text-sm text-stone-900 dark:text-white uppercase font-sans">Active Promotional & Campaign Indices</h3>
-          <p className="text-[11px] text-stone-400 font-medium">Pushed to user client mobile applications</p>
+          <h3 className="font-semibold text-sm text-stone-900 dark:text-white">Active campaigns</h3>
+          <p className="text-xs text-stone-500 font-medium">Visible in customer apps when published</p>
         </div>
 
         <button
+          type="button"
           onClick={() => setShowCreatorModal(true)}
-          className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl shadow flex items-center gap-1.5 cursor-pointer font-sans"
+          className="admin-btn-primary"
           id="btn-create-campaign"
         >
-          <Plus className="w-4 h-4" />
-          <span>New Festival Campaign</span>
+          <Plus className="w-4 h-4" aria-hidden />
+          <span>New campaign</span>
         </button>
       </div>
 

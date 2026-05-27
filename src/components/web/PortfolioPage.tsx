@@ -228,7 +228,7 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
 
           <div className="relative z-10 max-w-4xl space-y-4">
             <div className="flex items-center gap-1.5">
-              <span className="px-3 py-1 text-[10px] font-black tracking-widest bg-[#FFCB44] text-red-950 rounded-full uppercase font-mono">
+              <span className="px-3 py-1 text-[10px] font-black bg-[#FFCB44] text-red-950 rounded-full font-mono">
                 AURA PORTFOLIO
               </span>
               <span className="text-xs text-amber-300 font-extrabold flex items-center gap-1">
@@ -237,7 +237,7 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
               </span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-black uppercase tracking-tight font-sans leading-tight">
+            <h1 className="text-3xl sm:text-5xl font-black tracking-tight font-sans leading-tight">
               A Gallery of Golden <br />Traditional Memories
             </h1>
 
@@ -258,7 +258,7 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
             </div>
             <div>
               <span className="text-xl sm:text-2xl font-black block leading-none font-mono text-[#C51C13]">150+</span>
-              <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wider">Weddings Managed</span>
+              <span className="text-[10px] font-bold text-stone-400">Weddings Managed</span>
             </div>
           </div>
 
@@ -268,7 +268,7 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
             </div>
             <div>
               <span className="text-xl sm:text-2xl font-black block leading-none font-mono text-[#C51C13]">22k+</span>
-              <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wider">Satvik Bowls Served</span>
+              <span className="text-[10px] font-bold text-stone-400">Satvik Bowls Served</span>
             </div>
           </div>
 
@@ -278,7 +278,7 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
             </div>
             <div>
               <span className="text-xl sm:text-2xl font-black block leading-none font-mono text-[#C51C13]">4.92</span>
-              <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wider">Pure Veg Score</span>
+              <span className="text-[10px] font-bold text-stone-400">Pure Veg Score</span>
             </div>
           </div>
 
@@ -288,7 +288,7 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
             </div>
             <div>
               <span className="text-xl sm:text-2xl font-black block leading-none font-mono text-[#C51C13]">120+</span>
-              <span className="text-[10px] uppercase font-bold text-stone-400 tracking-wider">Vetted Top Vendors</span>
+              <span className="text-[10px] font-bold text-stone-400">Vetted Top Vendors</span>
             </div>
           </div>
 
@@ -313,7 +313,7 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
 
           {/* Interactive Categories selector */}
           <div className="flex flex-wrap gap-1.5 w-full md:w-auto justify-start md:justify-end">
-            <span className="text-xs text-stone-400 font-bold self-center mr-1 hidden sm:inline uppercase tracking-normal">
+            <span className="text-xs text-stone-400 font-bold self-center mr-1 hidden sm:inline tracking-normal">
               Filter Style:
             </span>
             {categories.map((cat) => (
@@ -344,7 +344,7 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
         
         {/* LEFT COLUMN: FILTERED PORTFOLIO PREVIEW CARDS */}
         <div className="lg:col-span-5 space-y-4">
-          <h3 className="text-xs font-black uppercase text-stone-400 tracking-widest pl-1 font-mono">
+          <h3 className="text-xs font-black text-stone-400 pl-1 font-mono">
             III. Past Celebration Milestones ({filteredItems.length})
           </h3>
 
@@ -371,7 +371,7 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
                     />
                     
                     {/* Floating badge for category */}
-                    <span className="absolute top-3 left-3 bg-stone-900/80 backdrop-blur-md text-[#FFCB44] text-[9px] font-black tracking-wider uppercase px-2.5 py-1 rounded-lg">
+                    <span className="absolute top-3 left-3 bg-stone-900/80 backdrop-blur-md text-[#FFCB44] text-[9px] font-black px-2.5 py-1 rounded-lg">
                       {item.category}
                     </span>
 
@@ -388,7 +388,7 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
                       <span>{item.location}</span>
                     </div>
 
-                    <h4 className="font-extrabold text-[#C51C13] dark:text-orange-400 text-sm sm:text-base leading-tight uppercase">
+                    <h4 className="font-extrabold text-[#C51C13] dark:text-orange-400 text-sm sm:text-base leading-tight">
                       {item.title}
                     </h4>
 
@@ -429,7 +429,7 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12">
         <div className="bg-[#FFFDF7] dark:bg-stone-850 p-6 sm:p-8 rounded-3xl border border-orange-150/40 dark:border-stone-800 flex flex-col md:flex-row items-center justify-between gap-6" id="portfolio-planning-cta">
           <div className="text-left space-y-2 max-w-2xl">
-            <h3 className="serif text-xl sm:text-2xl font-black text-[#C51C13] dark:text-orange-400 uppercase leading-none">
+            <h3 className="serif text-xl sm:text-2xl font-black text-[#C51C13] dark:text-orange-400 leading-none">
               Plan Your Marriage Ceremony Custom
             </h3>
             <p className="text-xs sm:text-xs text-stone-500 font-semibold leading-relaxed">
@@ -441,7 +441,7 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
             onClick={() => {
               alert('Redirecting to the Admin Center. Switch to "Admin Center" using the navbar button at top level to open Mithila Setup Planner, manage live wedding timelines, adjust satvik menu options, and register user profiles!');
             }}
-            className="w-full md:w-auto px-6 py-3 bg-[#C51C13] hover:bg-orange-750 text-white font-black text-xs uppercase tracking-wider rounded-xl transition shadow hover:scale-[1.02] cursor-pointer"
+            className="w-full md:w-auto px-6 py-3 bg-[#C51C13] hover:bg-orange-750 text-white font-black text-xs rounded-xl transition shadow hover:scale-[1.02] cursor-pointer"
           >
             Go To Admin Center Setup
           </button>

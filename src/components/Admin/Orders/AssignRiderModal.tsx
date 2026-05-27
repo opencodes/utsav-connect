@@ -18,7 +18,7 @@ export const AssignRiderModal: React.FC<AssignRiderModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-      <div className="bg-white dark:bg-stone-850 rounded-2xl max-w-sm w-full p-6 space-y-4 relative border border-orange-100 dark:border-stone-700 shadow-2xl animate-in zoom-in-95 text-left text-neutral-800 dark:text-stone-200">
+      <div className="bg-white dark:bg-stone-800 rounded-2xl max-w-sm w-full p-6 space-y-4 relative border border-orange-100 dark:border-stone-700 shadow-2xl animate-in zoom-in-95 text-left text-neutral-800 dark:text-stone-200">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-stone-400 hover:text-stone-900 dark:hover:text-white cursor-pointer"
@@ -26,12 +26,15 @@ export const AssignRiderModal: React.FC<AssignRiderModalProps> = ({
           <X className="w-4 h-4" />
         </button>
         
-        <h4 className="font-extrabold text-sm text-stone-900 dark:text-white uppercase">
-          Assign Satvik Delivery Rider Hub
+        <h4 className="font-semibold text-sm text-stone-900 dark:text-white">
+          Assign delivery partner
         </h4>
         <p className="text-xs text-stone-400 font-medium">Select active partner to assign to order {orderId}.</p>
 
         <div className="space-y-1">
+          {ridersList.length === 0 ? (
+            <p className="text-xs text-stone-500 py-4 text-center">No delivery partners configured.</p>
+          ) : null}
           {ridersList.map((r) => (
             <button
               key={r}

@@ -14,7 +14,7 @@ export const PopularRestaurantsGrid: React.FC<PopularRestaurantsGridProps> = ({ 
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Flame className="w-5 h-5 text-red-600 animate-pulse" />
-            <span className="text-xs uppercase font-extrabold tracking-widest text-red-600 dark:text-red-400">
+            <span className="text-xs font-extrabold text-red-600 dark:text-red-400">
               Lustrous Culinary Havens
             </span>
           </div>

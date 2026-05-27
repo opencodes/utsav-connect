@@ -1,22 +1,15 @@
 import React, { useState } from 'react';
-import { MOCK_RESTAURANTS } from '../../../data';
 import { Restaurant } from '../../../types';
 import { RestaurantSearchBar } from './RestaurantSearchBar';
 import { RestaurantTable } from './RestaurantTable';
 import { AddRestaurantModal } from './AddRestaurantModal';
 
 export const AdminManagement: React.FC = () => {
-  const [restaurants, setRestaurants] = useState<Restaurant[]>(MOCK_RESTAURANTS);
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
 
-  const [statusMap, setStatusMap] = useState<Record<string, boolean>>({
-    'rest-1': true,
-    'rest-2': true,
-    'rest-3': true,
-    'rest-4': true,
-    'rest-5': false,
-  });
+  const [statusMap, setStatusMap] = useState<Record<string, boolean>>({});
 
   const handleToggleStatus = (id: string) => {
     setStatusMap((prev) => ({ ...prev, [id]: !prev[id] }));

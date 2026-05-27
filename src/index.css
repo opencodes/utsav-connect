@@ -590,9 +590,8 @@ html.dark .landing-section-tone--parchment::before {
   background: transparent;
   color: #57534e;
   font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0;
   cursor: pointer;
   transition:
     background 0.15s ease,
@@ -659,9 +658,8 @@ html.dark .landing-section-tone--parchment::before {
 #hero-search-form .hero-vendor-popular-label {
   margin: 0;
   font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0;
   color: #78716c;
 }
 

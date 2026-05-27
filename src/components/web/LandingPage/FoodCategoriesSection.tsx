@@ -22,7 +22,7 @@ export const FoodCategoriesSection: React.FC<FoodCategoriesSectionProps> = ({ on
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Compass className="w-5 h-5 text-orange-600 animate-spin" style={{ animationDuration: '8s' }} />
-            <span className="text-xs uppercase font-extrabold tracking-widest text-amber-600 dark:text-amber-400">
+            <span className="text-xs font-extrabold text-amber-600 dark:text-amber-400">
               Traditional Wedding Services
             </span>
           </div>

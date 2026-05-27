@@ -1,6 +1,7 @@
 import React from 'react';
 import { Edit3, Trash2 } from 'lucide-react';
 import { Restaurant } from '../../../types';
+import { AdminEmptyState } from '../AdminEmptyState';
 
 interface RestaurantTableProps {
   restaurants: Restaurant[];
@@ -15,12 +16,19 @@ export const RestaurantTable: React.FC<RestaurantTableProps> = ({
   onToggleStatus,
   onDeleteRestaurant,
 }) => {
+  if (restaurants.length === 0) {
+    return (
+      <AdminEmptyState
+        title="No stores yet"
+        description="Add a kitchen or store using the button above to start managing listings."
+      />
+    );
+  }
+
   return (
-    <div className="bg-white dark:bg-stone-850 rounded-2xl border border-orange-100/40 dark:border-stone-800 shadow-sm overflow-hidden text-left">
-      <div className="px-5 py-4 border-b border-light-100 dark:border-stone-800">
-        <h3 className="font-extrabold text-sm text-stone-900 dark:text-white">
-          Active Kitchen Stores Index
-        </h3>
+    <div className="bg-white dark:bg-stone-800 rounded-2xl border border-orange-100/40 dark:border-stone-800 shadow-sm overflow-hidden text-left">
+      <div className="px-5 py-4 border-b border-stone-200 dark:border-stone-800">
+        <h3 className="font-semibold text-sm text-stone-900 dark:text-white">Stores</h3>
       </div>
 
       <div className="overflow-x-auto">
@@ -63,12 +71,12 @@ export const RestaurantTable: React.FC<RestaurantTableProps> = ({
 
                   {/* Delivery time */}
                   <td className="p-4 font-semibold">
-                    <span className="font-black text-stone-900 dark:text-white">{rest.deliveryTime} mins</span>
+                    <span className="font-semibold text-stone-900 dark:text-white">{rest.deliveryTime} mins</span>
                     <p className="text-[10px] text-stone-400 font-medium">Avg distance: {rest.distance}km</p>
                   </td>
 
                   {/* Cost indicator */}
-                  <td className="p-4 font-bold text-stone-850 dark:text-stone-300">
+                  <td className="p-4 font-bold text-stone-800 dark:text-stone-300">
                     ₹{rest.costForTwo} for two
                   </td>
 

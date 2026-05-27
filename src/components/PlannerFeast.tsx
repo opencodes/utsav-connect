@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { readPlannerStorage } from '../plannerStorage';
 import { ChefHat, Plus, Trash2, Calendar, Users, Scale, AlertCircle, ShoppingBag, Sparkles } from 'lucide-react';
 
 interface MenuItem {
@@ -24,52 +25,17 @@ interface FeastDayPlan {
   menuItems: MenuItem[];
 }
 
-const PRE_SEEDED_MENU_ITEMS: MenuItem[] = [
-  { id: 'men-1', name: 'Kesari Kaju Katli (Sweets)', category: 'Dessert', estimatedServingPerGuest: 1.5, paneerRatioGrams: 0, basmatiRiceRatioGrams: 0, cowGheeRatioGrams: 5, flourRatioGrams: 0, sugarRatioGrams: 100, milkYogurtRatioLiters: 0, spicesRatioGrams: 2 },
-  { id: 'men-2', name: 'Saffron Veg Dum Biryani', category: 'Main Course', estimatedServingPerGuest: 1.2, paneerRatioGrams: 30, basmatiRiceRatioGrams: 150, cowGheeRatioGrams: 20, flourRatioGrams: 0, sugarRatioGrams: 0, milkYogurtRatioLiters: 0.05, spicesRatioGrams: 15 },
-  { id: 'men-3', name: 'Shahi Paneer Deluxe Curry', category: 'Main Course', estimatedServingPerGuest: 1.0, paneerRatioGrams: 120, basmatiRiceRatioGrams: 0, cowGheeRatioGrams: 15, flourRatioGrams: 0, sugarRatioGrams: 5, milkYogurtRatioLiters: 0.1, spicesRatioGrams: 12 },
-  { id: 'men-4', name: 'Crispy Butter Puris Basket', category: 'Breads', estimatedServingPerGuest: 4.0, paneerRatioGrams: 0, basmatiRiceRatioGrams: 0, cowGheeRatioGrams: 10, flourRatioGrams: 120, sugarRatioGrams: 0, milkYogurtRatioLiters: 0, spicesRatioGrams: 2 },
-  { id: 'men-5', name: 'Utsav Special Cardamom Lassi', category: 'Beverage', estimatedServingPerGuest: 1.0, paneerRatioGrams: 0, basmatiRiceRatioGrams: 0, cowGheeRatioGrams: 0, flourRatioGrams: 0, sugarRatioGrams: 40, milkYogurtRatioLiters: 0.25, spicesRatioGrams: 1 }
-];
-
-const DEFAULT_FEAST_PLANS: FeastDayPlan[] = [
-  {
-    id: 'fst-1',
-    date: '2026-11-10',
-    mealType: 'Dinner',
-    expectedGuests: 180,
-    menuItems: [
-      PRE_SEEDED_MENU_ITEMS[1], // Biryani
-      PRE_SEEDED_MENU_ITEMS[3], // Puris
-      PRE_SEEDED_MENU_ITEMS[4]  // Lassi
-    ]
-  },
-  {
-    id: 'fst-2',
-    date: '2026-11-12',
-    mealType: 'Dinner',
-    expectedGuests: 350,
-    menuItems: [
-      PRE_SEEDED_MENU_ITEMS[0], // Kaju Katli
-      PRE_SEEDED_MENU_ITEMS[1], // Biryani
-      PRE_SEEDED_MENU_ITEMS[2], // Paneer
-      PRE_SEEDED_MENU_ITEMS[3]  // Puris
-    ]
-  }
-];
-
 export const PlannerFeast: React.FC = () => {
-  const [plans, setPlans] = useState<FeastDayPlan[]>(() => {
-    const saved = localStorage.getItem('utsav_planner_feast');
-    return saved ? JSON.parse(saved) : DEFAULT_FEAST_PLANS;
-  });
+  const [plans, setPlans] = useState<FeastDayPlan[]>(() =>
+    readPlannerStorage<FeastDayPlan[]>('utsav_planner_feast', [])
+  );
 
-  const [allItems] = useState<MenuItem[]>(PRE_SEEDED_MENU_ITEMS);
+  const [allItems, setAllItems] = useState<MenuItem[]>([]);
 
   // Form Inputs
   const [fDate, setFDate] = useState('');
   const [fMealType, setFMealType] = useState<'Breakfast' | 'Lunch' | 'High Tea' | 'Dinner'>('Dinner');
-  const [fExpectedGuests, setFExpectedGuests] = useState('250');
+  const [fExpectedGuests, setFExpectedGuests] = useState('');
   const [selectedItemsIds, setSelectedItemsIds] = useState<string[]>([]);
 
   // Item custom ratio add state
@@ -107,7 +73,7 @@ export const PlannerFeast: React.FC = () => {
       id: `fst-${Date.now()}`,
       date: fDate,
       mealType: fMealType,
-      expectedGuests: parseInt(fExpectedGuests, 10) || 100,
+      expectedGuests: parseInt(fExpectedGuests, 10) || 0,
       menuItems: compiledItems
     };
 
@@ -171,60 +137,60 @@ export const PlannerFeast: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 border-b border-stone-100 dark:border-stone-700/60 pb-4 mb-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 bg-orange-600 text-white font-black text-[9px] uppercase tracking-wider rounded-md">
+              <span className="px-2 py-0.5 bg-orange-600 text-white font-semibold text-[9px] rounded-md">
                 Master Auto-calc engine
               </span>
-              <span className="text-orange-600 font-mono text-[10px] uppercase font-bold flex items-center gap-1">
+              <span className="text-orange-600 font-mono text-[10px] font-bold flex items-center gap-1">
                 <Sparkles className="w-3 h-3 animate-spin text-orange-600" />
                 Raw Ingredient Demand Chart
               </span>
             </div>
-            <h2 className="text-xl font-black mt-1 uppercase tracking-tight text-stone-900 dark:text-white">Catering Raw Materials Aggregation</h2>
+            <h2 className="text-xl font-semibold mt-1 tracking-tight text-stone-900 dark:text-white">Catering Raw Materials Aggregation</h2>
             <p className="text-xs text-stone-600 dark:text-stone-300 max-w-xl">
               This panel automatically aggregates flour, milk, spices, basmati rice, ghee and paneer weights in real-time by multiplying meal plans, item recipes, and expected headcounts.
             </p>
           </div>
           <div className="text-right">
-            <span className="text-stone-500 dark:text-stone-400 text-[10px] uppercase block font-mono">Total Meal Plans Loaded</span>
-            <span className="text-2xl font-black text-orange-600">{plans.length} Slots</span>
+            <span className="text-stone-500 dark:text-stone-400 text-[10px] block font-mono">Total Meal Plans Loaded</span>
+            <span className="text-2xl font-semibold text-orange-600">{plans.length} Slots</span>
           </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-7 gap-3 text-center">
           <div className="bg-stone-50 dark:bg-stone-900/60 p-3 rounded-2xl border border-stone-200/40 dark:border-stone-700/50">
-            <span className="text-[9px] uppercase font-mono font-bold text-stone-500 dark:text-stone-400 block">Basmati Rice</span>
+            <span className="text-[9px] font-mono font-bold text-stone-500 dark:text-stone-400 block">Basmati Rice</span>
             <b className="text-base text-orange-655 block mt-1">{rawMaterials.rice} <span className="text-xs font-normal text-stone-500 dark:text-stone-400">KG</span></b>
-            <span className="text-[8px] text-stone-400 dark:text-stone-500 block uppercase font-mono tracking-widest mt-1">Scented Rice</span>
+            <span className="text-[8px] text-stone-400 dark:text-stone-500 block font-mono mt-1">Scented Rice</span>
           </div>
           <div className="bg-stone-50 dark:bg-stone-900/60 p-3 rounded-2xl border border-stone-200/40 dark:border-stone-700/50">
-            <span className="text-[9px] uppercase font-mono font-bold text-stone-500 dark:text-stone-400 block">Royal Ghee</span>
+            <span className="text-[9px] font-mono font-bold text-stone-500 dark:text-stone-400 block">Royal Ghee</span>
             <b className="text-base text-orange-655 block mt-1">{rawMaterials.ghee} <span className="text-xs font-normal text-stone-500 dark:text-stone-400">KG</span></b>
-            <span className="text-[8px] text-stone-400 dark:text-stone-500 block uppercase font-mono tracking-widest mt-1">Pure Cow Ghee</span>
+            <span className="text-[8px] text-stone-400 dark:text-stone-500 block font-mono mt-1">Pure Cow Ghee</span>
           </div>
           <div className="bg-stone-50 dark:bg-stone-900/60 p-3 rounded-2xl border border-stone-200/40 dark:border-stone-700/50">
-            <span className="text-[9px] uppercase font-mono font-bold text-stone-500 dark:text-stone-400 block">Fresh Paneer</span>
+            <span className="text-[9px] font-mono font-bold text-stone-500 dark:text-stone-400 block">Fresh Paneer</span>
             <b className="text-base text-orange-655 block mt-1">{rawMaterials.paneer} <span className="text-xs font-normal text-stone-500 dark:text-stone-400">KG</span></b>
-            <span className="text-[8px] text-stone-400 dark:text-stone-500 block uppercase font-mono tracking-widest mt-1">Cottage Cheese</span>
+            <span className="text-[8px] text-stone-400 dark:text-stone-500 block font-mono mt-1">Cottage Cheese</span>
           </div>
           <div className="bg-stone-50 dark:bg-stone-900/60 p-3 rounded-2xl border border-stone-200/40 dark:border-stone-700/50">
-            <span className="text-[9px] uppercase font-mono font-bold text-stone-500 dark:text-stone-400 block">Maida / Flour</span>
+            <span className="text-[9px] font-mono font-bold text-stone-500 dark:text-stone-400 block">Maida / Flour</span>
             <b className="text-base text-orange-655 block mt-1">{rawMaterials.flour} <span className="text-xs font-normal text-stone-500 dark:text-stone-400">KG</span></b>
-            <span className="text-[8px] text-stone-400 dark:text-stone-500 block uppercase font-mono tracking-widest mt-1">Wheat Base</span>
+            <span className="text-[8px] text-stone-400 dark:text-stone-500 block font-mono mt-1">Wheat Base</span>
           </div>
           <div className="bg-stone-50 dark:bg-stone-900/60 p-3 rounded-2xl border border-stone-200/40 dark:border-stone-700/50">
-            <span className="text-[9px] uppercase font-mono font-bold text-stone-500 dark:text-stone-400 block">Pure Sugar</span>
+            <span className="text-[9px] font-mono font-bold text-stone-500 dark:text-stone-400 block">Pure Sugar</span>
             <b className="text-base text-orange-655 block mt-1">{rawMaterials.sugar} <span className="text-xs font-normal text-stone-500 dark:text-stone-400">KG</span></b>
-            <span className="text-[8px] text-stone-400 dark:text-stone-500 block uppercase font-mono tracking-widest mt-1">Sweets / Syrup</span>
+            <span className="text-[8px] text-stone-400 dark:text-stone-500 block font-mono mt-1">Sweets / Syrup</span>
           </div>
           <div className="bg-stone-50 dark:bg-stone-900/60 p-3 rounded-2xl border border-stone-200/40 dark:border-stone-700/50">
-            <span className="text-[9px] uppercase font-mono font-bold text-stone-500 dark:text-stone-400 block">Milk / Dairy</span>
+            <span className="text-[9px] font-mono font-bold text-stone-500 dark:text-stone-400 block">Milk / Dairy</span>
             <b className="text-base text-orange-655 block mt-1">{rawMaterials.milk} <span className="text-xs font-normal text-stone-500 dark:text-stone-400">Litres</span></b>
-            <span className="text-[8px] text-stone-400 dark:text-stone-500 block uppercase font-mono tracking-widest mt-1">Yogurt/Cream</span>
+            <span className="text-[8px] text-stone-400 dark:text-stone-500 block font-mono mt-1">Yogurt/Cream</span>
           </div>
           <div className="bg-stone-50 dark:bg-stone-900/60 p-3 rounded-2xl border border-stone-200/40 dark:border-stone-700/50">
-            <span className="text-[9px] uppercase font-mono font-bold text-stone-500 dark:text-stone-400 block">Royal Spices</span>
+            <span className="text-[9px] font-mono font-bold text-stone-500 dark:text-stone-400 block">Royal Spices</span>
             <b className="text-base text-orange-655 block mt-1">{rawMaterials.spices} <span className="text-xs font-normal text-stone-500 dark:text-stone-400">KG</span></b>
-            <span className="text-[8px] text-stone-400 dark:text-stone-500 block uppercase font-mono tracking-widest mt-1">Cardamom/Masala</span>
+            <span className="text-[8px] text-stone-400 dark:text-stone-500 block font-mono mt-1">Cardamom/Masala</span>
           </div>
         </div>
       </div>
@@ -234,14 +200,14 @@ export const PlannerFeast: React.FC = () => {
         
         {/* Feast Planners Creator Form */}
         <div className="bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 p-5 shadow-sm space-y-5">
-          <h3 className="text-sm font-black uppercase text-stone-900 dark:text-white pb-3 border-b border-light-100 flex items-center gap-2">
+          <h3 className="text-sm font-semibold text-stone-900 dark:text-white pb-3 border-b border-light-100 flex items-center gap-2">
             <Calendar className="w-4 h-4 text-orange-600" />
             <span>Schedule Feast Day</span>
           </h3>
 
           <form onSubmit={handleAddPlan} className="space-y-4">
             <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Feast Date</label>
+              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Feast Date</label>
               <input
                 type="date"
                 value={fDate}
@@ -253,7 +219,7 @@ export const PlannerFeast: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Meal category</label>
+                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Meal category</label>
                 <select
                   value={fMealType}
                   onChange={e => setFMealType(e.target.value as any)}
@@ -266,7 +232,7 @@ export const PlannerFeast: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1">Exp. Headcount</label>
+                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Exp. Headcount</label>
                 <input
                   type="number"
                   placeholder="Expected count"
@@ -280,8 +246,11 @@ export const PlannerFeast: React.FC = () => {
 
             {/* Menu checklist */}
             <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 uppercase tracking-widest mb-1.5">Compose Menu Items</label>
+              <label className="block text-[10px] font-extrabold text-stone-400 mb-1.5">Compose Menu Items</label>
               <div className="space-y-1.5 max-h-[160px] overflow-y-auto border rounded-lg p-2.5 bg-stone-50 dark:bg-stone-900">
+                {allItems.length === 0 ? (
+                  <p className="text-xs text-stone-500 py-2 text-center">No menu items yet. Add items to your catalog first.</p>
+                ) : null}
                 {allItems.map(item => (
                   <label key={item.id} className="flex items-center gap-2 text-xs p-1 cursor-pointer select-none text-stone-700 dark:text-stone-300 hover:text-stone-950">
                     <input
@@ -301,7 +270,7 @@ export const PlannerFeast: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold tracking-wider uppercase transition-colors flex items-center justify-center gap-1.5"
+              className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
             >
               <Plus className="w-4 h-4" />
               <span>Record Feast Day</span>
@@ -311,14 +280,14 @@ export const PlannerFeast: React.FC = () => {
 
         {/* Active Feast Schedules */}
         <div className="lg:col-span-2 bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 p-5 shadow-sm space-y-4">
-          <h3 className="text-sm font-black uppercase text-stone-900 dark:text-white pb-3 border-b border-light-100">
+          <h3 className="text-sm font-semibold text-stone-900 dark:text-white pb-3 border-b border-light-100">
             Active Feast & Meal Planners
           </h3>
 
           {plans.length === 0 ? (
               <div className="text-center py-12 text-stone-400">
                 <AlertCircle className="w-8 h-8 mx-auto text-orange-605 opacity-60 mb-2" />
-              <p className="text-xs font-bold uppercase tracking-wider">No Scheduled Feasts</p>
+              <p className="text-xs font-bold">No Scheduled Feasts</p>
               <p className="text-[10px] mt-1">Configure kitchen days on the left to activate auto ingredient scaling.</p>
             </div>
           ) : (
@@ -327,7 +296,7 @@ export const PlannerFeast: React.FC = () => {
                 <div key={plan.id} className="p-4 rounded-xl bg-stone-50 dark:bg-stone-900 flex flex-col justify-between gap-3 text-left">
                   <div>
                     <div className="flex justify-between items-start gap-2">
-                      <span className="px-2 py-0.5 rounded bg-orange-600 text-white font-mono font-bold text-[9px] uppercase tracking-wider">
+                      <span className="px-2 py-0.5 rounded bg-orange-600 text-white font-mono font-bold text-[9px]">
                         🍛 {plan.mealType}
                       </span>
                       <button
@@ -349,7 +318,7 @@ export const PlannerFeast: React.FC = () => {
 
                     {/* Food list */}
                     <div className="mt-3 pt-3 border-t border-stone-200 dark:border-stone-700 space-y-1.5">
-                      <span className="text-[9px] uppercase font-bold text-stone-400 block tracking-widest font-mono">Kitchen Menu</span>
+                      <span className="text-[9px] font-bold text-stone-400 block font-mono">Kitchen Menu</span>
                       <ul className="space-y-1">
                         {plan.menuItems.map((menuItem, idx) => (
                           <li key={idx} className="text-xs flex justify-between text-stone-700 dark:text-stone-300">

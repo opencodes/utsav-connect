@@ -17,7 +17,7 @@ export const VendorListingHero: React.FC<VendorListingHeroProps> = ({
       id="vendor-listing-hero"
     >
       <div className="space-y-2 text-center md:text-left z-10">
-        <span className="text-yellow-300 font-extrabold text-xs uppercase tracking-widest bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+        <span className="text-yellow-300 font-extrabold text-xs bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
           🪔 {APP_NAME} vendor marketplace 🪔
         </span>
         <h2 className="serif text-2xl sm:text-3xl font-black italic tracking-normal leading-none">

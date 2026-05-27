@@ -65,11 +65,11 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
             <p className="text-stone-400 text-xs sm:text-sm font-semibold">{userProfile.email} | {userProfile.phone}</p>
             <div className="flex flex-wrap items-center gap-3 mt-2 text-xs">
               {isEventPlannerCustomer && (
-                <span className="bg-rose-600 px-2 py-0.5 rounded font-bold font-mono uppercase text-white">
+                <span className="bg-rose-600 px-2 py-0.5 rounded font-bold font-mono text-white">
                   Event planning customer
                 </span>
               )}
-              <span className="bg-orange-600 px-2 py-0.5 rounded font-bold font-mono uppercase text-white">
+              <span className="bg-orange-600 px-2 py-0.5 rounded font-bold font-mono text-white">
                 Festive Premium Member
               </span>
               <span className="text-amber-400 font-bold">
@@ -82,7 +82,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
         {/* Live Wallet & Loyalty display widgets */}
         <div className="flex items-center gap-4 shrink-0">
           <div className="text-center bg-stone-850 p-3 sm:p-4 rounded-xl border border-stone-700 text-stone-200">
-            <div className="text-[10px] font-bold text-amber-500 uppercase font-mono tracking-widest">
+            <div className="text-[10px] font-bold text-amber-500 font-mono">
               Shree Wallet
             </div>
             <div className="text-xl font-black text-white mt-0.5">₹{userProfile.walletBalance}</div>
@@ -90,7 +90,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
           </div>
 
           <div className="text-center bg-stone-850 p-3 sm:p-4 rounded-xl border border-stone-700 text-stone-200">
-            <div className="text-[10px] font-bold text-amber-500 uppercase font-mono tracking-widest">
+            <div className="text-[10px] font-bold text-amber-500 font-mono">
               Utsav Points
             </div>
             <div className="text-xl font-black text-amber-400 mt-0.5">{userProfile.royaltyPoints} pts</div>
@@ -128,7 +128,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
           
           <button
             onClick={() => setActiveTab('orders')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-colors ${
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black transition-colors ${
               activeTab === 'orders'
                 ? 'bg-orange-600 text-white'
                 : 'text-stone-700 dark:text-stone-300 hover:bg-orange-50 dark:hover:bg-stone-800'
@@ -140,7 +140,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
 
           <button
             onClick={() => setActiveTab('wallet')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-colors ${
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black transition-colors ${
               activeTab === 'wallet'
                 ? 'bg-orange-600 text-white'
                 : 'text-stone-700 dark:text-stone-300 hover:bg-orange-50 dark:hover:bg-stone-800'
@@ -152,7 +152,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
 
           <button
             onClick={() => setActiveTab('addresses')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-colors ${
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black transition-colors ${
               activeTab === 'addresses'
                 ? 'bg-orange-600 text-white'
                 : 'text-stone-700 dark:text-stone-300 hover:bg-orange-50 dark:hover:bg-stone-800'
@@ -164,7 +164,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
 
           <button
             onClick={() => setActiveTab('support')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-colors ${
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black transition-colors ${
               activeTab === 'support'
                 ? 'bg-orange-600 text-white'
                 : 'text-stone-700 dark:text-stone-300 hover:bg-orange-50 dark:hover:bg-stone-800'
@@ -176,7 +176,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
 
           <button
             onClick={() => setActiveTab('settings')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-colors ${
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-black transition-colors ${
               activeTab === 'settings'
                 ? 'bg-orange-600 text-white'
                 : 'text-stone-700 dark:text-stone-300 hover:bg-orange-50 dark:hover:bg-stone-800'
@@ -223,7 +223,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-mono text-stone-400 font-bold">{ord.id}</span>
                       <span
-                        className={`text-[10px] px-2 py-0.5 font-bold uppercase rounded ${
+                        className={`text-[10px] px-2 py-0.5 font-bold rounded ${
                           ord.status === 'Delivered'
                             ? 'bg-green-100 text-green-700'
                             : ord.status === 'Cancelled'
@@ -288,7 +288,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
                       <AnimatedDiya className="w-full h-full" />
                     </div>
                     
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#FFDFB2]">UTSAV CREDITS DEBIT CHIP</span>
+                    <span className="text-[10px] font-bold text-[#FFDFB2]">UTSAV CREDITS DEBIT CHIP</span>
                     <h4 className="text-2xl font-black mt-2">₹{userProfile.walletBalance}</h4>
                     <p className="text-[11px] text-[#FFA26B] mt-1">Certified Satvik Food Limit</p>
                     
@@ -309,7 +309,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
                     Add Festive Money to Wallet
                   </h4>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider font-mono block">Amount to deposit (₹)</label>
+                    <label className="text-[10px] font-bold text-stone-400 font-mono block">Amount to deposit (₹)</label>
                     <input
                       type="number"
                       placeholder="e.g. 500, 1000, 2000"
@@ -335,7 +335,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
 
                   <button
                     type="submit"
-                    className="w-full py-2.5 bg-orange-600 text-white font-bold text-xs rounded-lg uppercase tracking-wider shadow-md hover:bg-orange-700 shadow-orange-500/20 active:scale-95 transition-all"
+                    className="w-full py-2.5 bg-orange-600 text-white font-bold text-xs rounded-lg shadow-md hover:bg-orange-700 shadow-orange-500/20 active:scale-95 transition-all"
                   >
                     Deposit money (Simulate)
                   </button>
@@ -366,7 +366,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-black text-white bg-orange-600 px-2.5 py-0.5 rounded uppercase">
+                        <span className="text-xs font-black text-white bg-orange-600 px-2.5 py-0.5 rounded">
                           {addr.type}
                         </span>
                         {addr.landmark && (
@@ -401,7 +401,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
                 
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider font-mono">Location Type</label>
+                    <label className="text-[10px] font-bold text-stone-400 font-mono">Location Type</label>
                     <select
                       value={newType}
                       onChange={(e) => setNewType(e.target.value as any)}
@@ -414,7 +414,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider font-mono">Street Address Line</label>
+                    <label className="text-[10px] font-bold text-stone-400 font-mono">Street Address Line</label>
                     <input
                       type="text"
                       placeholder="Apartment name, building, street, landmark"
@@ -428,7 +428,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
 
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-stone-900 hover:bg-stone-850 text-white font-bold text-xs rounded-lg uppercase tracking-wider transition"
+                  className="px-4 py-2 bg-stone-900 hover:bg-stone-850 text-white font-bold text-xs rounded-lg transition"
                 >
                   Save Location
                 </button>
@@ -452,7 +452,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
                   <div key={tck.id} className="p-4 rounded-xl bg-stone-50 dark:bg-stone-900 border text-left space-y-3 dark:border-stone-800">
                     <div className="flex justify-between items-start gap-2 border-b border-stone-200/50 dark:border-stone-800 pb-2">
                       <div>
-                        <span className="text-[10px] font-bold font-mono text-orange-605 uppercase">{tck.category}</span>
+                        <span className="text-[10px] font-bold font-mono text-orange-605">{tck.category}</span>
                         <h4 className="font-extrabold text-sm text-stone-900 dark:text-white mt-1">{tck.subject}</h4>
                       </div>
                       <span className={`text-[9px] font-bold px-2 py-0.5 rounded ${tck.status === 'Resolved' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>

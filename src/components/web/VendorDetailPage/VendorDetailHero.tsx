@@ -47,7 +47,7 @@ export const VendorDetailHero: React.FC<VendorDetailHeroProps> = ({
       <div className="p-6 sm:p-8 -mt-10 relative bg-white dark:bg-stone-850 rounded-t-3xl border-t border-orange-50 dark:border-stone-800 shadow-md">
         <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
           <div className="space-y-2">
-            <span className="inline-block text-[10px] font-bold text-amber-600 dark:text-amber-400 font-mono tracking-widest bg-amber-50 dark:bg-amber-950/20 px-2 py-0.5 rounded-full">
+            <span className="inline-block text-[10px] font-bold text-amber-600 dark:text-amber-400 font-mono bg-amber-50 dark:bg-amber-950/20 px-2 py-0.5 rounded-full">
               ✓ VERIFIED {category.toUpperCase()}
             </span>
             <h2 className="serif text-2xl sm:text-3xl font-black italic text-[#C51C13] dark:text-white">

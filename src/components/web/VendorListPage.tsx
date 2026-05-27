@@ -1,10 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Filter } from 'lucide-react';
+import { APP_NAME } from '../../brand';
 import { AnimatedDiya } from './GoldenDeco';
 import { WEDDING_CATEGORIES } from './VendorCategoryPage/CategoriesGrid';
 import { ALL_MOCK_VENDORS } from './VendorCategoryPage/mockData';
 import { vendorMatchesCity } from './VendorCategoryPage/vendorCityFilter';
-import { VendorListingHero } from './VendorListingPage/VendorListingHero';
+import { HERO_VENDOR_CITIES } from './LandingPage/heroVendorSearch';
+import { PageBanner } from './PageBanner';
 import { VendorSearchBar, VendorSearchDraft } from './VendorListingPage/VendorSearchBar';
 import { VendorListItemCard } from './VendorListingPage/VendorListItemCard';
 import {
@@ -164,16 +166,47 @@ export const VendorListPage: React.FC<VendorListPageProps> = ({
     ? WEDDING_CATEGORIES.find((c) => c.id === selectedCategoryId)?.name
     : null;
 
+  const activeCityLabel = selectedCity
+    ? HERO_VENDOR_CITIES.find((c) => c.value === selectedCity)?.label
+    : null;
+
+  const bannerTitle =
+    activeCategoryLabel && activeCityLabel
+      ? `${activeCategoryLabel} in ${activeCityLabel}`
+      : activeCategoryLabel
+        ? activeCategoryLabel
+        : activeCityLabel
+          ? `Vendors in ${activeCityLabel}`
+          : 'Find trusted vendors for your celebration';
+
+  const bannerDescription =
+    activeCategoryLabel || activeCityLabel
+      ? `Compare ratings, packages, and response times — then request quotes from verified ${APP_NAME} vendors.`
+      : 'Venues, catering, décor, photography, pandits, and more — compare ratings, packages, and request quotes.';
+
+  const bannerImage =
+    selectedCategoryId === 'makeup'
+      ? 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=1600&auto=format&fit=crop&q=80'
+      : selectedCategoryId === 'photographers'
+        ? 'https://images.unsplash.com/photo-1519741497674-611481863552?w=1600&auto=format&fit=crop&q=80'
+        : selectedCategoryId === 'food'
+          ? 'https://images.unsplash.com/photo-1555244162-803834f70033?w=1600&auto=format&fit=crop&q=80'
+          : 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1600&auto=format&fit=crop&q=80';
+
   return (
-    <div
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 min-h-screen bg-stone-50 dark:bg-stone-900"
-      id="vendor-listing-container"
-    >
-      <VendorListingHero
-        searchQuery={draft.query}
-        setSearchQuery={(query) => setDraft((prev) => ({ ...prev, query }))}
+    <div className="min-h-screen w-full overflow-x-hidden bg-stone-50 dark:bg-stone-900" id="vendor-listing-container">
+      <PageBanner
+        id="vendor-listing-hero"
+        variant="vendor"
+        bleed
+        eyebrow={`${APP_NAME} vendor marketplace`}
+        title={bannerTitle}
+        description={bannerDescription}
+        imageSrc={bannerImage}
+        imageAlt={bannerTitle}
       />
 
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <VendorSearchBar
         draft={draft}
         onDraftChange={setDraft}
@@ -243,7 +276,7 @@ export const VendorListPage: React.FC<VendorListPageProps> = ({
               type="button"
               onClick={handleSimulateInfiniteScroll}
               disabled={isInfiniteScrolling}
-              className="px-6 py-2.5 bg-white dark:bg-stone-800 hover:bg-orange-50 dark:hover:bg-amber-950/20 text-stone-800 dark:text-stone-200 hover:text-orange-600 dark:hover:text-amber-400 font-extrabold text-xs tracking-wider uppercase border border-orange-100 dark:border-stone-800 rounded-full shadow-md hover:shadow-lg disabled:opacity-50 transition-all flex items-center gap-2 cursor-pointer"
+              className="px-6 py-2.5 bg-white dark:bg-stone-800 hover:bg-orange-50 dark:hover:bg-amber-950/20 text-stone-800 dark:text-stone-200 hover:text-orange-600 dark:hover:text-amber-400 font-extrabold text-xs border border-orange-100 dark:border-stone-800 rounded-full shadow-md hover:shadow-lg disabled:opacity-50 transition-all flex items-center gap-2 cursor-pointer"
             >
               {isInfiniteScrolling ? (
                 <>
@@ -259,6 +292,7 @@ export const VendorListPage: React.FC<VendorListPageProps> = ({
             </button>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

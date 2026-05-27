@@ -37,7 +37,7 @@ const QUICK_VENDOR_TAGS = [
 ] as const;
 
 const plannerFieldLabel =
-  'block text-[11px] font-bold uppercase tracking-wide text-stone-500 mb-1.5';
+  'block text-[11px] font-bold tracking-wide text-stone-500 mb-1.5';
 
 const vendorFieldLabel = plannerFieldLabel;
 

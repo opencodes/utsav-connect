@@ -1,5 +1,6 @@
 import React from 'react';
 import { Mail, Phone } from 'lucide-react';
+import { AdminEmptyState } from '../AdminEmptyState';
 
 interface User {
   id: string;
@@ -19,8 +20,17 @@ interface CustomerTableProps {
 }
 
 export const CustomerTable: React.FC<CustomerTableProps> = ({ users, onSelectUser }) => {
+  if (users.length === 0) {
+    return (
+      <AdminEmptyState
+        title="No customers yet"
+        description="Registered customers will appear here for wallet and loyalty management."
+      />
+    );
+  }
+
   return (
-    <div className="bg-white dark:bg-stone-850 rounded-2xl border border-orange-100/40 dark:border-stone-800 shadow-sm overflow-hidden text-left">
+    <div className="bg-white dark:bg-stone-800 rounded-2xl border border-orange-100/40 dark:border-stone-800 shadow-sm overflow-hidden text-left">
       <div className="overflow-x-auto">
         <table className="w-full text-xs text-left text-neutral-800 dark:text-stone-300">
           <thead className="text-[10px] font-bold text-stone-400 bg-stone-50 dark:bg-stone-900/45 p-4">
@@ -70,7 +80,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({ users, onSelectUse
 
                 {/* Status */}
                 <td className="p-4">
-                  <span className={`text-[9px] px-2 py-0.5 rounded font-black uppercase ${
+                  <span className={`text-[9px] px-2 py-0.5 rounded font-semibold ${
                     user.status === 'Active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-650'
                   }`}>
                     {user.status}

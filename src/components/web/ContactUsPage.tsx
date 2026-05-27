@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { APP_NAME, SUPPORT_EMAIL } from '../../brand';
 import { LandingSection } from './LandingPage/LandingSection';
+import { PageBanner } from './PageBanner';
 
 interface ContactUsPageProps {
   onNavigate: (page: string, data?: unknown) => void;
@@ -72,24 +73,33 @@ export const ContactUsPage: React.FC<ContactUsPageProps> = ({ onNavigate }) => {
 
   return (
     <div className="min-h-screen bg-[#FFFDF7] dark:bg-stone-900" id="contact-us-page">
-      <section className="border-b border-stone-200/80 dark:border-stone-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-28 pb-10 lg:pb-14">
-          <div className="max-w-2xl space-y-4 text-left">
-            <span className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-orange-600 dark:text-amber-400">
-              <span className="h-px w-6 bg-gradient-to-r from-orange-500 to-amber-400" aria-hidden />
-              Contact {APP_NAME}
-              <span className="h-px w-6 bg-gradient-to-r from-amber-400 to-orange-500" aria-hidden />
-            </span>
-            <h1 className="heading-page text-3xl sm:text-4xl text-[#C51C13] dark:text-white">
-              We&apos;re here to help you plan
-            </h1>
-            <p className="text-sm sm:text-base text-stone-600 dark:text-stone-300 leading-relaxed">
-              Questions about vendors, listings, or event planning? Send us a message and our team will
-              get back to you — usually within one business day.
-            </p>
-          </div>
+      <PageBanner
+        id="contact-page-banner"
+        variant="contact"
+        eyebrow={`Contact ${APP_NAME}`}
+        title="We're here to help you plan"
+        description="Questions about vendors, listings, or event planning? Send us a message and our team will get back to you — usually within one business day."
+        imageSrc="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1400&auto=format&fit=crop&q=80"
+        imageAlt="Festive event table setting"
+      >
+        <div className="flex flex-wrap gap-2 sm:gap-3">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white">
+            <Clock className="w-3.5 h-3.5 text-[#FFCB44] shrink-0" aria-hidden />
+            Reply within 1 business day
+          </span>
+          <a
+            href={`mailto:${SUPPORT_EMAIL}`}
+            className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white hover:bg-white/20 transition-colors"
+          >
+            <Mail className="w-3.5 h-3.5 text-[#FFCB44] shrink-0" aria-hidden />
+            {SUPPORT_EMAIL}
+          </a>
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white">
+            <MapPin className="w-3.5 h-3.5 text-[#FFCB44] shrink-0" aria-hidden />
+            NCR &amp; partner cities
+          </span>
         </div>
-      </section>
+      </PageBanner>
 
       <LandingSection tone="white" showTexture={false} showMandala={false} innerClassName="py-10 sm:py-14">
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-start">

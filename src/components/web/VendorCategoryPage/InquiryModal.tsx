@@ -58,7 +58,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
                 Our lead traditional coordination specialist will analyze your specifications and reach out within 2 hours.
               </p>
             </div>
-            <div className="flex items-center gap-1.5 text-[10px] uppercase font-mono font-bold tracking-widest text-amber-200 bg-black/20 p-2 px-4 rounded-full">
+            <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold text-amber-200 bg-black/20 p-2 px-4 rounded-full">
               <CheckCircle2 className="w-4 h-4 text-lime-400" />
               <span>Reference ID: UTS-W-983</span>
             </div>
@@ -67,7 +67,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
 
         <div className="flex justify-between items-start">
           <div className="space-y-1 text-left">
-            <span className="text-[10px] tracking-wider uppercase font-extrabold text-orange-600 dark:text-orange-400 flex items-center gap-1">
+            <span className="text-[10px] font-extrabold text-orange-600 dark:text-orange-400 flex items-center gap-1">
               <Sparkles className="w-3 h-3 text-amber-500 animate-spin" />
               Royal Wedding Consultation
             </span>
@@ -105,7 +105,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
           
           {/* Name */}
           <div className="space-y-1 text-left">
-            <label className="font-extrabold text-stone-605 text-[10px] uppercase">Groom / Bride Name</label>
+            <label className="font-extrabold text-stone-605 text-[10px]">Groom / Bride Name</label>
             <div className="relative">
               <input
                 type="text"
@@ -121,7 +121,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
 
           {/* Contact phone */}
           <div className="space-y-1 text-left">
-            <label className="font-extrabold text-stone-650 text-[10px] uppercase">WhatsApp Contact</label>
+            <label className="font-extrabold text-stone-650 text-[10px]">WhatsApp Contact</label>
             <div className="relative">
               <input
                 type="tel"
@@ -138,7 +138,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
           <div className="grid grid-cols-2 gap-3">
             {/* Event Date */}
             <div className="space-y-1 text-left">
-              <label className="font-extrabold text-stone-650 text-[10px] uppercase">Auspicious Date</label>
+              <label className="font-extrabold text-stone-650 text-[10px]">Auspicious Date</label>
               <div className="relative">
                 <input
                   type="date"
@@ -153,7 +153,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
 
             {/* Estimated Guests count */}
             <div className="space-y-1 text-left">
-              <label className="font-extrabold text-stone-650 text-[10px] uppercase">Guests Volume</label>
+              <label className="font-extrabold text-stone-650 text-[10px]">Guests Volume</label>
               <select
                 value={formData.estimatedGuests}
                 onChange={(e) => setFormData({ ...formData, estimatedGuests: e.target.value })}
@@ -169,7 +169,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
 
           {/* Short message */}
           <div className="space-y-1 text-left">
-            <label className="font-extrabold text-stone-650 text-[10px] uppercase">Special Request Note</label>
+            <label className="font-extrabold text-stone-650 text-[10px]">Special Request Note</label>
             <textarea
               rows={2}
               placeholder="We want traditional decor with marigold flower torans, sangeet entry dance theme..."

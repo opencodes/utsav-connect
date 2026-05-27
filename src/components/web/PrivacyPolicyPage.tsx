@@ -12,10 +12,10 @@ export const PrivacyPolicyPage: React.FC = () => {
         <div className="flex justify-center mb-3">
           <Shield className="w-10 h-10 text-orange-650 animate-bounce" />
         </div>
-        <span className="text-[10px] uppercase font-mono font-black tracking-widest text-orange-655 dark:text-orange-400 bg-orange-100 dark:bg-stone-800 px-3 py-1 rounded-full">
+        <span className="text-[10px] font-mono font-black text-orange-655 dark:text-orange-400 bg-orange-100 dark:bg-stone-800 px-3 py-1 rounded-full">
           Data Protection // Privacy Policy
         </span>
-        <h1 className="text-3xl md:text-4xl font-serif font-black text-stone-900 dark:text-white mt-3 uppercase tracking-tight">
+        <h1 className="text-3xl md:text-4xl font-serif font-black text-stone-900 dark:text-white mt-3 tracking-tight">
           Ceremonial Privacy Charters
         </h1>
         <p className="text-xs text-stone-500 max-w-sm mx-auto mt-2 font-sans">
@@ -30,7 +30,7 @@ export const PrivacyPolicyPage: React.FC = () => {
           
           {/* INTRO DUCTION */}
           <div className="space-y-3 font-sans" id="privacy-intro">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400 font-mono">
+            <h3 className="text-sm font-bold text-orange-600 dark:text-orange-400 font-mono">
               ✦ Introduction & Commitments
             </h3>
             <p className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed font-sans">
@@ -40,7 +40,7 @@ export const PrivacyPolicyPage: React.FC = () => {
 
           {/* SECTION 1 */}
           <div className="space-y-3" id="privacy-sec-1">
-            <h4 className="text-xs font-black uppercase text-stone-900 dark:text-white font-serif border-b pb-2 border-stone-100 dark:border-stone-800 flex items-center gap-2">
+            <h4 className="text-xs font-black text-stone-900 dark:text-white font-serif border-b pb-2 border-stone-100 dark:border-stone-800 flex items-center gap-2">
               <Eye className="w-4 h-4 text-orange-605" />
               <span>1. Information We Capture</span>
             </h4>
@@ -56,7 +56,7 @@ export const PrivacyPolicyPage: React.FC = () => {
 
           {/* SECTION 2 */}
           <div className="space-y-3" id="privacy-sec-2">
-            <h4 className="text-xs font-black uppercase text-stone-900 dark:text-white font-serif border-b pb-2 border-stone-100 dark:border-stone-800 flex items-center gap-2">
+            <h4 className="text-xs font-black text-stone-900 dark:text-white font-serif border-b pb-2 border-stone-100 dark:border-stone-800 flex items-center gap-2">
               <Lock className="w-4 h-4 text-orange-605" />
               <span>2. How Data Is Employed</span>
             </h4>
@@ -67,7 +67,7 @@ export const PrivacyPolicyPage: React.FC = () => {
 
           {/* SECTION 3 */}
           <div className="space-y-3" id="privacy-sec-3">
-            <h4 className="text-xs font-black uppercase text-stone-900 dark:text-white font-serif border-b pb-2 border-stone-100 dark:border-stone-800 flex items-center gap-2">
+            <h4 className="text-xs font-black text-stone-900 dark:text-white font-serif border-b pb-2 border-stone-100 dark:border-stone-800 flex items-center gap-2">
               <FileKey className="w-4 h-4 text-orange-605" />
               <span>3. Information Splicing With Vetted Partners</span>
             </h4>
@@ -78,7 +78,7 @@ export const PrivacyPolicyPage: React.FC = () => {
 
           {/* SECTION 4 */}
           <div className="space-y-3" id="privacy-sec-4">
-            <h4 className="text-xs font-black uppercase text-stone-900 dark:text-white font-serif border-b pb-2 border-stone-100 dark:border-stone-800 flex items-center gap-2">
+            <h4 className="text-xs font-black text-stone-900 dark:text-white font-serif border-b pb-2 border-stone-100 dark:border-stone-800 flex items-center gap-2">
               <Info className="w-4 h-4 text-orange-605" />
               <span>4. User Controls & Account Erasure</span>
             </h4>
@@ -98,7 +98,7 @@ export const PrivacyPolicyPage: React.FC = () => {
                 className="w-4 h-4 mt-0.5 text-orange-655 focus:ring-orange-500 rounded border-stone-200"
               />
               <div>
-                <label htmlFor="privacy-ack-btn" className="text-[11px] font-extrabold text-stone-800 dark:text-stone-200 uppercase tracking-tight cursor-pointer select-none">
+                <label htmlFor="privacy-ack-btn" className="text-[11px] font-extrabold text-stone-800 dark:text-stone-200 tracking-tight cursor-pointer select-none">
                   Auspicious Privacy Charter Accepted
                 </label>
                 <p className="text-[10px] text-stone-400 mt-1 font-sans leading-tight">

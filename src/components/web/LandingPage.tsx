@@ -1,11 +1,11 @@
 import React from 'react';
-import { HeroSection } from './LandingPage/HeroSection';
-import { VendorCategoriesSection } from './LandingPage/VendorCategoriesSection';
-import { EventPlannerPromoSection } from './LandingPage/EventPlannerPromoSection';
-import { PlatformHowItWorksSection } from './LandingPage/PlatformHowItWorksSection';
-import { VendorRegisterSection } from './LandingPage/VendorRegisterSection';
-import { WeddingDirectoryBannerPromo } from './LandingPage/WeddingDirectoryBannerPromo';
-import { CustomerTestimonialsSection } from './LandingPage/CustomerTestimonialsSection';
+import { HeroSection } from './Landing/HeroSection';
+import { VendorCategoriesSection } from './Landing/VendorCategoriesSection';
+import { EventPlannerPromoSection } from './Landing/EventPlannerPromoSection';
+import { PlatformHowItWorksSection } from './Landing/PlatformHowItWorksSection';
+import { VendorRegisterSection } from './Landing/VendorRegisterSection';
+import { WeddingDirectoryBannerPromo } from './Landing/WeddingDirectoryBannerPromo';
+import { CustomerTestimonialsSection } from './Landing/CustomerTestimonialsSection';
 
 interface LandingPageProps {
   onNavigate: (page: string, data?: unknown) => void;

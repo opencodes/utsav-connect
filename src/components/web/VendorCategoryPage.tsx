@@ -3,11 +3,11 @@ import { AnimatePresence } from 'motion/react';
 import { ArrowLeft, Search, Sparkles, SlidersHorizontal, Check } from 'lucide-react';
 import { RangoliMandala } from './GoldenDeco';
 
-import { CategoriesGrid, WEDDING_CATEGORIES, CategoryItem } from './VendorCategoryPage/CategoriesGrid';
-import { VendorGridCard, ListingCardItem } from './VendorCategoryPage/VendorGridCard';
-import { SubCategoryDetailsModal } from './VendorCategoryPage/SubCategoryDetailsModal';
-import { InquiryModal, InquiryFormData } from './VendorCategoryPage/InquiryModal';
-import { ALL_MOCK_VENDORS } from './VendorCategoryPage/mockData';
+import { CategoriesGrid, WEDDING_CATEGORIES, CategoryItem } from './VendorCategory/CategoriesGrid';
+import { VendorGridCard, ListingCardItem } from './VendorCategory/VendorGridCard';
+import { SubCategoryDetailsModal } from './VendorCategory/SubCategoryDetailsModal';
+import { InquiryModal, InquiryFormData } from './VendorCategory/InquiryModal';
+import { ALL_MOCK_VENDORS } from './VendorCategory/mockData';
 
 interface VendorCategoryPageProps {
   onNavigate: (page: string, data?: any) => void;

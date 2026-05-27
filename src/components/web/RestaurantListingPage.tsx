@@ -2,9 +2,9 @@ import React, { useState, useMemo } from 'react';
 import { ArrowUpDown, Check, Star, Clock, Filter, Sparkles } from 'lucide-react';
 import { MOCK_RESTAURANTS } from '../../data';
 import { AnimatedDiya } from './GoldenDeco';
-import { RestaurantListingHero } from './RestaurantListingPage/RestaurantListingHero';
-import { FiltersRibbon } from './RestaurantListingPage/FiltersRibbon';
-import { RestaurantListItemCard } from './RestaurantListingPage/RestaurantListItemCard';
+import { RestaurantListingHero } from './RestaurantListing/RestaurantListingHero';
+import { FiltersRibbon } from './RestaurantListing/FiltersRibbon';
+import { RestaurantListItemCard } from './RestaurantListing/RestaurantListItemCard';
 
 interface RestaurantListingPageProps {
   onNavigate: (page: string, data?: any) => void;

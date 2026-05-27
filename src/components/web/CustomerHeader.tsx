@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import LogoSvg from '../../assets/logo.svg';
 import { APP_NAME } from '../../brand';
-import { HERO_VENDOR_CITIES } from './LandingPage/heroVendorSearch';
+import { HERO_VENDOR_CITIES } from './Landing/heroVendorSearch';
 
 interface CustomerHeaderProps {
   onNavigate: (page: string, data?: unknown) => void;

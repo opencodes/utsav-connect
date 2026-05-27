@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Calendar, Users, Check, Search, Plus, Clock, MapPin, Sparkles, X, ChevronRight, Gift, Heart, Utensils, BookOpen, MessageCircle } from 'lucide-react';
 import { MarigoldToran, RangoliMandala, AnimatedDiya } from './GoldenDeco';
-import { HERO_EVENT_TYPES } from './LandingPage/heroEventSearch';
+import { HERO_EVENT_TYPES } from './Landing/heroEventSearch';
 
 const EVENT_TYPE_KEYWORDS: Record<string, string[]> = {
   wedding: ['wedding', 'shadi', 'ceremony'],

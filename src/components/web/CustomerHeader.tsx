@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Search,
   User,
@@ -28,6 +29,8 @@ interface CustomerHeaderProps {
   userProfile: { name: string; walletBalance: number };
   /** Nav sits on the landing hero gradient (same block as hero) */
   blendWithHero?: boolean;
+  selectedCity: string;
+  onCityChange: (city: string) => void;
 }
 
 const PRIMARY_NAV: { label: string; value: string; alsoActive?: string[] }[] = [
@@ -49,11 +52,18 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
   isLoggedIn,
   userProfile,
   blendWithHero = false,
+  selectedCity,
+  onCityChange,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [selectedCity, setSelectedCity] = useState('noida');
   const [cityMenuOpen, setCityMenuOpen] = useState(false);
   const [scrolledPastHero, setScrolledPastHero] = useState(false);
+  const cityButtonRef = useRef<HTMLButtonElement>(null);
+  const [cityMenuRect, setCityMenuRect] = useState<{
+    top: number;
+    left: number;
+    minWidth: number;
+  } | null>(null);
 
   const onHeroGradient = blendWithHero && !scrolledPastHero;
 
@@ -75,6 +85,29 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
       window.removeEventListener('resize', update);
     };
   }, [blendWithHero]);
+
+  useLayoutEffect(() => {
+    if (!cityMenuOpen || !cityButtonRef.current) {
+      setCityMenuRect(null);
+      return;
+    }
+    const updateRect = () => {
+      const rect = cityButtonRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      setCityMenuRect({
+        top: rect.bottom + 4,
+        left: rect.left,
+        minWidth: Math.max(rect.width, 176),
+      });
+    };
+    updateRect();
+    window.addEventListener('scroll', updateRect, { passive: true });
+    window.addEventListener('resize', updateRect);
+    return () => {
+      window.removeEventListener('scroll', updateRect);
+      window.removeEventListener('resize', updateRect);
+    };
+  }, [cityMenuOpen]);
 
   const cityLabel =
     HEADER_CITIES.find((c) => c.value === selectedCity)?.label ?? 'Noida';
@@ -102,19 +135,10 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
     }`;
   };
 
-  const syncHeroCity = (cityValue: string) => {
-    setSelectedCity(cityValue);
-    window.dispatchEvent(new CustomEvent('hero-city-change', { detail: { city: cityValue } }));
-    const select = document.getElementById('hero-search-city') as HTMLSelectElement | null;
-    if (select) select.value = cityValue;
-  };
-
   const handleCitySelect = (cityValue: string) => {
-    syncHeroCity(cityValue);
+    onCityChange(cityValue);
     setCityMenuOpen(false);
-    if (currentPage === 'landing') {
-      document.getElementById('landing-hero')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
+    if (currentPage !== 'landing') {
       goTo('vendor-categories', { city: cityValue });
     }
   };
@@ -185,6 +209,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
 
             <div className="relative hidden sm:block">
               <button
+                ref={cityButtonRef}
                 type="button"
                 onClick={() => setCityMenuOpen((o) => !o)}
                 className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg transition-colors cursor-pointer text-left ${
@@ -209,38 +234,46 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
                   className={`w-4 h-4 shrink-0 ${onHeroGradient ? 'text-amber-200/80' : 'text-stone-400'}`}
                 />
               </button>
-              {cityMenuOpen && (
-                <>
-                  <button
-                    type="button"
-                    className="fixed inset-0 z-40 cursor-default"
-                    aria-label="Close city menu"
-                    onClick={() => setCityMenuOpen(false)}
-                  />
-                  <ul
-                    className="absolute left-0 top-full mt-1 z-50 min-w-[11rem] py-1 bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-700 shadow-xl max-h-64 overflow-y-auto"
-                    role="listbox"
-                  >
-                    {HEADER_CITIES.map((c) => (
-                      <li key={c.value}>
-                        <button
-                          type="button"
-                          role="option"
-                          aria-selected={selectedCity === c.value}
-                          onClick={() => handleCitySelect(c.value)}
-                          className={`w-full text-left px-3 py-2 text-sm font-medium cursor-pointer ${
-                            selectedCity === c.value
-                              ? 'text-[#C51C13] bg-orange-50 dark:bg-stone-800'
-                              : 'text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-800'
-                          }`}
-                        >
-                          {c.label}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
+              {cityMenuOpen &&
+                cityMenuRect &&
+                createPortal(
+                  <>
+                    <button
+                      type="button"
+                      className="fixed inset-0 z-[90] cursor-default bg-transparent"
+                      aria-label="Close city menu"
+                      onClick={() => setCityMenuOpen(false)}
+                    />
+                    <ul
+                      className="fixed z-[100] py-1 bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-700 shadow-xl max-h-64 overflow-y-auto"
+                      style={{
+                        top: cityMenuRect.top,
+                        left: cityMenuRect.left,
+                        minWidth: cityMenuRect.minWidth,
+                      }}
+                      role="listbox"
+                    >
+                      {HEADER_CITIES.map((c) => (
+                        <li key={c.value}>
+                          <button
+                            type="button"
+                            role="option"
+                            aria-selected={selectedCity === c.value}
+                            onClick={() => handleCitySelect(c.value)}
+                            className={`w-full text-left px-3 py-2 text-sm font-medium cursor-pointer ${
+                              selectedCity === c.value
+                                ? 'text-[#C51C13] bg-orange-50 dark:bg-stone-800'
+                                : 'text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-800'
+                            }`}
+                          >
+                            {c.label}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </>,
+                  document.body
+                )}
             </div>
           </div>
 
@@ -311,7 +344,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
             ) : (
               <button
                 type="button"
-                onClick={() => goTo('profile')}
+                onClick={() => goTo('sign-in')}
                 className={`hidden sm:inline-flex px-3 py-2 text-sm font-semibold cursor-pointer ${
                   onHeroGradient
                     ? 'text-amber-100 hover:text-white'
@@ -416,6 +449,15 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
                 {link.label}
               </button>
             ))}
+            {!isLoggedIn && (
+              <button
+                type="button"
+                onClick={() => goTo('sign-in')}
+                className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-[#C51C13] bg-orange-50 dark:bg-stone-800"
+              >
+                Sign in
+              </button>
+            )}
             {isLoggedIn && (
               <>
                 <button

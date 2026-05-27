@@ -18,6 +18,7 @@ import { HowItWorksPage } from './components/web/HowItWorksPage';
 import { TermsPage } from './components/web/TermsPage';
 import { PrivacyPolicyPage } from './components/web/PrivacyPolicyPage';
 import { CancellationPolicyPage } from './components/web/CancellationPolicyPage';
+import { SignInPage } from './components/web/SignInPage';
 import { MarigoldToran, RangoliMandala } from './components/web/GoldenDeco';
 import { LANDING_HERO_SHELL_CLASS } from './components/web/landingHeroShell';
 
@@ -49,11 +50,12 @@ export default function App() {
 
   // Customer states info
   const [currentPage, setCurrentPage] = useState<string>('landing');
+  const [selectedCity, setSelectedCity] = useState('noida');
   const [currentLocation, setCurrentLocation] = useState<string>('Sector 56, Noida, UP');
   const [selectedRestId, setSelectedRestId] = useState<string>('rest-1');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile>(MOCK_USER_PROFILE);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [vendorSearchFilters, setVendorSearchFilters] = useState({
     search: '',
     categoryId: '',
@@ -82,6 +84,11 @@ export default function App() {
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDarkMode);
   }, [isDarkMode]);
+
+  const handleCityChange = (city: string) => {
+    setSelectedCity(city);
+    window.dispatchEvent(new CustomEvent('hero-city-change', { detail: { city } }));
+  };
 
   const handleNavigatePage = (
     pageName: string,
@@ -118,7 +125,24 @@ export default function App() {
     } else if (pageName !== 'celebrations') {
       setEventPlannerSearch({ eventName: '', location: '', date: '', eventType: '' });
     }
+    if (pageName === 'profile' && !isLoggedIn) {
+      setCurrentPage('sign-in');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     setCurrentPage(pageName);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSignIn = ({ phone, email }: { phone: string; email: string }) => {
+    setUserProfile((prev) => ({
+      ...prev,
+      phone: phone.startsWith('+') ? phone : `+91 ${phone.replace(/\D/g, '').slice(-10)}`,
+      email,
+    }));
+    setIsLoggedIn(true);
+    setCurrentPage('profile');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -199,6 +223,8 @@ export default function App() {
                 isLoggedIn={isLoggedIn}
                 userProfile={userProfile}
                 blendWithHero
+                selectedCity={selectedCity}
+                onCityChange={handleCityChange}
               />
               <AnimatePresence mode="wait">
                 <motion.div
@@ -208,7 +234,11 @@ export default function App() {
                   exit={{ opacity: 0, y: -12 }}
                   transition={{ duration: 0.35, ease: 'easeInOut' }}
                 >
-                  <LandingPage onNavigate={handleNavigatePage} />
+                  <LandingPage
+                    onNavigate={handleNavigatePage}
+                    selectedCity={selectedCity}
+                    onCityChange={handleCityChange}
+                  />
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -223,6 +253,8 @@ export default function App() {
                 onLogout={handleLogout}
                 isLoggedIn={isLoggedIn}
                 userProfile={userProfile}
+                selectedCity={selectedCity}
+                onCityChange={handleCityChange}
               />
               <main className="flex-grow">
                 <AnimatePresence mode="wait">
@@ -263,7 +295,11 @@ export default function App() {
                   />
                 )}
 
-                {currentPage === 'profile' && (
+                {currentPage === 'sign-in' && (
+                  <SignInPage onSignIn={handleSignIn} onNavigate={handleNavigatePage} />
+                )}
+
+                {currentPage === 'profile' && isLoggedIn && (
                   <UserProfilePage
                     userProfile={userProfile}
                     onUpdateWallet={handleUpdateWallet}
@@ -334,8 +370,8 @@ export default function App() {
 
           <Footer
             isDarkMode={isDarkMode}
+            currentPage={currentPage}
             onNavigate={handleNavigatePage}
-            onSwitchToAdmin={() => setIsAdminMode(true)}
           />
         </div>
       ) : (

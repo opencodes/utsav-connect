@@ -2,10 +2,10 @@ import React, { useState, useMemo } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { FoodItem, CartItem } from '../../types';
 import { MOCK_RESTAURANTS } from '../../data';
-import { RestaurantDetailHero } from './RestaurantDetail/RestaurantDetailHero';
-import { MenuCategoryToggleList } from './RestaurantDetail/MenuCategoryToggleList';
-import { MenuFoodCard } from './RestaurantDetail/MenuFoodCard';
-import { StickyCartFooter } from './RestaurantDetail/StickyCartFooter';
+import { RestaurantDetailHero } from './RestaurantDetailPage/RestaurantDetailHero';
+import { MenuCategoryToggleList } from './RestaurantDetailPage/MenuCategoryToggleList';
+import { MenuFoodCard } from './RestaurantDetailPage/MenuFoodCard';
+import { StickyCartFooter } from './RestaurantDetailPage/StickyCartFooter';
 
 interface RestaurantDetailPageProps {
   restaurantId: string;

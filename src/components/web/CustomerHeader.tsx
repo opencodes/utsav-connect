@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Search,
   User,
@@ -15,7 +16,7 @@ import {
 } from 'lucide-react';
 import LogoSvg from '../../assets/logo.svg';
 import { APP_NAME } from '../../brand';
-import { HERO_VENDOR_CITIES } from './Landing/heroVendorSearch';
+import { HERO_VENDOR_CITIES } from './LandingPage/heroVendorSearch';
 
 interface CustomerHeaderProps {
   onNavigate: (page: string, data?: unknown) => void;
@@ -25,14 +26,18 @@ interface CustomerHeaderProps {
   onSwitchToAdmin: () => void;
   onLogout: () => void;
   isLoggedIn: boolean;
+  isVendorLoggedIn?: boolean;
+  isEventPlannerCustomer?: boolean;
   userProfile: { name: string; walletBalance: number };
   /** Nav sits on the landing hero gradient (same block as hero) */
   blendWithHero?: boolean;
+  selectedCity: string;
+  onCityChange: (city: string) => void;
 }
 
 const PRIMARY_NAV: { label: string; value: string; alsoActive?: string[] }[] = [
   { label: 'Home', value: 'landing' },
-  { label: 'Vendors', value: 'vendor-categories' },
+  { label: 'Vendors', value: 'vendor-categories', alsoActive: ['vendor-list', 'vendor-details'] },
   { label: 'About', value: 'about' },
   { label: 'Contact', value: 'contact' },
 ];
@@ -47,13 +52,22 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
   onSwitchToAdmin,
   onLogout,
   isLoggedIn,
+  isVendorLoggedIn = false,
+  isEventPlannerCustomer = false,
   userProfile,
   blendWithHero = false,
+  selectedCity,
+  onCityChange,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [selectedCity, setSelectedCity] = useState('noida');
   const [cityMenuOpen, setCityMenuOpen] = useState(false);
   const [scrolledPastHero, setScrolledPastHero] = useState(false);
+  const cityButtonRef = useRef<HTMLButtonElement>(null);
+  const [cityMenuRect, setCityMenuRect] = useState<{
+    top: number;
+    left: number;
+    minWidth: number;
+  } | null>(null);
 
   const onHeroGradient = blendWithHero && !scrolledPastHero;
 
@@ -75,6 +89,29 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
       window.removeEventListener('resize', update);
     };
   }, [blendWithHero]);
+
+  useLayoutEffect(() => {
+    if (!cityMenuOpen || !cityButtonRef.current) {
+      setCityMenuRect(null);
+      return;
+    }
+    const updateRect = () => {
+      const rect = cityButtonRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      setCityMenuRect({
+        top: rect.bottom + 4,
+        left: rect.left,
+        minWidth: Math.max(rect.width, 176),
+      });
+    };
+    updateRect();
+    window.addEventListener('scroll', updateRect, { passive: true });
+    window.addEventListener('resize', updateRect);
+    return () => {
+      window.removeEventListener('scroll', updateRect);
+      window.removeEventListener('resize', updateRect);
+    };
+  }, [cityMenuOpen]);
 
   const cityLabel =
     HEADER_CITIES.find((c) => c.value === selectedCity)?.label ?? 'Noida';
@@ -102,30 +139,21 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
     }`;
   };
 
-  const syncHeroCity = (cityValue: string) => {
-    setSelectedCity(cityValue);
-    window.dispatchEvent(new CustomEvent('hero-city-change', { detail: { city: cityValue } }));
-    const select = document.getElementById('hero-search-city') as HTMLSelectElement | null;
-    if (select) select.value = cityValue;
-  };
-
   const handleCitySelect = (cityValue: string) => {
-    syncHeroCity(cityValue);
+    onCityChange(cityValue);
     setCityMenuOpen(false);
-    if (currentPage === 'landing') {
-      document.getElementById('landing-hero')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      goTo('vendor-categories', { city: cityValue });
+    if (currentPage !== 'landing') {
+      goTo('vendor-list', { city: cityValue });
     }
   };
 
   const goToEventPlanning = () => {
-    if (currentPage === 'landing') {
-      document.getElementById('hero-tab-planner')?.click();
-      document.getElementById('landing-hero')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      onNavigate('celebrations');
+    if (isEventPlannerCustomer) {
+      onSwitchToAdmin();
+      setMobileMenuOpen(false);
+      return;
     }
+    onNavigate('event-planner-register');
     setMobileMenuOpen(false);
   };
 
@@ -134,18 +162,15 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
       document.getElementById('hero-tab-vendors')?.click();
       document.getElementById('landing-hero')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else {
-      goTo('vendor-categories', { city: selectedCity });
+      goTo('vendor-list', { city: selectedCity });
     }
   };
 
   const listYourService = () => {
-    if (currentPage === 'landing') {
-      document.getElementById('vendor-register')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (isVendorLoggedIn) {
+      goTo('profile');
     } else {
-      goTo('landing');
-      setTimeout(() => {
-        document.getElementById('vendor-register')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 400);
+      goTo('list-your-service');
     }
     setMobileMenuOpen(false);
   };
@@ -185,6 +210,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
 
             <div className="relative hidden sm:block">
               <button
+                ref={cityButtonRef}
                 type="button"
                 onClick={() => setCityMenuOpen((o) => !o)}
                 className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg transition-colors cursor-pointer text-left ${
@@ -209,38 +235,46 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
                   className={`w-4 h-4 shrink-0 ${onHeroGradient ? 'text-amber-200/80' : 'text-stone-400'}`}
                 />
               </button>
-              {cityMenuOpen && (
-                <>
-                  <button
-                    type="button"
-                    className="fixed inset-0 z-40 cursor-default"
-                    aria-label="Close city menu"
-                    onClick={() => setCityMenuOpen(false)}
-                  />
-                  <ul
-                    className="absolute left-0 top-full mt-1 z-50 min-w-[11rem] py-1 bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-700 shadow-xl max-h-64 overflow-y-auto"
-                    role="listbox"
-                  >
-                    {HEADER_CITIES.map((c) => (
-                      <li key={c.value}>
-                        <button
-                          type="button"
-                          role="option"
-                          aria-selected={selectedCity === c.value}
-                          onClick={() => handleCitySelect(c.value)}
-                          className={`w-full text-left px-3 py-2 text-sm font-medium cursor-pointer ${
-                            selectedCity === c.value
-                              ? 'text-[#C51C13] bg-orange-50 dark:bg-stone-800'
-                              : 'text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-800'
-                          }`}
-                        >
-                          {c.label}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
+              {cityMenuOpen &&
+                cityMenuRect &&
+                createPortal(
+                  <>
+                    <button
+                      type="button"
+                      className="fixed inset-0 z-[90] cursor-default bg-transparent"
+                      aria-label="Close city menu"
+                      onClick={() => setCityMenuOpen(false)}
+                    />
+                    <ul
+                      className="fixed z-[100] py-1 bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-700 shadow-xl max-h-64 overflow-y-auto"
+                      style={{
+                        top: cityMenuRect.top,
+                        left: cityMenuRect.left,
+                        minWidth: cityMenuRect.minWidth,
+                      }}
+                      role="listbox"
+                    >
+                      {HEADER_CITIES.map((c) => (
+                        <li key={c.value}>
+                          <button
+                            type="button"
+                            role="option"
+                            aria-selected={selectedCity === c.value}
+                            onClick={() => handleCitySelect(c.value)}
+                            className={`w-full text-left px-3 py-2 text-sm font-medium cursor-pointer ${
+                              selectedCity === c.value
+                                ? 'text-[#C51C13] bg-orange-50 dark:bg-stone-800'
+                                : 'text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-800'
+                            }`}
+                          >
+                            {c.label}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </>,
+                  document.body
+                )}
             </div>
           </div>
 
@@ -277,8 +311,10 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
               <Store
                 className={`w-4 h-4 shrink-0 ${onHeroGradient ? 'text-[#FFCB44]' : 'text-[#C51C13]'}`}
               />
-              <span className="hidden xl:inline">List your service</span>
-              <span className="xl:hidden">List service</span>
+              <span className="hidden xl:inline">
+                {isVendorLoggedIn ? 'Vendor dashboard' : 'List your service'}
+              </span>
+              <span className="xl:hidden">{isVendorLoggedIn ? 'Dashboard' : 'List service'}</span>
               <span className="text-[10px] font-black uppercase bg-[#FFCB44] text-red-950 px-1.5 py-0.5 rounded">
                 Free
               </span>
@@ -291,11 +327,13 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
               className="hidden sm:inline-flex items-center gap-1.5 px-3 lg:px-4 py-2 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold shadow-md hover:shadow-lg transition-all cursor-pointer"
             >
               <CalendarPlus className="w-4 h-4 shrink-0" />
-              <span className="hidden lg:inline">Event planning</span>
-              <span className="lg:hidden">Plan event</span>
+              <span className="hidden lg:inline">
+                {isEventPlannerCustomer ? 'Planner workspace' : 'Event planning'}
+              </span>
+              <span className="lg:hidden">{isEventPlannerCustomer ? 'Workspace' : 'Plan event'}</span>
             </button>
 
-            {isLoggedIn ? (
+            {isVendorLoggedIn && (
               <button
                 type="button"
                 onClick={() => goTo('profile')}
@@ -304,21 +342,57 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
                     ? 'bg-white/10 border-white/30 hover:bg-white/20'
                     : 'bg-stone-100 dark:bg-stone-800 border-stone-200 dark:border-stone-600 hover:border-orange-300'
                 }`}
-                title={userProfile.name}
+                title="Vendor dashboard"
+              >
+                <Store className={`w-4 h-4 ${onHeroGradient ? 'text-[#FFCB44]' : 'text-[#C51C13]'}`} />
+              </button>
+            )}
+            {isLoggedIn ? (
+              <button
+                type="button"
+                onClick={() => onSwitchToAdmin()}
+                className={`hidden sm:flex items-center justify-center w-9 h-9 rounded-full border transition-colors cursor-pointer ${
+                  onHeroGradient
+                    ? 'bg-white/10 border-white/30 hover:bg-white/20'
+                    : 'bg-stone-100 dark:bg-stone-800 border-stone-200 dark:border-stone-600 hover:border-orange-300'
+                }`}
+                title={`${userProfile.name} — planner workspace`}
               >
                 <User className={`w-4 h-4 ${onHeroGradient ? 'text-[#FFCB44]' : 'text-[#C51C13]'}`} />
               </button>
             ) : (
+              !isVendorLoggedIn && (
+                <button
+                  type="button"
+                  onClick={() => goTo('sign-in')}
+                  className={`hidden sm:inline-flex px-3 py-2 text-sm font-semibold cursor-pointer ${
+                    onHeroGradient
+                      ? 'text-amber-100 hover:text-white'
+                      : 'text-[#C51C13] hover:text-[#A2110A]'
+                  }`}
+                >
+                  Sign in
+                </button>
+              )
+            )}
+
+            {(isLoggedIn || isVendorLoggedIn || isEventPlannerCustomer) && (
               <button
                 type="button"
-                onClick={() => goTo('profile')}
-                className={`hidden sm:inline-flex px-3 py-2 text-sm font-semibold cursor-pointer ${
+                onClick={() => {
+                  onLogout();
+                  setMobileMenuOpen(false);
+                }}
+                className={`hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-colors cursor-pointer ${
                   onHeroGradient
-                    ? 'text-amber-100 hover:text-white'
-                    : 'text-[#C51C13] hover:text-[#A2110A]'
+                    ? 'text-amber-100 hover:bg-white/10 hover:text-white border border-white/25'
+                    : 'text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 border border-stone-200 dark:border-stone-600'
                 }`}
+                id="header-logout-btn"
+                title="Log out"
               >
-                Sign in
+                <LogOut className="w-4 h-4 shrink-0" aria-hidden />
+                <span className="hidden lg:inline">Log out</span>
               </button>
             )}
 
@@ -397,7 +471,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
               className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-dashed border-orange-300 text-sm font-semibold text-[#C51C13]"
             >
               <Store className="w-4 h-4" />
-              List your service — Free
+              {isVendorLoggedIn ? 'Vendor dashboard' : 'List your service — Free'}
             </button>
           </div>
 
@@ -416,41 +490,64 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
                 {link.label}
               </button>
             ))}
-            {isLoggedIn && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => goTo('profile')}
-                  className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
-                >
-                  My profile — {userProfile.name}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    onLogout();
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-red-600 flex items-center gap-2"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Logout
-                </button>
-              </>
+            {!isLoggedIn && !isVendorLoggedIn && !isEventPlannerCustomer && (
+              <button
+                type="button"
+                onClick={() => goTo('sign-in')}
+                className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-[#C51C13] bg-orange-50 dark:bg-stone-800"
+              >
+                Sign in
+              </button>
+            )}
+            {isEventPlannerCustomer && (
+              <button
+                type="button"
+                onClick={() => {
+                  onSwitchToAdmin();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-[#C51C13] bg-orange-50 dark:bg-stone-800"
+              >
+                Planner workspace
+              </button>
+            )}
+            {isVendorLoggedIn && (
+              <button
+                type="button"
+                onClick={() => goTo('profile')}
+                className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-[#C51C13] bg-orange-50 dark:bg-stone-800"
+              >
+                Vendor dashboard
+              </button>
+            )}
+            {(isLoggedIn || isVendorLoggedIn || isEventPlannerCustomer) && (
+              <button
+                type="button"
+                onClick={() => {
+                  onLogout();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-red-600 dark:text-red-400 flex items-center gap-2 hover:bg-red-50 dark:hover:bg-red-950/30"
+              >
+                <LogOut className="w-4 h-4" aria-hidden />
+                Log out
+              </button>
             )}
           </nav>
 
-          <button
-            type="button"
-            onClick={() => {
-              onSwitchToAdmin();
-              setMobileMenuOpen(false);
-            }}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold uppercase text-amber-800 bg-amber-50 border border-amber-200 dark:bg-stone-800 dark:border-stone-700 dark:text-amber-400"
-          >
-            <Landmark className="w-4 h-4" />
-            Admin panel
-          </button>
+          {!isEventPlannerCustomer && (
+            <button
+              type="button"
+              onClick={() => {
+                onNavigate('event-planner-register');
+                setMobileMenuOpen(false);
+              }}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold uppercase text-amber-800 bg-amber-50 border border-amber-200 dark:bg-stone-800 dark:border-stone-700 dark:text-amber-400"
+            >
+              <Landmark className="w-4 h-4" />
+              Become an event planner
+            </button>
+          )}
         </div>
       )}
     </header>

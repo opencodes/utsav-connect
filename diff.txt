@@ -1,0 +1,3633 @@
+diff --git a/src/App.tsx b/src/App.tsx
+index 06c34df..dfb8127 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -1,4 +1,4 @@
+-import React, { useEffect, useState } from 'react';
++import React, { useCallback, useEffect, useState } from 'react';
+ import { motion, AnimatePresence } from 'motion/react';
+ 
+ // Customers views imports
+@@ -9,16 +9,26 @@ import { RestaurantListingPage } from './components/web/RestaurantListingPage';
+ import { RestaurantDetailPage } from './components/web/RestaurantDetailPage';
+ import { CartPage } from './components/web/CartPage';
+ import { UserProfilePage } from './components/web/UserProfilePage';
++import { VendorProfilePage } from './components/web/VendorProfilePage';
++import { VendorProfileGate } from './components/web/VendorProfileGate';
++import {
++  MOCK_VENDOR_SESSION,
++  type VendorDashboardSession,
++} from './components/web/VendorProfilePage/vendorProfileData';
+ import { VendorCategoryPage } from './components/web/VendorCategoryPage';
++import { VendorListPage } from './components/web/VendorListPage';
++import { VendorDetailsPage } from './components/web/VendorDetailsPage';
+ import { PlannedEventsShowcase } from './components/web/PlannedEventsShowcase';
+ import { PortfolioPage } from './components/web/PortfolioPage';
+ import { AboutUsPage } from './components/web/AboutUsPage';
+ import { ContactUsPage } from './components/web/ContactUsPage';
++import { VendorRegistrationPage } from './components/web/VendorRegistrationPage';
+ import { HowItWorksPage } from './components/web/HowItWorksPage';
+ import { TermsPage } from './components/web/TermsPage';
+ import { PrivacyPolicyPage } from './components/web/PrivacyPolicyPage';
+ import { CancellationPolicyPage } from './components/web/CancellationPolicyPage';
+-import { SignInPage } from './components/web/SignInPage';
++import { SignInPage, type SignInMode } from './components/web/SignInPage';
++import { EventPlannerRegistrationPage } from './components/web/EventPlannerRegistrationPage';
+ import { MarigoldToran, RangoliMandala } from './components/web/GoldenDeco';
+ import { LANDING_HERO_SHELL_CLASS } from './components/web/landingHeroShell';
+ 
+@@ -43,30 +53,82 @@ import { PlannerInventory } from './components/PlannerInventory';
+ // Types & Data
+ import { FoodItem, CartItem, UserProfile } from './types';
+ import { MOCK_USER_PROFILE } from './data';
++import type { CustomerType } from './types';
++import {
++  type NavigateData,
++  type ParsedRoute,
++  pageToPath,
++  parseLocation,
++  pushRoute,
++  replaceRoute,
++} from './routing';
++
++function getInitialRoute(): ParsedRoute {
++  return parseLocation();
++}
++
++const COMMERCE_ADMIN_TABS = new Set([
++  'dashboard',
++  'restaurants',
++  'orders',
++  'customers',
++  'marketing',
++]);
++
++function plannerDefaultTab(current: string): string {
++  return COMMERCE_ADMIN_TABS.has(current) ? 'planner-events' : current;
++}
++
++function isPlannerCustomer(loggedIn: boolean, customerType?: CustomerType): boolean {
++  return loggedIn && customerType === 'event-planner';
++}
+ 
+ export default function App() {
++  const initialRoute = getInitialRoute();
++
+   const [isDarkMode, setIsDarkMode] = useState(false);
+   const [isAdminMode, setIsAdminMode] = useState(false);
+ 
+   // Customer states info
+-  const [currentPage, setCurrentPage] = useState<string>('landing');
+-  const [selectedCity, setSelectedCity] = useState('noida');
++  const [currentPage, setCurrentPage] = useState<string>(initialRoute.page);
++  const [selectedCity, setSelectedCity] = useState(
++    initialRoute.vendorSearch?.city || 'noida'
++  );
+   const [currentLocation, setCurrentLocation] = useState<string>('Sector 56, Noida, UP');
+-  const [selectedRestId, setSelectedRestId] = useState<string>('rest-1');
++  const [selectedRestId, setSelectedRestId] = useState<string>(
++    initialRoute.restaurantId || 'rest-1'
++  );
++  const [selectedVendorId, setSelectedVendorId] = useState<string>(initialRoute.vendorId || '');
+   const [cart, setCart] = useState<CartItem[]>([]);
+   const [userProfile, setUserProfile] = useState<UserProfile>(MOCK_USER_PROFILE);
+   const [isLoggedIn, setIsLoggedIn] = useState(false);
++  const [isVendorLoggedIn, setIsVendorLoggedIn] = useState(false);
++  const isEventPlannerCustomer = isPlannerCustomer(
++    isLoggedIn,
++    userProfile.customerType
++  );
++  const [signInInitialMode, setSignInInitialMode] = useState<SignInMode>('customer');
++  const [vendorSession, setVendorSession] =
++    useState<VendorDashboardSession>(MOCK_VENDOR_SESSION);
+   const [vendorSearchFilters, setVendorSearchFilters] = useState({
+-    search: '',
+-    categoryId: '',
+-    city: '',
++    search: initialRoute.vendorSearch?.search ?? '',
++    categoryId: initialRoute.vendorSearch?.categoryId ?? '',
++    city: initialRoute.vendorSearch?.city ?? '',
+   });
+   const [eventPlannerSearch, setEventPlannerSearch] = useState({
+-    eventName: '',
+-    location: '',
+-    date: '',
+-    eventType: '',
++    eventName: initialRoute.eventPlannerSearch?.eventName ?? '',
++    location: initialRoute.eventPlannerSearch?.location ?? '',
++    date: initialRoute.eventPlannerSearch?.date ?? '',
++    eventType: initialRoute.eventPlannerSearch?.eventType ?? '',
+   });
++  const [eventPlannerRegisterPrefill, setEventPlannerRegisterPrefill] = useState<{
++    eventName?: string;
++    location?: string;
++    date?: string;
++    eventType?: string;
++    city?: string;
++  }>({});
++  const [registerFromHome, setRegisterFromHome] = useState(false);
+ 
+   // Admin dynamic states
+   const [currentAdminTab, setCurrentAdminTab] = useState<string>('dashboard');
+@@ -76,43 +138,143 @@ export default function App() {
+     setIsDarkMode((prev) => !prev);
+   };
+ 
++  const applyRoute = useCallback(
++    (route: ParsedRoute, options?: { scroll?: boolean }) => {
++      if (route.admin) {
++        if (!isLoggedIn) {
++          setSignInInitialMode('customer');
++          setIsAdminMode(false);
++          setCurrentPage('sign-in');
++          if (window.location.pathname === '/admin') {
++            replaceRoute(pageToPath('sign-in'));
++          }
++          return;
++        }
++        setCurrentAdminTab((tab) => plannerDefaultTab(tab));
++        setIsAdminMode(true);
++        return;
++      }
++
++      setIsAdminMode(false);
++
++      let page = route.page;
++      if (page === 'account' && !isLoggedIn) {
++        page = 'sign-in';
++      }
++      if (page === 'vendor-details' && !route.vendorId) {
++        page = 'vendor-list';
++      }
++
++      setCurrentPage(page);
++
++      if (route.restaurantId) {
++        setSelectedRestId(route.restaurantId);
++      }
++      if (route.vendorId) {
++        setSelectedVendorId(route.vendorId);
++      }
++      if (route.vendorSearch) {
++        setVendorSearchFilters(route.vendorSearch);
++        if (route.vendorSearch.city) {
++          setSelectedCity(route.vendorSearch.city);
++        }
++      }
++      if (route.eventPlannerSearch) {
++        setEventPlannerSearch(route.eventPlannerSearch);
++      }
++
++      if (options?.scroll !== false) {
++        window.scrollTo({ top: 0, behavior: 'smooth' });
++      }
++    },
++    [isLoggedIn]
++  );
++
+   const handleLogout = () => {
+     setIsLoggedIn(false);
+-    setCurrentPage('landing');
++    setIsVendorLoggedIn(false);
++    setUserProfile((prev) => ({ ...prev, customerType: 'standard' }));
++    setIsAdminMode(false);
++    const path = pageToPath('landing');
++    pushRoute(path);
++    applyRoute({ page: 'landing' });
+   };
+ 
+   useEffect(() => {
+     document.documentElement.classList.toggle('dark', isDarkMode);
+   }, [isDarkMode]);
+ 
++  useEffect(() => {
++    const onPopState = () => {
++      applyRoute(parseLocation(), { scroll: true });
++    };
++    window.addEventListener('popstate', onPopState);
++    return () => window.removeEventListener('popstate', onPopState);
++  }, [applyRoute]);
++
++  useEffect(() => {
++    const route = parseLocation();
++    if (route.admin) {
++      if (!isLoggedIn) {
++        const path = pageToPath('sign-in');
++        if (window.location.pathname === '/admin') {
++          replaceRoute(path);
++        }
++        setIsAdminMode(false);
++        setCurrentPage('sign-in');
++        setSignInInitialMode('customer');
++      } else {
++        setIsAdminMode(true);
++        setCurrentAdminTab((tab) => plannerDefaultTab(tab));
++      }
++    }
++    if (route.page === 'account' && !isLoggedIn) {
++      replaceRoute('/sign-in');
++      setCurrentPage('sign-in');
++    }
++    if (window.location.hash && (route.page === 'landing' || currentPage === 'landing')) {
++      const id = window.location.hash.slice(1);
++      window.setTimeout(() => {
++        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
++      }, 300);
++    }
++    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount for deep links
++  }, []);
++
+   const handleCityChange = (city: string) => {
+     setSelectedCity(city);
+     window.dispatchEvent(new CustomEvent('hero-city-change', { detail: { city } }));
+   };
+ 
+-  const handleNavigatePage = (
+-    pageName: string,
+-    data?: {
+-      restaurantId?: string;
+-      search?: string;
+-      categoryId?: string;
+-      city?: string;
+-      eventName?: string;
+-      location?: string;
+-      date?: string;
+-      eventType?: string;
++  const handleNavigatePage = (pageName: string, data?: NavigateData) => {
++    if (data?.signInAs === 'planner' || data?.eventPlannerSignup || data?.signInAs === 'customer') {
++      setSignInInitialMode('customer');
++    } else if (data?.signInAs === 'vendor') {
++      setSignInInitialMode('vendor');
++    } else if (pageName !== 'sign-in') {
++      setSignInInitialMode('customer');
++    }
++
++    if (pageName === 'account' && !isLoggedIn) {
++      const path = pageToPath('sign-in', data, selectedCity);
++      pushRoute(path);
++      applyRoute({ page: 'sign-in' });
++      return;
+     }
+-  ) => {
++
+     if (data?.restaurantId) {
+       setSelectedRestId(data.restaurantId);
+     }
+-    if (pageName === 'vendor-categories') {
++    if (data?.vendorId) {
++      setSelectedVendorId(data.vendorId);
++    }
++    if (pageName === 'vendor-list') {
+       setVendorSearchFilters({
+         search: data?.search ?? '',
+         categoryId: data?.categoryId ?? '',
+-        city: data?.city ?? '',
++        city: data?.city ?? selectedCity,
+       });
+-    } else if (pageName !== 'vendor-categories') {
++    } else if (pageName !== 'vendor-list') {
+       setVendorSearchFilters({ search: '', categoryId: '', city: '' });
+     }
+     if (pageName === 'celebrations') {
+@@ -125,25 +287,133 @@ export default function App() {
+     } else if (pageName !== 'celebrations') {
+       setEventPlannerSearch({ eventName: '', location: '', date: '', eventType: '' });
+     }
+-    if (pageName === 'profile' && !isLoggedIn) {
+-      setCurrentPage('sign-in');
+-      window.scrollTo({ top: 0, behavior: 'smooth' });
+-      return;
++    if (pageName === 'event-planner-register') {
++      setEventPlannerRegisterPrefill({
++        eventName: data?.eventName,
++        location: data?.location,
++        date: data?.date,
++        eventType: data?.eventType,
++        city: data?.city ?? selectedCity,
++      });
++      setRegisterFromHome(Boolean(data?.fromHome));
+     }
+ 
+-    setCurrentPage(pageName);
+-    window.scrollTo({ top: 0, behavior: 'smooth' });
++    const path = pageToPath(pageName, data, selectedCity);
++    pushRoute(path);
++    applyRoute(
++      {
++        page: pageName,
++        restaurantId: data?.restaurantId,
++        vendorId: data?.vendorId,
++        vendorSearch:
++          pageName === 'vendor-list' || pageName === 'vendor-categories'
++            ? {
++                search: data?.search ?? '',
++                categoryId: data?.categoryId ?? '',
++                city: data?.city ?? selectedCity,
++              }
++            : undefined,
++        eventPlannerSearch:
++          pageName === 'celebrations'
++            ? {
++                eventName: data?.eventName ?? '',
++                location: data?.location ?? '',
++                date: data?.date ?? '',
++                eventType: data?.eventType ?? '',
++              }
++            : undefined,
++      },
++      { scroll: true }
++    );
++  };
++
++  const openPlannerWorkspace = () => {
++    setCurrentAdminTab('planner-events');
++    setIsAdminMode(true);
++    pushRoute('/admin');
++    applyRoute({ page: 'landing', admin: true });
+   };
+ 
++  const formatCustomerPhone = (phone: string) =>
++    phone.startsWith('+') ? phone : `+91 ${phone.replace(/\D/g, '').slice(-10)}`;
++
+   const handleSignIn = ({ phone, email }: { phone: string; email: string }) => {
+     setUserProfile((prev) => ({
+       ...prev,
+-      phone: phone.startsWith('+') ? phone : `+91 ${phone.replace(/\D/g, '').slice(-10)}`,
++      phone: formatCustomerPhone(phone),
+       email,
++      customerType: 'event-planner',
++    }));
++    setIsLoggedIn(true);
++    setIsVendorLoggedIn(false);
++    openPlannerWorkspace();
++  };
++
++  const handleEventPlannerRegister = (payload: {
++    fullName: string;
++    email: string;
++    phone: string;
++    companyName?: string;
++    primaryEventType: string;
++    city: string;
++    bio: string;
++    draftEvent?: {
++      eventName?: string;
++      location?: string;
++      date?: string;
++      eventType?: string;
++    };
++  }) => {
++    setUserProfile((prev) => ({
++      ...prev,
++      name: payload.fullName,
++      email: payload.email,
++      phone: formatCustomerPhone(payload.phone),
++      customerType: 'event-planner',
+     }));
+     setIsLoggedIn(true);
+-    setCurrentPage('profile');
+-    window.scrollTo({ top: 0, behavior: 'smooth' });
++    setIsVendorLoggedIn(false);
++    if (payload.draftEvent) {
++      setEventPlannerSearch({
++        eventName: payload.draftEvent.eventName ?? '',
++        location: payload.draftEvent.location ?? '',
++        date: payload.draftEvent.date ?? '',
++        eventType: payload.draftEvent.eventType ?? payload.primaryEventType,
++      });
++    }
++    openPlannerWorkspace();
++  };
++
++  const handleVendorSignIn = ({ phone, email }: { phone: string; email: string }) => {
++    setVendorSession((prev) => ({
++      ...prev,
++      phone: phone.startsWith('+') ? phone : `+91 ${phone.replace(/\D/g, '').slice(-10)}`,
++      email,
++    }));
++    setIsVendorLoggedIn(true);
++    const path = pageToPath('profile');
++    pushRoute(path);
++    applyRoute({ page: 'profile' });
++  };
++
++  const handleEnterAdmin = () => {
++    if (!isLoggedIn) {
++      const path = pageToPath('sign-in');
++      pushRoute(path);
++      applyRoute({ page: 'sign-in' });
++      setSignInInitialMode('customer');
++      return;
++    }
++    setCurrentAdminTab((tab) => plannerDefaultTab(tab));
++    setIsAdminMode(true);
++    pushRoute('/admin');
++  };
++
++  const handleExitAdmin = () => {
++    setIsAdminMode(false);
++    const path = pageToPath('landing');
++    pushRoute(path);
++    applyRoute({ page: 'landing' });
+   };
+ 
+   const handleAddToCart = (item: FoodItem, restId: string, restName: string) => {
+@@ -218,9 +488,11 @@ export default function App() {
+                 currentPage={currentPage}
+                 isDarkMode={isDarkMode}
+                 onToggleDarkMode={handleToggleDarkMode}
+-                onSwitchToAdmin={() => setIsAdminMode(true)}
++                onSwitchToAdmin={handleEnterAdmin}
+                 onLogout={handleLogout}
+                 isLoggedIn={isLoggedIn}
++                isVendorLoggedIn={isVendorLoggedIn}
++                isEventPlannerCustomer={isEventPlannerCustomer}
+                 userProfile={userProfile}
+                 blendWithHero
+                 selectedCity={selectedCity}
+@@ -249,9 +521,11 @@ export default function App() {
+                 currentPage={currentPage}
+                 isDarkMode={isDarkMode}
+                 onToggleDarkMode={handleToggleDarkMode}
+-                onSwitchToAdmin={() => setIsAdminMode(true)}
++                onSwitchToAdmin={handleEnterAdmin}
+                 onLogout={handleLogout}
+                 isLoggedIn={isLoggedIn}
++                isVendorLoggedIn={isVendorLoggedIn}
++                isEventPlannerCustomer={isEventPlannerCustomer}
+                 userProfile={userProfile}
+                 selectedCity={selectedCity}
+                 onCityChange={handleCityChange}
+@@ -296,24 +570,57 @@ export default function App() {
+                 )}
+ 
+                 {currentPage === 'sign-in' && (
+-                  <SignInPage onSignIn={handleSignIn} onNavigate={handleNavigatePage} />
++                  <SignInPage
++                    initialMode={signInInitialMode}
++                    onSignIn={handleSignIn}
++                    onVendorSignIn={handleVendorSignIn}
++                    onNavigate={handleNavigatePage}
++                  />
+                 )}
+ 
+-                {currentPage === 'profile' && isLoggedIn && (
++                {currentPage === 'profile' &&
++                  (isVendorLoggedIn ? (
++                    <VendorProfilePage
++                      session={vendorSession}
++                      onNavigate={handleNavigatePage}
++                    />
++                  ) : (
++                    <VendorProfileGate onNavigate={handleNavigatePage} />
++                  ))}
++
++                {currentPage === 'account' && isLoggedIn && (
+                   <UserProfilePage
+                     userProfile={userProfile}
+                     onUpdateWallet={handleUpdateWallet}
+                     onNavigate={handleNavigatePage}
++                    isEventPlannerCustomer={isEventPlannerCustomer}
++                    onOpenPlannerWorkspace={openPlannerWorkspace}
+                   />
+                 )}
+ 
+                 {currentPage === 'vendor-categories' && (
+                   <VendorCategoryPage
++                    onNavigate={handleNavigatePage}
++                    isDarkMode={isDarkMode}
++                    initialCity={selectedCity}
++                  />
++                )}
++
++                {currentPage === 'vendor-list' && (
++                  <VendorListPage
+                     onNavigate={handleNavigatePage}
+                     isDarkMode={isDarkMode}
+                     initialSearchQuery={vendorSearchFilters.search}
+                     initialCategoryId={vendorSearchFilters.categoryId}
+-                    initialCity={vendorSearchFilters.city}
++                    initialCity={vendorSearchFilters.city || selectedCity}
++                  />
++                )}
++
++                {currentPage === 'vendor-details' && selectedVendorId && (
++                  <VendorDetailsPage
++                    onNavigate={handleNavigatePage}
++                    vendorId={selectedVendorId}
++                    initialCity={selectedCity}
+                   />
+                 )}
+ 
+@@ -345,6 +652,23 @@ export default function App() {
+                   />
+                 )}
+ 
++                {currentPage === 'list-your-service' && (
++                  <VendorRegistrationPage
++                    onNavigate={handleNavigatePage}
++                    initialCity={selectedCity}
++                  />
++                )}
++
++                {currentPage === 'event-planner-register' && (
++                  <EventPlannerRegistrationPage
++                    onNavigate={handleNavigatePage}
++                    initialCity={selectedCity}
++                    initialPrefill={eventPlannerRegisterPrefill}
++                    startAtAccountStep={registerFromHome}
++                    onRegisterComplete={handleEventPlannerRegister}
++                  />
++                )}
++
+                 {currentPage === 'how-it-works' && (
+                   <HowItWorksPage
+                     onNavigate={handleNavigatePage}
+@@ -382,13 +706,17 @@ export default function App() {
+           <AdminSidebar
+             currentAdminTab={currentAdminTab}
+             onSelectTab={setCurrentAdminTab}
+-            onExitAdmin={() => setIsAdminMode(false)}
++            onExitAdmin={handleExitAdmin}
++            plannerWorkspace={isEventPlannerCustomer}
+           />
+ 
+           {/* Main workspace container (Header + body) */}
+           <div className="flex-1 flex flex-col overflow-hidden relative">
+             
+-            <AdminHeader currentTabName={currentAdminTab} />
++            <AdminHeader
++              currentTabName={currentAdminTab}
++              plannerWorkspace={isEventPlannerCustomer}
++            />
+ 
+             {/* Admin view Router */}
+             <main className="flex-1 p-6 overflow-y-auto space-y-6">
+diff --git a/src/components/Admin/Header/AdminHeader.tsx b/src/components/Admin/Header/AdminHeader.tsx
+index 5b2138c..b0c05d5 100644
+--- a/src/components/Admin/Header/AdminHeader.tsx
++++ b/src/components/Admin/Header/AdminHeader.tsx
+@@ -1,55 +1,131 @@
+ import React, { useState } from 'react';
+ import { Bell, Search, RefreshCw } from 'lucide-react';
++import { APP_NAME } from '../../../brand';
++
++const ADMIN_TAB_TITLES: Record<string, string> = {
++  dashboard: 'Dashboard',
++  restaurants: 'Products & Stores',
++  orders: 'Order Logs',
++  customers: 'Customers Sync',
++  marketing: 'Marketing & Campaigns',
++  'planner-events': 'Events & Rituals',
++  'planner-guests': 'Guests & RSVP',
++  'planner-feast': 'Feast & Catering',
++  'planner-vendors': 'Vendors Directory',
++  'planner-budget': 'Budget & Expenses',
++  'planner-chuman': 'Chuman (Gifts)',
++  'planner-inventory': 'Bartan & Cylinders',
++};
++
++function tabTitle(tabId: string): string {
++  return ADMIN_TAB_TITLES[tabId] ?? tabId.replace(/-/g, ' ');
++}
+ 
+ interface AdminHeaderProps {
+   currentTabName: string;
++  plannerWorkspace?: boolean;
+ }
+ 
+-export const AdminHeader: React.FC<AdminHeaderProps> = ({ currentTabName }) => {
++export const AdminHeader: React.FC<AdminHeaderProps> = ({
++  currentTabName,
++  plannerWorkspace = false,
++}) => {
+   const [showNotifications, setShowNotifications] = useState(false);
++  const displayTitle = tabTitle(currentTabName);
+ 
+-  const notifications = [
+-    { title: 'New Multi-item Order Placed', detail: 'OrderID: FED-9831 by Aishwarya, value ₹560', time: 'Just now', unread: true },
+-    { title: 'Diwali Campaign Alert', detail: 'Coupon DIWALISWEET conversion rate crossed 80%', time: '10m ago', unread: true },
+-    { title: 'Approval Required', detail: 'New menu item: "Dry Fruit Shrikhand" needs kitchen review', time: '1h ago', unread: false },
+-    { title: 'Support Ticket Escalated', detail: 'Wallet refund delay case FED-9640 is open', time: '3h ago', unread: false },
+-  ];
++  const notifications = plannerWorkspace
++    ? [
++        {
++          title: 'Upcoming: Tilak ceremony',
++          detail: 'Guest list draft ready — 42 confirmed of 60 invited',
++          time: 'Just now',
++          unread: true,
++        },
++        {
++          title: 'Vendor quote received',
++          detail: 'Catering partner replied for feast planning',
++          time: '2h ago',
++          unread: true,
++        },
++        {
++          title: 'Budget reminder',
++          detail: 'Chuman allocation at 78% of planned spend',
++          time: 'Yesterday',
++          unread: false,
++        },
++      ]
++    : [
++        {
++          title: 'New Multi-item Order Placed',
++          detail: 'OrderID: FED-9831 by Aishwarya, value ₹560',
++          time: 'Just now',
++          unread: true,
++        },
++        {
++          title: 'Diwali Campaign Alert',
++          detail: 'Coupon DIWALISWEET conversion rate crossed 80%',
++          time: '10m ago',
++          unread: true,
++        },
++        {
++          title: 'Approval Required',
++          detail: 'New menu item: "Dry Fruit Shrikhand" needs kitchen review',
++          time: '1h ago',
++          unread: false,
++        },
++      ];
+ 
+   return (
+-    <header className="sticky top-0 z-40 bg-white/95 dark:bg-stone-900/95 border-b border-orange-100/40 dark:border-stone-800 p-4 flex items-center justify-between gap-4 shadow-sm" id="admin-top-header" style={{ contentVisibility: 'auto' }}>
+-      
+-      {/* Search and context title */}
++    <header
++      className="sticky top-0 z-40 bg-white/95 dark:bg-stone-900/95 border-b border-orange-100/40 dark:border-stone-800 p-4 flex items-center justify-between gap-4 shadow-sm"
++      id="admin-top-header"
++      style={{ contentVisibility: 'auto' }}
++    >
+       <div className="flex items-center gap-4">
+-        <h2 className="text-lg font-black tracking-tight text-stone-900 dark:text-white capitalize">
+-          Root // <span className="text-orange-606 font-sans">{currentTabName}</span>
++        <h2 className="text-lg font-black tracking-tight text-stone-900 dark:text-white">
++          {plannerWorkspace ? (
++            <>
++              {APP_NAME}{' '}
++              <span className="text-orange-600 font-sans font-bold">/ {displayTitle}</span>
++            </>
++          ) : (
++            <>
++              Root // <span className="text-orange-600 font-sans">{displayTitle}</span>
++            </>
++          )}
+         </h2>
+ 
+-        {/* Global panel indicator search */}
+         <div className="hidden md:flex relative max-w-xs text-left">
+           <input
+             type="text"
+-            placeholder="Search master indexes..."
++            placeholder={
++              plannerWorkspace ? 'Search events, guests, vendors…' : 'Search master indexes...'
++            }
+             className="pl-8 pr-3 py-1.5 text-xs rounded-xl border bg-stone-50 dark:bg-stone-850 dark:border-stone-800 focus:outline-none focus:ring-1 focus:ring-orange-500 text-stone-900 dark:text-white"
+           />
+           <Search className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-stone-400" />
+         </div>
+       </div>
+ 
+-      {/* Right actions cluster */}
+       <div className="flex items-center gap-4 select-none">
+-        
+-        {/* Sync state button */}
+         <button
+-          onClick={() => alert('Database index synchronized with Live Cloud Run container.')}
++          type="button"
++          onClick={() =>
++            alert(
++              plannerWorkspace
++                ? 'Planner data synced (demo).'
++                : 'Database index synchronized with Live Cloud Run container.'
++            )
++          }
+           className="p-2 text-stone-400 hover:text-orange-650 rounded-full hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors cursor-pointer"
+           title="Click to Resync Nodes"
+         >
+           <RefreshCw className="w-4 h-4" />
+         </button>
+ 
+-        {/* Notifications badge */}
+         <div className="relative">
+           <button
++            type="button"
+             onClick={() => setShowNotifications(!showNotifications)}
+             className="p-2 text-stone-400 hover:text-orange-655 rounded-full hover:bg-stone-55 dark:hover:bg-stone-800 transition-colors relative cursor-pointer"
+             title="Read announcements"
+@@ -61,8 +137,11 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ currentTabName }) => {
+           {showNotifications && (
+             <div className="absolute top-full right-0 mt-2 w-80 rounded-2xl bg-white dark:bg-stone-800 shadow-2xl border border-orange-100 dark:border-stone-700 p-3 z-50 text-left animate-in fade-in slide-in-from-top-2 duration-150">
+               <div className="flex justify-between items-center pb-2 border-b border-light-100 dark:border-stone-700 mb-2">
+-                <span className="text-xs font-black text-stone-400 tracking-wider">Live System Logs</span>
++                <span className="text-xs font-black text-stone-400 tracking-wider">
++                  {plannerWorkspace ? 'Planner updates' : 'Live System Logs'}
++                </span>
+                 <button
++                  type="button"
+                   onClick={() => alert('Announcements flagged as completed.')}
+                   className="text-[10px] text-orange-600 hover:underline font-bold cursor-pointer"
+                 >
+@@ -81,10 +160,16 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ currentTabName }) => {
+                     }`}
+                   >
+                     <div className="flex justify-between items-start gap-2">
+-                      <b className="font-extrabold text-stone-900 dark:text-white font-sans">{not.title}</b>
+-                      <span className="text-[9px] text-stone-400 shrink-0 font-mono font-bold">{not.time}</span>
++                      <b className="font-extrabold text-stone-900 dark:text-white font-sans">
++                        {not.title}
++                      </b>
++                      <span className="text-[9px] text-stone-400 shrink-0 font-mono font-bold">
++                        {not.time}
++                      </span>
+                     </div>
+-                    <p className="text-stone-500 dark:text-stone-300 text-[11px] mt-0.5">{not.detail}</p>
++                    <p className="text-stone-500 dark:text-stone-300 text-[11px] mt-0.5">
++                      {not.detail}
++                    </p>
+                   </div>
+                 ))}
+               </div>
+@@ -92,19 +177,20 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ currentTabName }) => {
+           )}
+         </div>
+ 
+-        {/* Quick status card info */}
+         <div className="flex items-center gap-2 border-l pl-4 border-stone-105 dark:border-stone-850">
+           <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-orange-600 to-orange-700 flex items-center justify-center text-sm">
+             📯
+           </div>
+           <div className="text-left leading-none hidden sm:block">
+-            <h4 className="text-xs font-black text-stone-900 dark:text-white">Admin Core</h4>
+-            <span className="text-[9px] font-mono font-bold text-green-700 dark:text-green-400">Server Online</span>
++            <h4 className="text-xs font-black text-stone-900 dark:text-white">
++              {plannerWorkspace ? 'Customer account' : 'Admin Core'}
++            </h4>
++            <span className="text-[9px] font-mono font-bold text-green-700 dark:text-green-400">
++              {plannerWorkspace ? 'Workspace active' : 'Server Online'}
++            </span>
+           </div>
+         </div>
+-
+       </div>
+-
+     </header>
+   );
+ };
+diff --git a/src/components/Admin/Sidebar/AdminSidebar.tsx b/src/components/Admin/Sidebar/AdminSidebar.tsx
+index 5b02286..77a1582 100644
+--- a/src/components/Admin/Sidebar/AdminSidebar.tsx
++++ b/src/components/Admin/Sidebar/AdminSidebar.tsx
+@@ -1,14 +1,34 @@
+ import React from 'react';
+-import { LayoutDashboard, Store, ClipboardList, Users, Megaphone, ArrowLeft, ShieldAlert, Calendar, ChefHat, Truck, IndianRupee, Gift } from 'lucide-react';
++import {
++  LayoutDashboard,
++  Store,
++  ClipboardList,
++  Users,
++  Megaphone,
++  ArrowLeft,
++  Calendar,
++  ChefHat,
++  Truck,
++  IndianRupee,
++  Gift,
++} from 'lucide-react';
++import { APP_NAME } from '../../../brand';
+ import { AnimatedDiya } from '../../web/GoldenDeco';
+ 
+ interface AdminSidebarProps {
+   currentAdminTab: string;
+   onSelectTab: (tab: string) => void;
+   onExitAdmin: () => void;
++  /** Event planners only see the Mithila planner tools (not commerce admin). */
++  plannerWorkspace?: boolean;
+ }
+ 
+-export const AdminSidebar: React.FC<AdminSidebarProps> = ({ currentAdminTab, onSelectTab, onExitAdmin }) => {
++export const AdminSidebar: React.FC<AdminSidebarProps> = ({
++  currentAdminTab,
++  onSelectTab,
++  onExitAdmin,
++  plannerWorkspace = false,
++}) => {
+   const menuItems = [
+     { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard },
+     { id: 'restaurants', name: 'Products & Stores', icon: Store },
+@@ -28,52 +48,58 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ currentAdminTab, onS
+   ];
+ 
+   return (
+-    <aside className="w-64 bg-white border-r border-stone-200 h-screen sticky top-0 flex flex-col justify-between text-stone-850 z-30 shrink-0 overflow-y-auto" id="admin-sidebar" style={{ contentVisibility: 'auto' }}>
++    <aside
++      className="w-64 bg-white border-r border-stone-200 h-screen sticky top-0 flex flex-col justify-between text-stone-850 z-30 shrink-0 overflow-y-auto"
++      id="admin-sidebar"
++      style={{ contentVisibility: 'auto' }}
++    >
+       <div>
+-        
+-        {/* Admin Header Branding */}
+         <div className="p-6 border-b border-stone-100 flex items-center gap-2">
+           <div className="p-1 bg-gradient-to-tr from-rose-600 to-orange-600 rounded-lg shadow-md shrink-0">
+             <AnimatedDiya className="w-7 h-7" />
+           </div>
+           <div className="text-left">
+             <h1 className="text-[18px] font-black text-transparent bg-gradient-to-r from-orange-600 to-rose-600 bg-clip-text leading-none tracking-wide">
+-              UTSAV MASTER
++              {plannerWorkspace ? APP_NAME : 'UTSAV MASTER'}
+             </h1>
+             <span className="text-[11px] uppercase tracking-widest block text-orange-600 font-mono font-bold mt-1">
+-              Enterprise Suite
++              {plannerWorkspace ? 'Customer · Event planning' : 'Enterprise Suite'}
+             </span>
+           </div>
+         </div>
+ 
+-        {/* Navigation list */}
+         <div className="p-4 space-y-1">
+-          <span className="text-[12px] uppercase font-extrabold text-stone-500 font-mono tracking-wider block px-3 mb-1 text-left">
+-            Core Commerce
+-          </span>
+-          {menuItems.map((item) => {
+-            const Icon = item.icon;
+-            const isActive = currentAdminTab === item.id;
+-            return (
+-              <button
+-                key={item.id}
+-                onClick={() => onSelectTab(item.id)}
+-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left text-[13px] font-normal tracking-wider transition-all cursor-pointer ${
+-                  isActive
+-                    ? 'bg-stone-100 text-stone-950 shadow-sm font-bold'
+-                    : 'text-stone-600 hover:text-stone-900 hover:bg-stone-50'
+-                }`}
+-                id={`admin-sib-btn-${item.id}`}
+-              >
+-                <Icon className="w-3.5 h-3.5 shrink-0 text-orange-600" />
+-                <span>{item.name}</span>
+-              </button>
+-            );
+-          })}
++          {!plannerWorkspace && (
++            <>
++              <span className="text-[12px] uppercase font-extrabold text-stone-500 font-mono tracking-wider block px-3 mb-1 text-left">
++                Core Commerce
++              </span>
++              {menuItems.map((item) => {
++                const Icon = item.icon;
++                const isActive = currentAdminTab === item.id;
++                return (
++                  <button
++                    key={item.id}
++                    type="button"
++                    onClick={() => onSelectTab(item.id)}
++                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left text-[13px] font-normal tracking-wider transition-all cursor-pointer ${
++                      isActive
++                        ? 'bg-stone-100 text-stone-950 shadow-sm font-bold'
++                        : 'text-stone-600 hover:text-stone-900 hover:bg-stone-50'
++                    }`}
++                    id={`admin-sib-btn-${item.id}`}
++                  >
++                    <Icon className="w-3.5 h-3.5 shrink-0 text-orange-600" />
++                    <span>{item.name}</span>
++                  </button>
++                );
++              })}
++            </>
++          )}
+ 
+-          <div className="pt-4 pb-1">
++          <div className={plannerWorkspace ? 'pb-1' : 'pt-4 pb-1'}>
+             <span className="text-[12px] uppercase font-extrabold text-stone-500 font-mono tracking-wider block px-3 mb-1 text-left">
+-              Utsav Planner (Mithila)
++              {plannerWorkspace ? 'Your planning tools' : 'Utsav Planner (Mithila)'}
+             </span>
+           </div>
+           {plannerItems.map((item) => {
+@@ -82,11 +108,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ currentAdminTab, onS
+             return (
+               <button
+                 key={item.id}
++                type="button"
+                 onClick={() => onSelectTab(item.id)}
+                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left text-[13px] font-normal tracking-wider transition-all cursor-pointer ${
+                   isActive
+                     ? 'bg-stone-100 text-stone-950 shadow-sm font-bold'
+-                    : 'text-stone-650 hover:text-stone-900 hover:bg-stone-50'
++                    : 'text-stone-600 hover:text-stone-900 hover:bg-stone-50'
+                 }`}
+                 id={`admin-sib-btn-${item.id}`}
+               >
+@@ -96,26 +123,25 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ currentAdminTab, onS
+             );
+           })}
+         </div>
+-
+       </div>
+ 
+-      {/* Exit Control Panel */}
+       <div className="p-4 border-t border-stone-100 space-y-3">
+         <div className="flex items-center gap-2 p-2 bg-stone-50 rounded-xl border border-stone-200/80 text-[12px] text-stone-600 text-left">
+-          <ShieldAlert className="w-4 h-4 text-red-650 shrink-0" />
+-          <span>Role: Root Administrator (Satvik Level 5)</span>
++          <span className="font-semibold text-stone-800">
++            {plannerWorkspace ? 'Role: Customer (event planner)' : 'Role: Platform administrator'}
++          </span>
+         </div>
+-        
++
+         <button
++          type="button"
+           onClick={onExitAdmin}
+-          className="w-full py-2.5 bg-stone-100 hover:bg-stone-205 rounded-xl text-[14px] font-bold tracking-wider text-stone-700 hover:text-stone-950 transition-all flex items-center justify-center gap-2 cursor-pointer"
++          className="w-full py-2.5 bg-stone-100 hover:bg-stone-200 rounded-xl text-[14px] font-bold tracking-wider text-stone-700 hover:text-stone-950 transition-all flex items-center justify-center gap-2 cursor-pointer"
+           id="btn-admin-exit"
+         >
+-          <ArrowLeft className="w-4 h-4 text-black" />
+-          <span>Exit Suite</span>
++          <ArrowLeft className="w-4 h-4 text-black" aria-hidden />
++          <span>{plannerWorkspace ? 'Back to homepage' : 'Exit suite'}</span>
+         </button>
+       </div>
+-
+     </aside>
+   );
+ };
+diff --git a/src/components/web/AboutUsPage.tsx b/src/components/web/AboutUsPage.tsx
+index f1dae5a..fe913f9 100644
+--- a/src/components/web/AboutUsPage.tsx
++++ b/src/components/web/AboutUsPage.tsx
+@@ -1,252 +1,226 @@
+ import React from 'react';
+-import { motion } from 'motion/react';
+-import { Award, Heart, ShieldCheck, Flame, Star, Coffee, Sparkles } from 'lucide-react';
+-import { APP_NAME } from '../../brand';
+-import { AnimatedDiya, RangoliMandala, MithilaPaintingDivider, MithilaFrameCard } from './GoldenDeco';
++import { ArrowRight, Award, Mail, Search, Sparkles, Users } from 'lucide-react';
++import { APP_NAME, SUPPORT_EMAIL } from '../../brand';
++import { LandingSection, LandingSectionHeader } from './LandingPage/LandingSection';
+ 
+ interface AboutUsPageProps {
+-  onNavigate: (page: string) => void;
++  onNavigate: (page: string, data?: unknown) => void;
+ }
+ 
++const STATS = [
++  { value: '500+', label: 'Listed vendors' },
++  { value: '150+', label: 'Events hosted' },
++  { value: '15k+', label: 'Guests served' },
++];
++
++const VALUES = [
++  {
++    icon: Users,
++    title: 'Verified marketplace',
++    description:
++      'Browse venues, caterers, décor, photography, pandits, and more — with ratings, packages, and city filters.',
++  },
++  {
++    icon: Sparkles,
++    title: 'Built for Indian celebrations',
++    description:
++      'Weddings, festivals, and society functions — tools and categories that match how families actually plan.',
++  },
++  {
++    icon: Award,
++    title: 'Quotes without the chaos',
++    description:
++      'Shortlist vendors, send enquiries, and keep planning in one place instead of scattered chats and PDFs.',
++  },
++];
++
+ export const AboutUsPage: React.FC<AboutUsPageProps> = ({ onNavigate }) => {
+   return (
+-    <div className="pt-24 pb-16 bg-stone-50 dark:bg-stone-900 transition-colors duration-200" id="about-us-page">
+-      
+-      {/* HERO BANNER SECTION */}
+-      <section className="relative overflow-hidden py-16 px-4 md:px-8 text-center bg-gradient-to-br from-stone-900 via-stone-955 to-orange-950 text-white rounded-3xl mx-4 sm:mx-6 lg:mx-8 shadow-2xl mb-16" id="about-hero">
+-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-orange-500/10 rounded-full blur-[100px] pointer-events-none" />
+-        <div className="absolute -right-16 -top-16 w-64 h-64 opacity-5 pointer-events-none">
+-          <RangoliMandala className="w-full h-full text-orange-400" />
+-        </div>
+-        
+-        <div className="max-w-3xl mx-auto space-y-6 relative z-10">
+-          <div className="flex justify-center mb-4">
+-            <AnimatedDiya className="w-12 h-12 text-orange-500" />
+-          </div>
+-          <span className="text-xs font-bold font-mono tracking-widest text-orange-400 uppercase bg-orange-950/40 border border-orange-500/20 px-4 py-1.5 rounded-full inline-block">
+-            Our Heritage & Vision
+-          </span>
+-          <h1 className="text-4xl md:text-5xl font-serif font-black tracking-tight mt-2 leading-tight">
+-            Crafting Holy Traditions & <br />
+-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-orange-400 to-red-400">
+-              Royal Indian Celebrations
+-            </span>
+-          </h1>
+-          <p className="text-stone-300 text-sm md:text-base leading-relaxed max-w-2xl mx-auto font-sans">
+-            At Ceremony & Utsav Bites, we preserve India's rich ceremonial heritage, connecting modern families to timeless Vedic rituals, premium traditional catering, and magical custom decorators.
+-          </p>
+-        </div>
+-      </section>
+-
+-      {/* CORE PILARS / VALUES */}
+-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20" id="about-pillars">
+-        <div className="text-center mb-12">
+-          <h2 className="text-2xl md:text-3xl font-serif font-bold text-stone-900 dark:text-white uppercase tracking-wider">
+-            Our Three Golden Pillars
+-          </h2>
+-          <div className="w-20 h-1 bg-gradient-to-r from-orange-500 to-amber-500 mx-auto mt-3 rounded-full" />
+-        </div>
+-
+-        <div className="grid md:grid-cols-3 gap-8">
+-          <div className="bg-white dark:bg-stone-850 p-8 rounded-2xl border border-stone-100 dark:border-stone-800 shadow-md hover:shadow-xl transition-all hover:-translate-y-1 duration-200 flex flex-col items-center text-center space-y-4" id="pillar-food">
+-            <div className="w-14 h-14 bg-red-50 dark:bg-red-950/30 text-orange-600 rounded-2xl flex items-center justify-center">
+-              <Flame className="w-6 h-6 text-orange-600" />
+-            </div>
+-            <h3 className="text-lg font-bold font-serif text-stone-900 dark:text-white uppercase">Sattvik Shudh Feast</h3>
+-            <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-sans">
+-              We exclusively source pure organic cold-press oils, hand-ground spices, and pure cow ghee to curate divine, high-vibe wedding banquets certified by FSSAI and absolute spiritual standards.
+-            </p>
+-          </div>
+-
+-          <div className="bg-white dark:bg-stone-850 p-8 rounded-2xl border border-stone-100 dark:border-stone-800 shadow-md hover:shadow-xl transition-all hover:-translate-y-1 duration-200 flex flex-col items-center text-center space-y-4" id="pillar-rituals">
+-            <div className="w-14 h-14 bg-amber-50 dark:bg-amber-950/30 text-amber-500 rounded-2xl flex items-center justify-center">
+-              <Sparkles className="w-6 h-6 text-amber-500" />
++    <div className="min-h-screen bg-[#FFFDF7] dark:bg-stone-900" id="about-us-page">
++      {/* Hero */}
++      <section className="border-b border-stone-200/80 dark:border-stone-800">
++        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-28 pb-14 lg:pb-20">
++          <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
++            <div className="space-y-6 text-left">
++              <span className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-orange-600 dark:text-amber-400">
++                <span className="h-px w-6 bg-gradient-to-r from-orange-500 to-amber-400" aria-hidden />
++                About {APP_NAME}
++                <span className="h-px w-6 bg-gradient-to-r from-amber-400 to-orange-500" aria-hidden />
++              </span>
++              <h1 className="heading-page text-3xl sm:text-4xl lg:text-[2.75rem] text-[#C51C13] dark:text-white">
++                One place to discover vendors you can trust
++              </h1>
++              <p className="text-sm sm:text-base text-stone-600 dark:text-stone-300 leading-relaxed max-w-xl">
++                {APP_NAME} helps families and hosts compare services, request quotes, and plan weddings and
++                festive events — from banquet halls and halwais to photographers and pandits.
++              </p>
++              <div className="flex flex-wrap gap-3">
++                <button
++                  type="button"
++                  onClick={() => onNavigate('vendor-categories')}
++                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer"
++                >
++                  Browse categories
++                  <ArrowRight className="w-4 h-4" aria-hidden />
++                </button>
++                <button
++                  type="button"
++                  onClick={() => onNavigate('how-it-works')}
++                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-stone-300 dark:border-stone-600 text-stone-800 dark:text-stone-100 text-sm font-semibold hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
++                >
++                  How it works
++                </button>
++              </div>
+             </div>
+-            <h3 className="text-lg font-bold font-serif text-stone-900 dark:text-white uppercase">Vedic Ceremonial Fidelity</h3>
+-            <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-sans">
+-              From Dwar Puja to Mandap rituals, we safeguard authentic ceremonial structures. Our coordination suite pairs families with approved certified scholars, pandits, and auspicious item kits.
+-            </p>
+-          </div>
+ 
+-          <div className="bg-white dark:bg-stone-850 p-8 rounded-2xl border border-stone-100 dark:border-stone-800 shadow-md hover:shadow-xl transition-all hover:-translate-y-1 duration-200 flex flex-col items-center text-center space-y-4" id="pillar-design">
+-            <div className="w-14 h-14 bg-orange-50 dark:bg-orange-950/30 text-red-600 rounded-2xl flex items-center justify-center">
+-              <Award className="w-6 h-6 text-orange-600" />
++            <div className="relative rounded-2xl overflow-hidden shadow-lg border border-orange-100/60 dark:border-stone-700 aspect-[4/3] lg:aspect-auto lg:min-h-[320px]">
++              <img
++                src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=900&auto=format&fit=crop&q=80"
++                alt=""
++                className="absolute inset-0 w-full h-full object-cover"
++                referrerPolicy="no-referrer"
++              />
++              <div className="absolute inset-0 bg-gradient-to-t from-stone-950/50 via-transparent to-transparent" />
++              <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-3">
++                {STATS.map((stat) => (
++                  <div
++                    key={stat.label}
++                    className="rounded-xl bg-white/95 dark:bg-stone-900/90 backdrop-blur-sm px-3 py-2 border border-white/40 dark:border-stone-700 shadow-sm"
++                  >
++                    <p className="text-lg font-bold text-[#C51C13] dark:text-orange-400 leading-none">
++                      {stat.value}
++                    </p>
++                    <p className="text-[10px] font-medium text-stone-600 dark:text-stone-400 mt-0.5">
++                      {stat.label}
++                    </p>
++                  </div>
++                ))}
++              </div>
+             </div>
+-            <h3 className="text-lg font-bold font-serif text-stone-900 dark:text-white uppercase">Royal Spatial Canvas</h3>
+-            <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-sans">
+-              Hand-hung fresh marigold torans, beautifully traced sand rangoli mandalas, and royal vintage wooden seating are thoughtfully designed by native Indian karigars and master decorators.
+-            </p>
+           </div>
+         </div>
+       </section>
+ 
+-      <MithilaPaintingDivider className="my-12 opacity-90" />
+-
+-      {/* THE STORY OF WORK */}
+-      <section className="bg-stone-100 dark:bg-stone-950 py-16 transition-colors duration-200 mb-20" id="about-story">
+-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+-          <div className="grid md:grid-cols-2 gap-12 items-center">
+-            
+-            {/* Visual block */}
+-            <div className="relative">
+-              <div className="aspect-[4/3] bg-gradient-to-tr from-orange-600 to-amber-500 rounded-3xl p-1 relative shadow-2xl overflow-hidden group">
+-                <div className="absolute inset-0 bg-stone-950/20 backdrop-blur-xs flex items-center justify-center">
+-                  <RangoliMandala className="w-48 h-48 text-amber-100/20 animate-spin-slow" />
+-                </div>
+-                <div className="absolute bottom-6 left-6 right-6 bg-white/95 dark:bg-stone-900/95 p-6 rounded-2xl border border-stone-100 dark:border-stone-850 shadow-xl backdrop-blur-md">
+-                  <div className="flex items-center gap-3">
+-                    <span className="text-3xl">🪔</span>
+-                    <div>
+-                      <h4 className="text-sm font-bold text-stone-900 dark:text-white uppercase">Bespoke Heritage Award</h4>
+-                      <p className="text-[10px] text-stone-500 dark:text-stone-400">Awarded "Best Authentic Event Planning Suite" in Northern India, 2025.</p>
+-                    </div>
+-                  </div>
+-                </div>
++      {/* Values */}
++      <LandingSection id="about-values" tone="white" showTexture={false} showMandala={false}>
++        <LandingSectionHeader
++          align="left"
++          eyebrow="Why we exist"
++          title="Planning should feel clear, not overwhelming"
++          description="We focus on discovery, trust signals, and simple next steps — so you spend less time chasing vendors and more time celebrating."
++        />
++        <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
++          {VALUES.map(({ icon: Icon, title, description }) => (
++            <div
++              key={title}
++              className="rounded-2xl border border-stone-200/80 dark:border-stone-700 bg-stone-50/50 dark:bg-stone-800/40 p-6 space-y-4"
++            >
++              <div className="w-11 h-11 rounded-xl bg-orange-100 dark:bg-orange-950/50 flex items-center justify-center">
++                <Icon className="w-5 h-5 text-[#C51C13] dark:text-orange-400" aria-hidden />
++              </div>
++              <div className="space-y-2">
++                <h3 className="heading-card text-lg text-stone-900 dark:text-white">{title}</h3>
++                <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">{description}</p>
+               </div>
+-              <div className="absolute -top-6 -left-6 w-24 h-24 bg-amber-400/20 rounded-full blur-xl pointer-events-none" />
+-              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-orange-600/10 rounded-full blur-xl pointer-events-none" />
+             </div>
+-
+-            {/* Story text */}
+-            <div className="space-y-6">
+-              <span className="text-[11px] font-mono tracking-widest text-orange-600 dark:text-orange-400 font-bold uppercase block">
+-                How It Began // Since 2018
++          ))}
++        </div>
++      </LandingSection>
++
++      {/* Story */}
++      <LandingSection id="about-story" tone="parchment" showTexture={false} showMandala={false}>
++        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
++          <div className="order-2 lg:order-1 space-y-5 text-left">
++            <div className="space-y-3">
++              <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-orange-600 dark:text-amber-400">
++                Our story
+               </span>
+-              <h2 className="text-3xl font-serif font-black text-stone-900 dark:text-white uppercase tracking-tight">
+-                Our Journey From Varanasi Ghats To Smart Planners
++              <h2 className="heading-section text-2xl sm:text-3xl text-[#C51C13] dark:text-white">
++                From WhatsApp forwards to a real marketplace
+               </h2>
+-              <p className="text-xs md:text-sm text-stone-600 dark:text-stone-300 leading-relaxed font-sans">
+-                Utsav Bites arose out of a burning desire to cure a persistent malady: the dilution of pure traditional ingredients and ritualistic integrity in modern Indian weddings. Witnessing chemical ghee, plastic garlands, and discomposed scheduling, our founders set out to build a platform that marries timeless aesthetics with state-of-the-art technological convenience.
++              <p className="text-sm sm:text-base text-stone-600 dark:text-stone-400 leading-relaxed">
++                {APP_NAME} started when hosts couldn&apos;t compare pricing, availability, or reviews across
++                cities. Vendors lost leads in group chats. We built a shared place where both sides meet with
++                clarity.
+               </p>
+-              <p className="text-xs md:text-sm text-stone-600 dark:text-stone-300 leading-relaxed font-sans">
+-                Today, we operate in 5 major regions, managing over 420 premier traditional caterers, 1,200 verified pandits, and a vibrant community of local flower growers, sweet smiths, and folk musicians.
+-              </p>
+-
+-              <div className="grid grid-cols-3 gap-4 pt-4 border-t border-stone-200 dark:border-stone-800">
+-                <div>
+-                  <h5 className="text-2xl font-black text-orange-600 font-mono">15,000+</h5>
+-                  <p className="text-[10px] uppercase font-bold text-stone-500 tracking-wider font-sans">Satiated Guests</p>
+-                </div>
+-                <div>
+-                  <h5 className="text-2xl font-black text-orange-600 font-mono">150+</h5>
+-                  <p className="text-[10px] uppercase font-bold text-stone-500 tracking-wider font-sans">Weddings Hosted</p>
+-                </div>
+-                <div>
+-                  <h5 className="text-2xl font-black text-orange-600 font-mono">100%</h5>
+-                  <p className="text-[10px] uppercase font-bold text-stone-500 tracking-wider font-sans">Satvik Promise</p>
+-                </div>
+-              </div>
+             </div>
+-
++            <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
++              Today families search by category and city, save favourites, and request quotes. Vendors list
++              packages, respond faster, and build reputation through completed events — across NCR and
++              growing partner regions.
++            </p>
++            <a
++              href={`mailto:${SUPPORT_EMAIL}`}
++              className="inline-flex items-center gap-2 text-sm font-semibold text-[#C51C13] dark:text-orange-400 hover:underline"
++            >
++              <Mail className="w-4 h-4 shrink-0" aria-hidden />
++              {SUPPORT_EMAIL}
++            </a>
++          </div>
++          <div className="order-1 lg:order-2 rounded-2xl overflow-hidden border border-stone-200/80 dark:border-stone-700 shadow-md aspect-[4/3]">
++            <img
++              src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=900&auto=format&fit=crop&q=80"
++              alt=""
++              className="w-full h-full object-cover"
++              referrerPolicy="no-referrer"
++            />
+           </div>
+         </div>
+-      </section>
+-
+-      {/* SPECIAL INTERACTIVE MITHILA ART COMPONENT */}
+-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20" id="about-mithila-art-integration">
+-        <MithilaFrameCard className="hover:scale-[1.005] transition-transform duration-300">
+-          <div className="grid md:grid-cols-12 gap-6 items-center">
+-            <div className="md:col-span-8 space-y-3">
+-              <div className="flex items-center gap-2">
+-                <span className="px-2 py-0.5 bg-[#C51C13]/10 text-[#C51C13] text-[9px] font-black tracking-widest uppercase rounded">
+-                  Sita's Wedding Ceremony Heritage
+-                </span>
+-                <span className="text-xs">🦚</span>
+-              </div>
+-              <h3 className="serif text-xl sm:text-2xl font-black italic text-[#C51C13] tracking-tight">
+-                Authentic Mithila & Madhubani Artistry Studio
+-              </h3>
+-              <p className="text-xs sm:text-sm text-stone-700 leading-relaxed">
+-                Madhubani painting originated in the ancient Mithila region when King Janak commissioned local artists to paint the entire palace walls for his daughter <strong>Sita&apos;s wedding to Lord Ram</strong>. To preserve this celestial heritage, {APP_NAME} empowers you to hire authentic native Mithila women karigars who design hand-painted Kohbar ghar murals, traditional invitations, and shadi mandap patterns.
++      </LandingSection>
++
++      {/* How we help */}
++      <LandingSection id="about-platform" tone="cream" showTexture={false} showMandala={false}>
++        <div className="rounded-2xl bg-white dark:bg-stone-800 border border-orange-100/80 dark:border-stone-700 p-6 sm:p-10 lg:p-12">
++          <div className="grid lg:grid-cols-2 gap-8 items-center">
++            <div className="space-y-4 text-left">
++              <h2 className="heading-section text-2xl sm:text-3xl text-[#C51C13] dark:text-white">
++                Explore the platform
++              </h2>
++              <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
++                Start with vendor categories, dive into listings with filters, open vendor profiles for services
++                and reviews, or plan an event from scratch.
+               </p>
+-              <div className="flex flex-wrap gap-4 pt-1 font-mono text-[10px] text-stone-600 font-bold">
+-                <span className="flex items-center gap-1">🌿 Natural Herbal Dyes</span>
+-                <span className="flex items-center gap-1">✍️ Hand-drawn Nib & Bamboo Sticks</span>
+-                <span className="flex items-center gap-1">🛖 Safe Local Co-ops Contribution</span>
+-              </div>
++              <ul className="space-y-3 text-sm text-stone-700 dark:text-stone-300">
++                <li className="flex gap-3">
++                  <Search className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
++                  <span>Search by category, city, rating, and offers</span>
++                </li>
++                <li className="flex gap-3">
++                  <Users className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
++                  <span>Compare vendors side by side before you enquire</span>
++                </li>
++                <li className="flex gap-3">
++                  <Sparkles className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
++                  <span>Plan events with tools built for hosts and vendors</span>
++                </li>
++              </ul>
+             </div>
+-            <div className="md:col-span-4 bg-[#FAF6E9] border-2 border-dashed border-[#C51C13]/40 p-4 rounded-xl text-center space-y-3 flex flex-col justify-center items-center">
+-              <span className="text-3xl animate-bounce">🎨</span>
+-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#C51C13]">Hire Mithila Art Troupe</span>
+-              <p className="text-[10px] text-stone-500 leading-normal">
+-                Order bespoke Kohbar paintings, hand-painted gift boxes, or canvas centerpieces for your grand day!
+-              </p>
++            <div className="flex flex-col sm:flex-row lg:flex-col gap-3">
+               <button
++                type="button"
++                onClick={() => onNavigate('vendor-categories')}
++                className="w-full px-5 py-3 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer"
++              >
++                Find vendors
++              </button>
++              <button
++                type="button"
++                onClick={() => onNavigate('celebrations')}
++                className="w-full px-5 py-3 rounded-lg border border-[#C51C13] text-[#C51C13] dark:text-orange-400 dark:border-orange-500 hover:bg-orange-50 dark:hover:bg-stone-900 text-sm font-semibold transition-colors cursor-pointer"
++              >
++                Plan an event
++              </button>
++              <button
++                type="button"
+                 onClick={() => onNavigate('contact')}
+-                className="w-full py-2 bg-[#C51C13] hover:bg-[#A2110A] text-white font-mono text-[10px] font-black uppercase tracking-wider rounded-lg transition-colors cursor-pointer"
++                className="w-full px-5 py-3 rounded-lg text-stone-700 dark:text-stone-200 text-sm font-semibold hover:bg-stone-100 dark:hover:bg-stone-700/50 transition-colors cursor-pointer"
+               >
+-                Inquire Art Catalogue &rarr;
++                Contact our team
+               </button>
+             </div>
+           </div>
+-        </MithilaFrameCard>
+-      </section>
+-
+-      {/* MEET OUR ARCHITECTS / LEADERSHIP */}
+-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16" id="about-team">
+-        <div className="mb-12">
+-          <h2 className="text-2xl md:text-3xl font-serif font-bold text-stone-900 dark:text-white uppercase tracking-wider">
+-            Ceremonial Architects
+-          </h2>
+-          <p className="text-xs text-stone-500 dark:text-stone-400 max-w-md mx-auto mt-2 font-sans">
+-            A collective of master chefs, Vedic scholars, luxury designers, and technology pioneers working jointly.
+-          </p>
+-          <div className="w-16 h-1 bg-orange-600 mx-auto mt-4 rounded-full" />
+         </div>
+-
+-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+-          
+-          <div className="bg-white dark:bg-stone-850 p-6 rounded-2xl border border-stone-100 dark:border-stone-800 shadow-md flex flex-col items-center text-center space-y-3" id="team-vimal">
+-            <div className="w-24 h-24 bg-gradient-to-br from-amber-200 to-orange-400 rounded-full flex items-center justify-center text-3xl font-bold text-orange-950 font-serif shadow-inner border-2 border-orange-500/20">
+-              VS
+-            </div>
+-            <div>
+-              <h4 className="font-serif font-black text-stone-900 dark:text-white text-base">Vimal Shastri</h4>
+-              <p className="text-[10px] font-mono tracking-wider text-orange-600 uppercase font-bold mt-0.5">Founder & Rituals Custodian</p>
+-            </div>
+-            <p className="text-xs text-stone-500 leading-relaxed font-sans mt-2">
+-              Deeply trained in Sanskrit rituals at Banaras Hindu University, Vimal oversees the authenticity of our ceremonial modules and pandit boards.
+-            </p>
+-          </div>
+-
+-          <div className="bg-white dark:bg-stone-850 p-6 rounded-2xl border border-stone-100 dark:border-stone-800 shadow-md flex flex-col items-center text-center space-y-3" id="team-ananya">
+-            <div className="w-24 h-24 bg-gradient-to-br from-pink-200 to-red-400 rounded-full flex items-center justify-center text-3xl font-bold text-orange-950 font-serif shadow-inner border-2 border-orange-500/20">
+-              AM
+-            </div>
+-            <div>
+-              <h4 className="font-serif font-black text-stone-900 dark:text-white text-base">Ananya Mishra</h4>
+-              <p className="text-[10px] font-mono tracking-wider text-orange-600 uppercase font-bold mt-0.5">Director of Aesthetics & Decor</p>
+-            </div>
+-            <p className="text-xs text-stone-500 leading-relaxed font-sans mt-2">
+-              With 12 years in premium luxury spatial designs, Ananya combines localized floral heritage with stunning modern lighting systems.
+-            </p>
+-          </div>
+-
+-          <div className="bg-white dark:bg-stone-850 p-6 rounded-2xl border border-stone-100 dark:border-stone-800 shadow-md flex flex-col items-center text-center space-y-3" id="team-rohit">
+-            <div className="w-24 h-24 bg-gradient-to-br from-indigo-200 to-blue-400 rounded-full flex items-center justify-center text-3xl font-bold text-orange-950 font-serif shadow-inner border-2 border-orange-500/20">
+-              RK
+-            </div>
+-            <div>
+-              <h4 className="font-serif font-black text-stone-900 dark:text-white text-base">Rohit Kapoor</h4>
+-              <p className="text-[10px] font-mono tracking-wider text-orange-600 uppercase font-bold mt-0.5">Chief Feast Curator (Chef)</p>
+-            </div>
+-            <p className="text-xs text-stone-500 leading-relaxed font-sans mt-2">
+-               Former Executive Chef specialized in traditional Awadhi, Bhojpuri, and Satvik cuisines. Rohit governs our pure ghee kitchens policy.
+-            </p>
+-          </div>
+-
+-        </div>
+-
+-        <div className="mt-12">
+-          <button 
+-            onClick={() => onNavigate('vendor-categories')}
+-            className="px-8 py-3.5 bg-orange-600 hover:bg-orange-700 text-white font-mono text-xs font-black uppercase tracking-widest rounded-xl shadow-lg transition-transform hover:scale-105"
+-          >
+-            Find Wedding Vendors
+-          </button>
+-        </div>
+-      </section>
+-
++      </LandingSection>
+     </div>
+   );
+ };
+diff --git a/src/components/web/CartPage.tsx b/src/components/web/CartPage.tsx
+index 8a5cfd9..c58699e 100644
+--- a/src/components/web/CartPage.tsx
++++ b/src/components/web/CartPage.tsx
+@@ -110,8 +110,8 @@ export const CartPage: React.FC<CartPageProps> = ({
+       onClearCart();
+       setIsProcessingCheckout(false);
+ 
+-      alert(`🪔 Success! Order Placed beautifully! ₹${grandTotal} deducted from Shree Wallet. Track progress inside User Profile.`);
+-      onNavigate('profile');
++      alert(`🪔 Success! Order placed! ₹${grandTotal} deducted from Shree Wallet.`);
++      onNavigate('landing');
+     }, 1500);
+   };
+ 
+diff --git a/src/components/web/ContactUsPage.tsx b/src/components/web/ContactUsPage.tsx
+index beb9967..c78daf1 100644
+--- a/src/components/web/ContactUsPage.tsx
++++ b/src/components/web/ContactUsPage.tsx
+@@ -1,346 +1,377 @@
+ import React, { useState } from 'react';
+-import { Mail, Phone, MapPin, Calendar, Clock, MessageSquare, Send, CheckCircle2, Bookmark } from 'lucide-react';
+-import { AnimatedDiya, RangoliMandala } from './GoldenDeco';
++import {
++  CheckCircle2,
++  Clock,
++  Mail,
++  MapPin,
++  MessageSquare,
++  Phone,
++  Send,
++} from 'lucide-react';
++import { APP_NAME, SUPPORT_EMAIL } from '../../brand';
++import { LandingSection } from './LandingPage/LandingSection';
+ 
+ interface ContactUsPageProps {
+-  onNavigate: (page: string) => void;
++  onNavigate: (page: string, data?: unknown) => void;
+ }
+ 
++const INPUT_CLASS =
++  'w-full px-4 py-2.5 text-sm bg-white dark:bg-stone-900 rounded-lg border border-stone-200 dark:border-stone-700 text-stone-900 dark:text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 transition-colors';
++
++const LABEL_CLASS = 'text-xs font-semibold text-stone-700 dark:text-stone-300';
++
+ export const ContactUsPage: React.FC<ContactUsPageProps> = ({ onNavigate }) => {
+   const [formData, setFormData] = useState({
+     fullName: '',
+     email: '',
+     phone: '',
++    topic: 'event-planning',
++    city: '',
+     eventDate: '',
+-    ritualType: 'Wedding Ceremony',
+-    guestCount: '200',
+-    dietaryPreference: 'Pure Sattvik (No Onion/Garlic)',
+-    message: ''
++    message: '',
+   });
+ 
+   const [isSubmitted, setIsSubmitted] = useState(false);
+   const [inquiryId, setInquiryId] = useState('');
++  const [formError, setFormError] = useState('');
+ 
+-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
++  const handleChange = (
++    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
++  ) => {
+     const { name, value } = e.target;
+-    setFormData(prev => ({
+-      ...prev,
+-      [name]: value
+-    }));
++    setFormData((prev) => ({ ...prev, [name]: value }));
++    if (formError) setFormError('');
+   };
+ 
+   const handleSubmit = (e: React.FormEvent) => {
+     e.preventDefault();
+-    if (!formData.fullName || !formData.phone || !formData.email) {
+-      alert("Please fill in your Name, Email and Phone Number for authentication.");
++    if (!formData.fullName.trim() || !formData.phone.trim() || !formData.email.trim()) {
++      setFormError('Please enter your name, email, and phone number.');
+       return;
+     }
+-    // Generate inquiry ID
+     const randomNum = Math.floor(1000 + Math.random() * 9000);
+-    setInquiryId(`UTSAV-INQ-${randomNum}`);
++    setInquiryId(`SHUBHE-${randomNum}`);
+     setIsSubmitted(true);
++    setFormError('');
++  };
++
++  const resetForm = () => {
++    setIsSubmitted(false);
++    setFormData({
++      fullName: '',
++      email: '',
++      phone: '',
++      topic: 'event-planning',
++      city: '',
++      eventDate: '',
++      message: '',
++    });
++    setInquiryId('');
++    setFormError('');
+   };
+ 
+   return (
+-    <div className="pt-24 pb-16 bg-stone-50 dark:bg-stone-900 transition-colors duration-200" id="contact-us-page">
+-      
+-      {/* HEADER SECTION */}
+-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-12">
+-        <div className="flex justify-center mb-3">
+-          <AnimatedDiya className="w-10 h-10 text-orange-600 animate-pulse" />
++    <div className="min-h-screen bg-[#FFFDF7] dark:bg-stone-900" id="contact-us-page">
++      <section className="border-b border-stone-200/80 dark:border-stone-800">
++        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-28 pb-10 lg:pb-14">
++          <div className="max-w-2xl space-y-4 text-left">
++            <span className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-orange-600 dark:text-amber-400">
++              <span className="h-px w-6 bg-gradient-to-r from-orange-500 to-amber-400" aria-hidden />
++              Contact {APP_NAME}
++              <span className="h-px w-6 bg-gradient-to-r from-amber-400 to-orange-500" aria-hidden />
++            </span>
++            <h1 className="heading-page text-3xl sm:text-4xl text-[#C51C13] dark:text-white">
++              We&apos;re here to help you plan
++            </h1>
++            <p className="text-sm sm:text-base text-stone-600 dark:text-stone-300 leading-relaxed">
++              Questions about vendors, listings, or event planning? Send us a message and our team will
++              get back to you — usually within one business day.
++            </p>
++          </div>
+         </div>
+-        <span className="text-[10px] uppercase font-mono font-black tracking-widest text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-stone-800 px-3 py-1 rounded-full">
+-          Get in Touch // Connect
+-        </span>
+-        <h1 className="text-3xl md:text-4xl font-serif font-black text-stone-900 dark:text-white mt-3 uppercase tracking-tight">
+-          Reach Utsav Concierge
+-        </h1>
+-        <p className="text-xs text-stone-500 max-w-sm mx-auto mt-2 font-sans">
+-          Whether planning a marriage ceremony or renting auspicious materials, our dedicated staff coordinate your dreams 24/7.
+-        </p>
+-        <div className="w-16 h-1 bg-orange-600 mx-auto mt-4 rounded-full" />
+-      </div>
++      </section>
+ 
+-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+-        <div className="grid md:grid-cols-12 gap-8 items-start">
+-          
+-          {/* LEFT: CONTACT INFRASTRUCTURE & METADATA (Col span 5) */}
+-          <div className="md:col-span-5 space-y-6">
+-            
+-            {/* CORPORATE CORNER */}
+-            <div className="bg-white dark:bg-stone-850 p-6 rounded-2.5xl border border-stone-100 dark:border-stone-800 shadow-md space-y-4" id="corporate-hq">
+-              <span className="text-[10px] font-mono font-bold tracking-wider text-orange-600 dark:text-orange-450 uppercase block">
+-                ✦ Head Office Location ✦
+-              </span>
+-              <h3 className="text-base font-serif font-bold text-stone-900 dark:text-white uppercase">Corporate Saffron Suite</h3>
+-              
+-              <div className="space-y-4 text-xs font-sans text-stone-600 dark:text-stone-300">
+-                <div className="flex items-start gap-3">
+-                  <MapPin className="w-4 h-4 text-orange-600 shrink-0 mt-0.5" />
++      <LandingSection tone="white" showTexture={false} showMandala={false} innerClassName="py-10 sm:py-14">
++        <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-start">
++          {/* Contact details */}
++          <aside className="lg:col-span-5 space-y-5">
++            <div className="rounded-2xl border border-stone-200/80 dark:border-stone-700 bg-stone-50/60 dark:bg-stone-800/40 p-6 space-y-5">
++              <h2 className="heading-card text-lg text-stone-900 dark:text-white">Get in touch</h2>
++
++              <ul className="space-y-4 text-sm text-stone-600 dark:text-stone-300">
++                <li className="flex gap-3">
++                  <Mail className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
+                   <div>
+-                    <p className="font-bold">Utsav Bites Plaza</p>
+-                    <p>12th Floor, Saffron Tower, Connaught Place, New Delhi - 110001</p>
++                    <p className="font-semibold text-stone-900 dark:text-white">Email</p>
++                    <a
++                      href={`mailto:${SUPPORT_EMAIL}`}
++                      className="text-[#C51C13] dark:text-orange-400 hover:underline"
++                    >
++                      {SUPPORT_EMAIL}
++                    </a>
+                   </div>
+-                </div>
+-
+-                <div className="flex items-start gap-3">
+-                  <Phone className="w-4 h-4 text-orange-600 shrink-0 mt-0.5" />
++                </li>
++                <li className="flex gap-3">
++                  <Phone className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
+                   <div>
+-                    <p className="font-bold">24x7 Custom Hotline</p>
+-                    <p>+91 1800 123 4567 / +91 98871 00234</p>
++                    <p className="font-semibold text-stone-900 dark:text-white">Phone</p>
++                    <p>+91 1800 123 4567 (toll-free)</p>
++                    <p className="text-stone-500 dark:text-stone-400">+91 98871 00234</p>
+                   </div>
+-                </div>
+-
+-                <div className="flex items-start gap-3">
+-                  <Mail className="w-4 h-4 text-orange-600 shrink-0 mt-0.5" />
++                </li>
++                <li className="flex gap-3">
++                  <MapPin className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
+                   <div>
+-                    <p className="font-bold">Digital Desk Inquiry</p>
+-                    <p>concierge@utsavbites.in / support@utsavbites.in</p>
++                    <p className="font-semibold text-stone-900 dark:text-white">Office</p>
++                    <p>
++                      Sector 62, Noida, Uttar Pradesh 201309
++                      <br />
++                      National Capital Region, India
++                    </p>
+                   </div>
+-                </div>
+-
+-                <div className="flex items-start gap-3">
+-                  <Clock className="w-4 h-4 text-orange-600 shrink-0 mt-0.5" />
++                </li>
++                <li className="flex gap-3">
++                  <Clock className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
+                   <div>
+-                    <p className="font-bold">Auspicious Booking Support</p>
+-                    <p>Daily 08:00 AM - 10:00 PM IST (including public holidays)</p>
++                    <p className="font-semibold text-stone-900 dark:text-white">Support hours</p>
++                    <p>Mon – Sat, 9:00 AM – 7:00 PM IST</p>
+                   </div>
+-                </div>
+-              </div>
+-            </div>
+-
+-            {/* SPIRITUAL CORNER */}
+-            <div className="bg-gradient-to-br from-orange-600/10 via-amber-500/5 to-transparent dark:bg-stone-850/50 p-6 rounded-2.5xl border border-orange-500/20 shadow-sm space-y-3" id="spiritual-hq">
+-              <div className="flex items-center gap-2">
+-                <span className="text-base">☸</span>
+-                <h4 className="text-xs font-bold uppercase tracking-widest text-[#C51C13] dark:text-orange-400">Varanasi Ceremonial Desk</h4>
+-              </div>
+-              <p className="text-[11px] text-stone-500 dark:text-stone-400 font-sans leading-relaxed">
+-                Direct procurement desk at Scindia Ghat Varanasi for specialized Vedic items, Ganga jal, high-vibe incense, and pure brass items dispatch.
+-              </p>
+-              <div className="text-[11px] font-mono text-stone-600 dark:text-stone-300">
+-                Address: D-14/19, Scindia Dev Ghat, Varanasi, UP - 221001
+-              </div>
++                </li>
++              </ul>
+             </div>
+ 
+-            {/* LIVE CHAT SIMULATION ACCENT */}
+-            <div className="bg-stone-900 border-l-4 border-orange-600 p-5 rounded-r-2xl text-stone-300 flex items-start gap-3" id="faq-quick-accent">
+-              <MessageSquare className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
+-              <div>
+-                <h4 className="text-xs font-bold uppercase text-white tracking-wider">Planning in a Hurry?</h4>
+-                <p className="text-[10px] text-stone-400 mt-1 font-sans leading-relaxed">
+-                  Call our certified wedding coordination advisor instantly for priority venue configurations or catering trial bookings. Zero consultation fee!
++            <div className="rounded-2xl border border-orange-100 dark:border-stone-700 bg-orange-50/50 dark:bg-stone-800/50 p-5 flex gap-3">
++              <MessageSquare
++                className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5"
++                aria-hidden
++              />
++              <div className="space-y-1">
++                <p className="text-sm font-semibold text-stone-900 dark:text-white">
++                  Vendors &amp; partnerships
++                </p>
++                <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
++                  Want to list your business on {APP_NAME}? Use our{' '}
++                  <button
++                    type="button"
++                    onClick={() => onNavigate('list-your-service')}
++                    className="text-[#C51C13] dark:text-orange-400 font-semibold hover:underline cursor-pointer"
++                  >
++                    vendor registration form
++                  </button>{' '}
++                  or choose &quot;List my business&quot; below.
+                 </p>
+               </div>
+             </div>
++          </aside>
+ 
+-          </div>
+-
+-          {/* RIGHT: CONTACT / WEb-INTAKE FORM (Col span 7) */}
+-          <div className="md:col-span-7 bg-white dark:bg-stone-850 p-8 rounded-3xl border border-stone-100 dark:border-stone-800 shadow-xl relative overflow-hidden" id="contact-form-container">
+-            
+-            <div className="absolute top-[-50px] right-[-50px] w-40 h-40 opacity-5 pointer-events-none">
+-              <RangoliMandala className="w-full h-full text-orange-500" />
+-            </div>
+-
++          {/* Form */}
++          <div
++            className="lg:col-span-7 rounded-2xl border border-stone-200/80 dark:border-stone-700 bg-white dark:bg-stone-800 p-6 sm:p-8 shadow-sm"
++            id="contact-form-container"
++          >
+             {!isSubmitted ? (
+-              <form onSubmit={handleSubmit} className="space-y-5" id="ritual-contact-form">
+-                <h3 className="text-lg font-serif font-black text-stone-900 dark:text-white uppercase border-b border-stone-100 dark:border-stone-800 pb-3">
+-                  Auspicious Intake Sheet
+-                </h3>
++              <form onSubmit={handleSubmit} className="space-y-5" id="contact-form">
++                <div>
++                  <h2 className="heading-card text-xl text-stone-900 dark:text-white">
++                    Send a message
++                  </h2>
++                  <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
++                    Fields marked with * are required.
++                  </p>
++                </div>
++
++                {formError && (
++                  <p
++                    className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900/50 rounded-lg px-3 py-2"
++                    role="alert"
++                  >
++                    {formError}
++                  </p>
++                )}
+ 
+-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+-                  <div className="space-y-1">
+-                    <label className="text-[10px] font-black uppercase tracking-wider text-stone-600 dark:text-stone-400">Your Full Name *</label>
+-                    <input 
+-                      type="text" 
++                <div className="grid sm:grid-cols-2 gap-4">
++                  <div className="space-y-1.5">
++                    <label htmlFor="contact-fullName" className={LABEL_CLASS}>
++                      Full name *
++                    </label>
++                    <input
++                      id="contact-fullName"
++                      type="text"
+                       name="fullName"
+                       value={formData.fullName}
+                       onChange={handleChange}
+                       required
+-                      placeholder="e.g. Rahul Sharma"
+-                      className="w-full px-4 py-2.5 bg-stone-50 dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 text-xs focus:outline-none focus:border-orange-500 transition-colors text-stone-900 dark:text-white"
++                      autoComplete="name"
++                      placeholder="Your name"
++                      className={INPUT_CLASS}
+                     />
+                   </div>
+-
+-                  <div className="space-y-1">
+-                    <label className="text-[10px] font-black uppercase tracking-wider text-stone-600 dark:text-stone-400">Phone Number *</label>
+-                    <input 
+-                      type="tel" 
++                  <div className="space-y-1.5">
++                    <label htmlFor="contact-phone" className={LABEL_CLASS}>
++                      Phone *
++                    </label>
++                    <input
++                      id="contact-phone"
++                      type="tel"
+                       name="phone"
+                       value={formData.phone}
+                       onChange={handleChange}
+                       required
+-                      placeholder="e.g. +91 99880 12345"
+-                      className="w-full px-4 py-2.5 bg-stone-50 dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 text-xs focus:outline-none focus:border-orange-500 transition-colors text-stone-900 dark:text-white"
++                      autoComplete="tel"
++                      placeholder="+91 98765 43210"
++                      className={INPUT_CLASS}
+                     />
+                   </div>
+                 </div>
+ 
+-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+-                  <div className="space-y-1">
+-                    <label className="text-[10px] font-black uppercase tracking-wider text-stone-600 dark:text-stone-400">Email Address *</label>
+-                    <input 
+-                      type="email" 
+-                      name="email"
+-                      value={formData.email}
+-                      onChange={handleChange}
+-                      required
+-                      placeholder="e.g. rahul@hmail.com"
+-                      className="w-full px-4 py-2.5 bg-stone-50 dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 text-xs focus:outline-none focus:border-orange-500 transition-colors text-stone-900 dark:text-white"
+-                    />
+-                  </div>
+-
+-                  <div className="space-y-1">
+-                    <label className="text-[10px] font-black uppercase tracking-wider text-stone-600 dark:text-stone-400">Ceremony Date (Optional)</label>
+-                    <input 
+-                      type="date" 
+-                      name="eventDate"
+-                      value={formData.eventDate}
+-                      onChange={handleChange}
+-                      className="w-full px-4 py-2.5 bg-stone-50 dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 text-xs focus:outline-none focus:border-orange-500 transition-colors text-stone-900 dark:text-white"
+-                    />
+-                  </div>
++                <div className="space-y-1.5">
++                  <label htmlFor="contact-email" className={LABEL_CLASS}>
++                    Email *
++                  </label>
++                  <input
++                    id="contact-email"
++                    type="email"
++                    name="email"
++                    value={formData.email}
++                    onChange={handleChange}
++                    required
++                    autoComplete="email"
++                    placeholder="you@example.com"
++                    className={INPUT_CLASS}
++                  />
+                 </div>
+ 
+-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+-                  <div className="space-y-1">
+-                    <label className="text-[10px] font-black uppercase tracking-wider text-stone-600 dark:text-stone-400">Ritual Category</label>
+-                    <select 
+-                      name="ritualType"
+-                      value={formData.ritualType}
++                <div className="grid sm:grid-cols-2 gap-4">
++                  <div className="space-y-1.5">
++                    <label htmlFor="contact-topic" className={LABEL_CLASS}>
++                      How can we help?
++                    </label>
++                    <select
++                      id="contact-topic"
++                      name="topic"
++                      value={formData.topic}
+                       onChange={handleChange}
+-                      className="w-full px-4 py-2.5 bg-stone-50 dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 text-xs focus:outline-none focus:border-orange-500 transition-colors text-stone-900 dark:text-white"
++                      className={INPUT_CLASS}
+                     >
+-                      <option>Wedding Ceremony</option>
+-                      <option>Dwar Puja Ritual</option>
+-                      <option>Makar Sankrant Feast</option>
+-                      <option>Utsav Sweet Boxes Order</option>
+-                      <option>Silver Ware Rentals</option>
++                      <option value="event-planning">Event planning</option>
++                      <option value="vendor-listing">List my business</option>
++                      <option value="vendor-enquiry">Question about a vendor</option>
++                      <option value="account">Account &amp; login</option>
++                      <option value="other">Something else</option>
+                     </select>
+                   </div>
+-
+-                  <div className="space-y-1">
+-                    <label className="text-[10px] font-black uppercase tracking-wider text-stone-600 dark:text-stone-400">Total Guests</label>
+-                    <select 
+-                      name="guestCount"
+-                      value={formData.guestCount}
++                  <div className="space-y-1.5">
++                    <label htmlFor="contact-city" className={LABEL_CLASS}>
++                      City (optional)
++                    </label>
++                    <input
++                      id="contact-city"
++                      type="text"
++                      name="city"
++                      value={formData.city}
+                       onChange={handleChange}
+-                      className="w-full px-4 py-2.5 bg-stone-50 dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 text-xs focus:outline-none focus:border-orange-500 transition-colors text-stone-900 dark:text-white"
+-                    >
+-                      <option>50 - 150 guests</option>
+-                      <option>200 - 500 guests</option>
+-                      <option>500 - 1000 guests</option>
+-                      <option>1000+ Royal Feast</option>
+-                    </select>
++                      placeholder="e.g. Noida, Delhi"
++                      className={INPUT_CLASS}
++                    />
+                   </div>
++                </div>
+ 
+-                  <div className="space-y-1">
+-                    <label className="text-[10px] font-black uppercase tracking-wider text-stone-600 dark:text-stone-400">Dietary Style</label>
+-                    <select 
+-                      name="dietaryPreference"
+-                      value={formData.dietaryPreference}
+-                      onChange={handleChange}
+-                      className="w-full px-4 py-2.5 bg-stone-50 dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 text-xs focus:outline-none focus:border-orange-500 transition-colors text-stone-900 dark:text-white"
+-                    >
+-                      <option>Pure Sattvik (No Onion/Garlic)</option>
+-                      <option>Pure Ghee Vegetarian (Standard)</option>
+-                      <option>Mughlai Feast (Egg/Halal Allowed)</option>
+-                      <option>Sugar-Free Organic Accents</option>
+-                    </select>
+-                  </div>
++                <div className="space-y-1.5">
++                  <label htmlFor="contact-eventDate" className={LABEL_CLASS}>
++                    Event date (optional)
++                  </label>
++                  <input
++                    id="contact-eventDate"
++                    type="date"
++                    name="eventDate"
++                    value={formData.eventDate}
++                    onChange={handleChange}
++                    className={INPUT_CLASS}
++                  />
+                 </div>
+ 
+-                <div className="space-y-1">
+-                  <label className="text-[10px] font-black uppercase tracking-wider text-stone-600 dark:text-stone-400">Describe Your Desired Vibe & Mandap Theme</label>
+-                  <textarea 
++                <div className="space-y-1.5">
++                  <label htmlFor="contact-message" className={LABEL_CLASS}>
++                    Message
++                  </label>
++                  <textarea
++                    id="contact-message"
+                     rows={4}
+                     name="message"
+                     value={formData.message}
+                     onChange={handleChange}
+-                    placeholder="Describe specific flower elements, ritual duration, raw mithai delivery protocols, budget limits..."
+-                    className="w-full px-4 py-2.5 bg-stone-50 dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-800 text-xs focus:outline-none focus:border-orange-500 transition-colors text-stone-900 dark:text-white resize-none"
++                    placeholder="Tell us about your event, vendor needs, or question..."
++                    className={`${INPUT_CLASS} resize-none`}
+                   />
+                 </div>
+ 
+-                <button 
++                <button
+                   type="submit"
+-                  className="w-full py-3 bg-orange-600 hover:bg-orange-700 text-white font-mono text-xs font-black tracking-widest uppercase rounded-xl shadow-lg transition-transform hover:scale-[1.01] flex items-center justify-center gap-2 cursor-pointer"
++                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer"
+                 >
+-                  <Send className="w-3.5 h-3.5" />
+-                  <span>Transmit Auspicious Booking Request</span>
++                  <Send className="w-4 h-4" aria-hidden />
++                  Send message
+                 </button>
+               </form>
+             ) : (
+-              // SUBMITTED SUCCESS SHEET (VESTED RANGOLI RECEIPT)
+-              <div className="space-y-6 text-center py-6" id="success-intake-receipt">
+-                <div className="w-16 h-16 bg-green-50 dark:bg-stone-800 rounded-full flex items-center justify-center mx-auto text-green-500 border border-green-200 dark:border-green-800 shadow-inner">
+-                  <CheckCircle2 className="w-10 h-10" />
+-                </div>
+-                
+-                <div className="space-y-2">
+-                  <h3 className="text-xl font-serif font-black text-stone-900 dark:text-white uppercase tracking-tight">Booking Inquiry Registered!</h3>
+-                  <p className="text-xs text-stone-500 dark:text-stone-400 px-4">
+-                    Pranam, <strong>{formData.fullName}</strong>. Your auspicious details are transmitted safely to the CP Concierge desk.
+-                  </p>
++              <div className="space-y-6 py-4 text-center sm:text-left" id="contact-success">
++                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
++                  <div className="w-14 h-14 rounded-full bg-green-50 dark:bg-green-950/40 flex items-center justify-center text-green-600 dark:text-green-400 border border-green-200 dark:border-green-800 shrink-0">
++                    <CheckCircle2 className="w-8 h-8" aria-hidden />
++                  </div>
++                  <div className="space-y-2">
++                    <h2 className="heading-card text-xl text-stone-900 dark:text-white">
++                      Message received
++                    </h2>
++                    <p className="text-sm text-stone-600 dark:text-stone-400">
++                      Thanks, <strong>{formData.fullName}</strong>. We&apos;ve logged your enquiry and
++                      will reply to <strong>{formData.email}</strong> soon.
++                    </p>
++                  </div>
+                 </div>
+ 
+-                {/* Simulated Certificate Block */}
+-                <div className="bg-gradient-to-br from-amber-50 to-orange-50/50 dark:from-stone-900 dark:to-orange-950/20 p-6 rounded-2xl border-2 border-amber-300 dark:border-amber-900/60 text-left relative overflow-hidden max-w-md mx-auto">
+-                  <div className="absolute top-0 right-0 p-2 text-stone-300 dark:text-stone-850 opacity-40">
+-                    <Bookmark className="w-12 h-12" />
++                <div className="rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900/50 p-5 text-sm space-y-2">
++                  <div className="flex justify-between gap-4">
++                    <span className="text-stone-500 dark:text-stone-400">Reference</span>
++                    <span className="font-mono font-semibold text-stone-900 dark:text-white">
++                      {inquiryId}
++                    </span>
+                   </div>
+-                  
+-                  <div className="space-y-3 font-mono text-[11px] text-stone-700 dark:text-stone-300">
+-                    <div className="flex justify-between border-b pb-1 dark:border-stone-800">
+-                      <span className="font-bold uppercase text-orange-600">Inquiry ID:</span>
+-                      <span className="font-black text-stone-900 dark:text-white">{inquiryId}</span>
+-                    </div>
+-                    <div className="flex justify-between border-b pb-1 dark:border-stone-800">
+-                      <span className="font-bold uppercase text-orange-600">Category:</span>
+-                      <span>{formData.ritualType}</span>
+-                    </div>
+-                    <div className="flex justify-between border-b pb-1 dark:border-stone-800">
+-                      <span className="font-bold uppercase text-orange-600">Date Proposed:</span>
+-                      <span>{formData.eventDate || 'Auspicious Muhurat Booking'}</span>
+-                    </div>
+-                    <div className="flex justify-between border-b pb-1 dark:border-stone-800">
+-                      <span className="font-bold uppercase text-orange-600">Diet Standard:</span>
+-                      <span>{formData.dietaryPreference}</span>
+-                    </div>
+-                    <div className="flex justify-between">
+-                      <span className="font-bold uppercase text-orange-600">Verification:</span>
+-                      <span className="text-green-600 font-black">● SUBMISSION OK</span>
+-                    </div>
++                  <div className="flex justify-between gap-4">
++                    <span className="text-stone-500 dark:text-stone-400">Topic</span>
++                    <span className="text-stone-900 dark:text-white text-right capitalize">
++                      {formData.topic.replace(/-/g, ' ')}
++                    </span>
+                   </div>
++                  {formData.eventDate && (
++                    <div className="flex justify-between gap-4">
++                      <span className="text-stone-500 dark:text-stone-400">Event date</span>
++                      <span className="text-stone-900 dark:text-white">{formData.eventDate}</span>
++                    </div>
++                  )}
+                 </div>
+ 
+-                <p className="text-[10px] text-stone-400 font-sans italic">
+-                  An SMS receipt and detailed email itinerary have been sent to <strong>{formData.phone}</strong> & <strong>{formData.email}</strong>. Our custom executive will call you within 2 clock hours.
+-                </p>
+-
+-                <div className="flex justify-center gap-4">
+-                  <button 
+-                    onClick={() => setIsSubmitted(false)}
+-                    className="px-6 py-2 border border-stone-200 dark:border-stone-700 rounded-xl text-[10px] font-bold uppercase hover:bg-stone-50 dark:hover:bg-stone-800 transition text-stone-700 dark:text-stone-300 cursor-pointer"
++                <div className="flex flex-col sm:flex-row gap-3">
++                  <button
++                    type="button"
++                    onClick={resetForm}
++                    className="px-5 py-2.5 rounded-lg border border-stone-300 dark:border-stone-600 text-sm font-semibold text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors cursor-pointer"
+                   >
+-                    Submit New Intake
++                    Send another message
+                   </button>
+-                  <button 
+-                    onClick={() => onNavigate('landing')}
+-                    className="px-6 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-[10px] font-bold uppercase transition cursor-pointer"
++                  <button
++                    type="button"
++                    onClick={() => onNavigate('vendor-categories')}
++                    className="px-5 py-2.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer"
+                   >
+-                    Go Back Home
++                    Browse vendors
+                   </button>
+                 </div>
+               </div>
+             )}
+-
+           </div>
+-
+         </div>
+-      </div>
+-
++      </LandingSection>
+     </div>
+   );
+ };
+diff --git a/src/components/web/CustomerHeader.tsx b/src/components/web/CustomerHeader.tsx
+index 0477064..a25b451 100644
+--- a/src/components/web/CustomerHeader.tsx
++++ b/src/components/web/CustomerHeader.tsx
+@@ -26,6 +26,8 @@ interface CustomerHeaderProps {
+   onSwitchToAdmin: () => void;
+   onLogout: () => void;
+   isLoggedIn: boolean;
++  isVendorLoggedIn?: boolean;
++  isEventPlannerCustomer?: boolean;
+   userProfile: { name: string; walletBalance: number };
+   /** Nav sits on the landing hero gradient (same block as hero) */
+   blendWithHero?: boolean;
+@@ -35,7 +37,7 @@ interface CustomerHeaderProps {
+ 
+ const PRIMARY_NAV: { label: string; value: string; alsoActive?: string[] }[] = [
+   { label: 'Home', value: 'landing' },
+-  { label: 'Vendors', value: 'vendor-categories' },
++  { label: 'Vendors', value: 'vendor-categories', alsoActive: ['vendor-list', 'vendor-details'] },
+   { label: 'About', value: 'about' },
+   { label: 'Contact', value: 'contact' },
+ ];
+@@ -50,6 +52,8 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
+   onSwitchToAdmin,
+   onLogout,
+   isLoggedIn,
++  isVendorLoggedIn = false,
++  isEventPlannerCustomer = false,
+   userProfile,
+   blendWithHero = false,
+   selectedCity,
+@@ -139,17 +143,17 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
+     onCityChange(cityValue);
+     setCityMenuOpen(false);
+     if (currentPage !== 'landing') {
+-      goTo('vendor-categories', { city: cityValue });
++      goTo('vendor-list', { city: cityValue });
+     }
+   };
+ 
+   const goToEventPlanning = () => {
+-    if (currentPage === 'landing') {
+-      document.getElementById('hero-tab-planner')?.click();
+-      document.getElementById('landing-hero')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+-    } else {
+-      onNavigate('celebrations');
++    if (isEventPlannerCustomer) {
++      onSwitchToAdmin();
++      setMobileMenuOpen(false);
++      return;
+     }
++    onNavigate('event-planner-register');
+     setMobileMenuOpen(false);
+   };
+ 
+@@ -158,18 +162,15 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
+       document.getElementById('hero-tab-vendors')?.click();
+       document.getElementById('landing-hero')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+     } else {
+-      goTo('vendor-categories', { city: selectedCity });
++      goTo('vendor-list', { city: selectedCity });
+     }
+   };
+ 
+   const listYourService = () => {
+-    if (currentPage === 'landing') {
+-      document.getElementById('vendor-register')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
++    if (isVendorLoggedIn) {
++      goTo('profile');
+     } else {
+-      goTo('landing');
+-      setTimeout(() => {
+-        document.getElementById('vendor-register')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+-      }, 400);
++      goTo('list-your-service');
+     }
+     setMobileMenuOpen(false);
+   };
+@@ -310,8 +311,10 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
+               <Store
+                 className={`w-4 h-4 shrink-0 ${onHeroGradient ? 'text-[#FFCB44]' : 'text-[#C51C13]'}`}
+               />
+-              <span className="hidden xl:inline">List your service</span>
+-              <span className="xl:hidden">List service</span>
++              <span className="hidden xl:inline">
++                {isVendorLoggedIn ? 'Vendor dashboard' : 'List your service'}
++              </span>
++              <span className="xl:hidden">{isVendorLoggedIn ? 'Dashboard' : 'List service'}</span>
+               <span className="text-[10px] font-black uppercase bg-[#FFCB44] text-red-950 px-1.5 py-0.5 rounded">
+                 Free
+               </span>
+@@ -324,11 +327,13 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
+               className="hidden sm:inline-flex items-center gap-1.5 px-3 lg:px-4 py-2 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold shadow-md hover:shadow-lg transition-all cursor-pointer"
+             >
+               <CalendarPlus className="w-4 h-4 shrink-0" />
+-              <span className="hidden lg:inline">Event planning</span>
+-              <span className="lg:hidden">Plan event</span>
++              <span className="hidden lg:inline">
++                {isEventPlannerCustomer ? 'Planner workspace' : 'Event planning'}
++              </span>
++              <span className="lg:hidden">{isEventPlannerCustomer ? 'Workspace' : 'Plan event'}</span>
+             </button>
+ 
+-            {isLoggedIn ? (
++            {isVendorLoggedIn && (
+               <button
+                 type="button"
+                 onClick={() => goTo('profile')}
+@@ -337,21 +342,57 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
+                     ? 'bg-white/10 border-white/30 hover:bg-white/20'
+                     : 'bg-stone-100 dark:bg-stone-800 border-stone-200 dark:border-stone-600 hover:border-orange-300'
+                 }`}
+-                title={userProfile.name}
++                title="Vendor dashboard"
++              >
++                <Store className={`w-4 h-4 ${onHeroGradient ? 'text-[#FFCB44]' : 'text-[#C51C13]'}`} />
++              </button>
++            )}
++            {isLoggedIn ? (
++              <button
++                type="button"
++                onClick={() => onSwitchToAdmin()}
++                className={`hidden sm:flex items-center justify-center w-9 h-9 rounded-full border transition-colors cursor-pointer ${
++                  onHeroGradient
++                    ? 'bg-white/10 border-white/30 hover:bg-white/20'
++                    : 'bg-stone-100 dark:bg-stone-800 border-stone-200 dark:border-stone-600 hover:border-orange-300'
++                }`}
++                title={`${userProfile.name} — planner workspace`}
+               >
+                 <User className={`w-4 h-4 ${onHeroGradient ? 'text-[#FFCB44]' : 'text-[#C51C13]'}`} />
+               </button>
+             ) : (
++              !isVendorLoggedIn && (
++                <button
++                  type="button"
++                  onClick={() => goTo('sign-in')}
++                  className={`hidden sm:inline-flex px-3 py-2 text-sm font-semibold cursor-pointer ${
++                    onHeroGradient
++                      ? 'text-amber-100 hover:text-white'
++                      : 'text-[#C51C13] hover:text-[#A2110A]'
++                  }`}
++                >
++                  Sign in
++                </button>
++              )
++            )}
++
++            {(isLoggedIn || isVendorLoggedIn || isEventPlannerCustomer) && (
+               <button
+                 type="button"
+-                onClick={() => goTo('sign-in')}
+-                className={`hidden sm:inline-flex px-3 py-2 text-sm font-semibold cursor-pointer ${
++                onClick={() => {
++                  onLogout();
++                  setMobileMenuOpen(false);
++                }}
++                className={`hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-colors cursor-pointer ${
+                   onHeroGradient
+-                    ? 'text-amber-100 hover:text-white'
+-                    : 'text-[#C51C13] hover:text-[#A2110A]'
++                    ? 'text-amber-100 hover:bg-white/10 hover:text-white border border-white/25'
++                    : 'text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 border border-stone-200 dark:border-stone-600'
+                 }`}
++                id="header-logout-btn"
++                title="Log out"
+               >
+-                Sign in
++                <LogOut className="w-4 h-4 shrink-0" aria-hidden />
++                <span className="hidden lg:inline">Log out</span>
+               </button>
+             )}
+ 
+@@ -430,7 +471,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
+               className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-dashed border-orange-300 text-sm font-semibold text-[#C51C13]"
+             >
+               <Store className="w-4 h-4" />
+-              List your service — Free
++              {isVendorLoggedIn ? 'Vendor dashboard' : 'List your service — Free'}
+             </button>
+           </div>
+ 
+@@ -449,7 +490,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
+                 {link.label}
+               </button>
+             ))}
+-            {!isLoggedIn && (
++            {!isLoggedIn && !isVendorLoggedIn && !isEventPlannerCustomer && (
+               <button
+                 type="button"
+                 onClick={() => goTo('sign-in')}
+@@ -458,41 +499,55 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
+                 Sign in
+               </button>
+             )}
+-            {isLoggedIn && (
+-              <>
+-                <button
+-                  type="button"
+-                  onClick={() => goTo('profile')}
+-                  className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-stone-600 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800"
+-                >
+-                  My profile — {userProfile.name}
+-                </button>
+-                <button
+-                  type="button"
+-                  onClick={() => {
+-                    onLogout();
+-                    setMobileMenuOpen(false);
+-                  }}
+-                  className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-red-600 flex items-center gap-2"
+-                >
+-                  <LogOut className="w-4 h-4" />
+-                  Logout
+-                </button>
+-              </>
++            {isEventPlannerCustomer && (
++              <button
++                type="button"
++                onClick={() => {
++                  onSwitchToAdmin();
++                  setMobileMenuOpen(false);
++                }}
++                className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-[#C51C13] bg-orange-50 dark:bg-stone-800"
++              >
++                Planner workspace
++              </button>
++            )}
++            {isVendorLoggedIn && (
++              <button
++                type="button"
++                onClick={() => goTo('profile')}
++                className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-[#C51C13] bg-orange-50 dark:bg-stone-800"
++              >
++                Vendor dashboard
++              </button>
++            )}
++            {(isLoggedIn || isVendorLoggedIn || isEventPlannerCustomer) && (
++              <button
++                type="button"
++                onClick={() => {
++                  onLogout();
++                  setMobileMenuOpen(false);
++                }}
++                className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-red-600 dark:text-red-400 flex items-center gap-2 hover:bg-red-50 dark:hover:bg-red-950/30"
++              >
++                <LogOut className="w-4 h-4" aria-hidden />
++                Log out
++              </button>
+             )}
+           </nav>
+ 
+-          <button
+-            type="button"
+-            onClick={() => {
+-              onSwitchToAdmin();
+-              setMobileMenuOpen(false);
+-            }}
+-            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold uppercase text-amber-800 bg-amber-50 border border-amber-200 dark:bg-stone-800 dark:border-stone-700 dark:text-amber-400"
+-          >
+-            <Landmark className="w-4 h-4" />
+-            Admin panel
+-          </button>
++          {!isEventPlannerCustomer && (
++            <button
++              type="button"
++              onClick={() => {
++                onNavigate('event-planner-register');
++                setMobileMenuOpen(false);
++              }}
++              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-bold uppercase text-amber-800 bg-amber-50 border border-amber-200 dark:bg-stone-800 dark:border-stone-700 dark:text-amber-400"
++            >
++              <Landmark className="w-4 h-4" />
++              Become an event planner
++            </button>
++          )}
+         </div>
+       )}
+     </header>
+diff --git a/src/components/web/Footer.tsx b/src/components/web/Footer.tsx
+index c699910..38458cb 100644
+--- a/src/components/web/Footer.tsx
++++ b/src/components/web/Footer.tsx
+@@ -7,14 +7,31 @@ import { AppPhoneMockup } from './AppPhoneMockup';
+ interface FooterProps {
+   isDarkMode: boolean;
+   currentPage?: string;
+-  onNavigate?: (page: string) => void;
++  onNavigate?: (page: string, data?: unknown) => void;
+ }
+ 
++const MORE_PAGES: { label: string; page: string; data?: unknown }[] = [
++  { label: 'Home', page: 'landing' },
++  { label: 'Vendor categories', page: 'vendor-categories' },
++  { label: 'Vendor list', page: 'vendor-list' },
++  { label: 'Vendor dashboard', page: 'profile' },
++  { label: 'Public vendor listing', page: 'vendor-details', data: { vendorId: 'vn-4' } },
++  { label: 'Event planner register', page: 'event-planner-register' },
++  { label: 'Browse events', page: 'celebrations' },
++  { label: 'Portfolio', page: 'portfolio' },
++  { label: 'Contact', page: 'contact' },
++  { label: 'List your service', page: 'list-your-service' },
++  { label: 'Restaurants', page: 'restaurants' },
++  { label: 'Restaurant menu', page: 'restaurant-detail', data: { restaurantId: 'rest-1' } },
++  { label: 'Cart', page: 'cart' },
++  { label: 'Sign in', page: 'sign-in' },
++];
++
+ export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavigate }) => {
+   const [storeNotice, setStoreNotice] = useState(false);
+ 
+-  const goToPage = (page: string) => {
+-    onNavigate?.(page);
++  const goToPage = (page: string, data?: unknown) => {
++    onNavigate?.(page, data);
+   };
+ 
+   const scrollToSection = (sectionId: string) => {
+@@ -22,16 +39,20 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavig
+       document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+ 
+     if (currentPage === 'landing') {
++      window.history.replaceState(null, '', `/#${sectionId}`);
+       scroll();
+       return;
+     }
+     goToPage('landing');
+-    window.setTimeout(scroll, 450);
++    window.setTimeout(() => {
++      window.history.replaceState(null, '', `/#${sectionId}`);
++      scroll();
++    }, 450);
+   };
+ 
+-  const handlePageLink = (page: string, e: React.MouseEvent) => {
++  const handlePageLink = (page: string, e: React.MouseEvent, data?: unknown) => {
+     e.preventDefault();
+-    goToPage(page);
++    goToPage(page, data);
+   };
+ 
+   const handleHowItWorks = (e: React.MouseEvent) => {
+@@ -178,7 +199,7 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavig
+         <div className="absolute top-[280px] left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-amber-500/10 rounded-full blur-[120px] pointer-events-none" />
+ 
+         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 pt-16">
+-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12" id="footer-links-grid">
++          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-12" id="footer-links-grid">
+             <div className="col-span-2 md:col-span-1 space-y-4">
+               <button
+                 type="button"
+@@ -329,6 +350,25 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavig
+                 </li>
+               </ul>
+             </div>
++
++            <div className="space-y-4">
++              <h4 className="text-stone-500 font-bold text-sm tracking-wider uppercase mb-3">
++                More pages
++              </h4>
++              <ul className="space-y-2 text-sm text-stone-400">
++                {MORE_PAGES.map(({ label, page, data }) => (
++                  <li key={page + label}>
++                    <button
++                      type="button"
++                      onClick={(e) => handlePageLink(page, e, data)}
++                      className="hover:text-orange-400 transition-colors cursor-pointer text-left"
++                    >
++                      {label}
++                    </button>
++                  </li>
++                ))}
++              </ul>
++            </div>
+           </div>
+ 
+           <div className="border-t border-stone-800 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-stone-500">
+diff --git a/src/components/web/LandingPage/EventPlannerPromoSection.tsx b/src/components/web/LandingPage/EventPlannerPromoSection.tsx
+index 4af086e..29c7766 100644
+--- a/src/components/web/LandingPage/EventPlannerPromoSection.tsx
++++ b/src/components/web/LandingPage/EventPlannerPromoSection.tsx
+@@ -75,16 +75,25 @@ export const EventPlannerPromoSection: React.FC<EventPlannerPromoSectionProps> =
+             </button>
+             .
+           </p>
+-          <button
+-            type="button"
+-            onClick={() => onNavigate('celebrations')}
+-            id="btn-landing-open-planner"
+-            className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white font-semibold text-sm transition-colors cursor-pointer shrink-0"
+-          >
+-            <CalendarPlus className="w-5 h-5" />
+-            Start planning
+-            <ArrowRight className="w-4 h-4" />
+-          </button>
++          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 shrink-0">
++            <button
++              type="button"
++              onClick={() => onNavigate('event-planner-register')}
++              id="btn-landing-open-planner"
++              className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white font-semibold text-sm transition-colors cursor-pointer"
++            >
++              <CalendarPlus className="w-5 h-5" />
++              Register as event planner
++              <ArrowRight className="w-4 h-4" />
++            </button>
++            <button
++              type="button"
++              onClick={() => onNavigate('sign-in')}
++              className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg border border-stone-300 dark:border-stone-600 text-stone-800 dark:text-stone-200 font-semibold text-sm hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors cursor-pointer"
++            >
++              Sign in
++            </button>
++          </div>
+         </div>
+       </div>
+     </LandingSection>
+diff --git a/src/components/web/LandingPage/FoodCategoriesSection.tsx b/src/components/web/LandingPage/FoodCategoriesSection.tsx
+index 55e5a16..160744f 100644
+--- a/src/components/web/LandingPage/FoodCategoriesSection.tsx
++++ b/src/components/web/LandingPage/FoodCategoriesSection.tsx
+@@ -43,7 +43,7 @@ export const FoodCategoriesSection: React.FC<FoodCategoriesSectionProps> = ({ on
+         {WEDDING_SPECIALTIES.map((cat) => (
+           <div
+             key={cat.id}
+-            onClick={() => onNavigate('vendor-categories', { categoryId: cat.id })}
++            onClick={() => onNavigate('vendor-list', { categoryId: cat.id })}
+             className="flex flex-col items-center p-5 rounded-2xl bg-white dark:bg-stone-850 hover:bg-orange-50 dark:hover:bg-amber-950/20 border border-orange-100/40 dark:border-stone-800 cursor-pointer shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+             id={`cat-card-${cat.id}`}
+           >
+diff --git a/src/components/web/LandingPage/HeroSection.tsx b/src/components/web/LandingPage/HeroSection.tsx
+index 10fe16e..7ab7ba3 100644
+--- a/src/components/web/LandingPage/HeroSection.tsx
++++ b/src/components/web/LandingPage/HeroSection.tsx
+@@ -101,17 +101,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
+     if (keyword.trim()) payload.search = keyword.trim();
+     if (categoryId) payload.categoryId = categoryId;
+     if (city) payload.city = city;
+-    onNavigate('vendor-categories', Object.keys(payload).length > 0 ? payload : undefined);
++    onNavigate('vendor-list', Object.keys(payload).length > 0 ? payload : undefined);
+   };
+ 
+   const handleEventPlannerSearch = (e: React.FormEvent) => {
+     e.preventDefault();
+-    const payload: HeroEventSearchPayload = {};
+-    if (eventName.trim()) payload.eventName = eventName.trim();
+-    if (eventLocation.trim()) payload.location = eventLocation.trim();
+-    if (eventDate) payload.date = eventDate;
+-    if (eventType) payload.eventType = eventType;
+-    onNavigate('celebrations', Object.keys(payload).length > 0 ? payload : undefined);
++    onNavigate('event-planner-register', {
++      fromHome: true,
++      eventName: eventName.trim() || undefined,
++      location: eventLocation.trim() || undefined,
++      date: eventDate || undefined,
++      eventType: eventType || undefined,
++      city: city || selectedCity,
++    });
+   };
+ 
+   const applyPopularCity = (cityValue: string) => {
+@@ -124,8 +126,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
+     setActiveTab('vendors');
+   };
+ 
+-  const scrollToVendorRegister = () => {
+-    document.getElementById('vendor-register')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
++  const goToVendorRegistration = () => {
++    onNavigate('list-your-service');
+   };
+ 
+   return (
+@@ -400,10 +402,29 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
+ 
+                     <button type="submit" id="btn-hero-planner-search" className="hero-planner-submit">
+                       <CalendarPlus className="w-5 h-5 shrink-0" strokeWidth={2.25} />
+-                      Plan your event
++                      Register &amp; plan your event
+                     </button>
+                     <p className="text-[11px] text-stone-500 mt-2">
+-                      Add any details you have — you can refine your event in the planner.
++                      Create your free account, then open your planning workspace — guests, budget,
++                      vendors &amp; timelines.
++                    </p>
++                    <p className="text-[11px] text-stone-500 mt-3 pt-3 border-t border-stone-200/80">
++                      Already have an account?{' '}
++                      <button
++                        type="button"
++                        onClick={() => onNavigate('sign-in')}
++                        className="text-[#C51C13] font-semibold hover:underline cursor-pointer"
++                      >
++                        Sign in to continue planning
++                      </button>
++                      {' · '}
++                      <button
++                        type="button"
++                        onClick={() => onNavigate('celebrations')}
++                        className="text-[#C51C13] font-semibold hover:underline cursor-pointer"
++                      >
++                        Browse public events
++                      </button>
+                     </p>
+                   </form>
+                 </div>
+@@ -430,7 +451,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
+           <span>Are you a ceremony vendor?</span>
+           <button
+             type="button"
+-            onClick={scrollToVendorRegister}
++            onClick={goToVendorRegistration}
+             className="font-bold text-[#FFCB44] hover:text-amber-200 underline-offset-2 hover:underline cursor-pointer"
+           >
+             List your service on {APP_NAME}
+diff --git a/src/components/web/LandingPage/VendorCategoriesSection.tsx b/src/components/web/LandingPage/VendorCategoriesSection.tsx
+index 2e20758..bad3479 100644
+--- a/src/components/web/LandingPage/VendorCategoriesSection.tsx
++++ b/src/components/web/LandingPage/VendorCategoriesSection.tsx
+@@ -30,7 +30,7 @@ export const VendorCategoriesSection: React.FC<VendorCategoriesSectionProps> = (
+           <button
+             key={cat.id}
+             type="button"
+-            onClick={() => onNavigate('vendor-categories', { categoryId: cat.id })}
++            onClick={() => onNavigate('vendor-list', { categoryId: cat.id })}
+             aria-label={`${cat.name}, ${cat.count} plus vendors`}
+             className="flex flex-col items-center p-2 sm:p-3 text-stone-800 dark:text-stone-100 hover:text-[#C51C13] dark:hover:text-orange-400 transition-colors cursor-pointer"
+             id={`vendor-cat-${cat.id}`}
+diff --git a/src/components/web/LandingPage/VendorRegisterSection.tsx b/src/components/web/LandingPage/VendorRegisterSection.tsx
+index b8341de..252b6aa 100644
+--- a/src/components/web/LandingPage/VendorRegisterSection.tsx
++++ b/src/components/web/LandingPage/VendorRegisterSection.tsx
+@@ -37,7 +37,7 @@ export const VendorRegisterSection: React.FC<VendorRegisterSectionProps> = ({ on
+           <div className="flex flex-col sm:flex-row gap-3 pt-2 justify-center lg:justify-start">
+             <button
+               type="button"
+-              onClick={() => onNavigate('contact')}
++              onClick={() => onNavigate('list-your-service')}
+               className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white font-semibold text-sm transition-colors cursor-pointer"
+             >
+               Apply to list your business
+diff --git a/src/components/web/RestaurantListingPage.tsx b/src/components/web/RestaurantListingPage.tsx
+index fceca63..c19ae06 100644
+--- a/src/components/web/RestaurantListingPage.tsx
++++ b/src/components/web/RestaurantListingPage.tsx
+@@ -106,7 +106,7 @@ export const RestaurantListingPage: React.FC<RestaurantListingPageProps> = ({ on
+         <div className="flex justify-between items-center px-1">
+           <h3 className="text-lg font-black text-stone-900 dark:text-white flex items-center gap-1.5">
+             <Filter className="w-4 h-4 text-orange-600" />
+-            <span>Found {filteredRestaurants.length} Vendors Matches</span>
++            <span>Found {filteredRestaurants.length} restaurant matches</span>
+           </h3>
+           {(selectedCuisine || sortBy || filterPureVeg || filterOffers) && (
+             <button
+@@ -125,13 +125,13 @@ export const RestaurantListingPage: React.FC<RestaurantListingPageProps> = ({ on
+ 
+         {filteredRestaurants.length === 0 ? (
+           /* Empty state */
+-          <div className="bg-white dark:bg-stone-850 rounded-2xl p-12 text-center border border-orange-50 dark:border-stone-800 space-y-4 max-w-md mx-auto" id="listing-empty-state">
++          <div className="bg-white dark:bg-stone-800 rounded-2xl p-12 text-center border border-orange-50 dark:border-stone-800 space-y-4 max-w-md mx-auto" id="listing-empty-state">
+             <AnimatedDiya className="w-16 h-16 mx-auto animate-bounce filter drop-shadow" />
+-            <h4 className="text-lg font-bold text-stone-850 dark:text-white">
+-              No Festive Kitchen Matches Found
++            <h4 className="text-lg font-bold text-stone-900 dark:text-white">
++              No festive kitchen matches found
+             </h4>
+             <p className="text-xs text-stone-500 leading-relaxed">
+-              We couldn't find any vendors that fit your current active search parameters. Try resetting your active filters or query.
++              We couldn&apos;t find any restaurants that fit your current search. Try resetting your filters or query.
+             </p>
+             <button
+               onClick={() => {
+@@ -163,7 +163,7 @@ export const RestaurantListingPage: React.FC<RestaurantListingPageProps> = ({ on
+             <button
+               onClick={handleSimulateInfiniteScroll}
+               disabled={isInfiniteScrolling}
+-              className="px-6 py-2.5 bg-white dark:bg-stone-850 hover:bg-orange-50 dark:hover:bg-amber-950/20 text-stone-800 dark:text-stone-200 hover:text-orange-600 dark:hover:text-amber-400 font-extrabold text-xs tracking-wider uppercase border border-orange-100 dark:border-stone-800 rounded-full shadow-md hover:shadow-lg disabled:opacity-50 transition-all flex items-center gap-2 cursor-pointer"
++              className="px-6 py-2.5 bg-white dark:bg-stone-800 hover:bg-orange-50 dark:hover:bg-amber-950/20 text-stone-800 dark:text-stone-200 hover:text-orange-600 dark:hover:text-amber-400 font-extrabold text-xs tracking-wider uppercase border border-orange-100 dark:border-stone-800 rounded-full shadow-md hover:shadow-lg disabled:opacity-50 transition-all flex items-center gap-2 cursor-pointer"
+             >
+               {isInfiniteScrolling ? (
+                 <>
+@@ -172,7 +172,7 @@ export const RestaurantListingPage: React.FC<RestaurantListingPageProps> = ({ on
+                 </>
+               ) : (
+                 <>
+-                  <span>Load More Vendors</span>
++                  <span>Load more restaurants</span>
+                   <span>↓</span>
+                 </>
+               )}
+diff --git a/src/components/web/RestaurantListingPage/FiltersRibbon.tsx b/src/components/web/RestaurantListingPage/FiltersRibbon.tsx
+index 85bfd27..21671cb 100644
+--- a/src/components/web/RestaurantListingPage/FiltersRibbon.tsx
++++ b/src/components/web/RestaurantListingPage/FiltersRibbon.tsx
+@@ -91,11 +91,11 @@ export const FiltersRibbon: React.FC<FiltersRibbonProps> = ({
+       {/* Right: Sort controls */}
+       <div className="flex items-center gap-2">
+         <ArrowUpDown className="w-4 h-4 text-orange-600 shrink-0" />
+-        <span className="text-xs font-bold text-stone-550 dark:text-stone-405">Sort by:</span>
++        <span className="text-xs font-bold text-stone-500 dark:text-stone-400">Sort by:</span>
+         <select
+           value={sortBy || ''}
+           onChange={(e) => setSortBy((e.target.value as any) || null)}
+-          className="text-xs font-bold bg-transparent border border-orange-100 dark:border-stone-700 dark:bg-stone-800 p-1.5 rounded-lg text-stone-750 dark:text-stone-300 focus:outline-none focus:ring-1 focus:ring-orange-500 cursor-pointer"
++          className="text-xs font-bold bg-transparent border border-orange-100 dark:border-stone-700 dark:bg-stone-800 p-1.5 rounded-lg text-stone-700 dark:text-stone-300 focus:outline-none focus:ring-1 focus:ring-orange-500 cursor-pointer"
+         >
+           <option value="">Popularity/Standard</option>
+           <option value="rating">Top Rated (⭐)</option>
+diff --git a/src/components/web/RestaurantListingPage/RestaurantListItemCard.tsx b/src/components/web/RestaurantListingPage/RestaurantListItemCard.tsx
+index 0e01525..b806d7c 100644
+--- a/src/components/web/RestaurantListingPage/RestaurantListItemCard.tsx
++++ b/src/components/web/RestaurantListingPage/RestaurantListItemCard.tsx
+@@ -14,7 +14,7 @@ export const RestaurantListItemCard: React.FC<RestaurantListItemCardProps> = ({
+   return (
+     <div
+       onClick={onClick}
+-      className="bg-white dark:bg-stone-850 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:scale-[1.005] transition-all border border-orange-100/40 dark:border-stone-800 cursor-pointer flex flex-col sm:flex-row h-full group"
++      className="bg-white dark:bg-stone-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:scale-[1.005] transition-all border border-orange-100/40 dark:border-stone-800 cursor-pointer flex flex-col sm:flex-row h-full group"
+     >
+       {/* Image Section */}
+       <div className="relative w-full sm:w-48 h-48 sm:h-full shrink-0 overflow-hidden bg-stone-100">
+@@ -49,7 +49,7 @@ export const RestaurantListItemCard: React.FC<RestaurantListItemCardProps> = ({
+             </div>
+           </div>
+ 
+-          <p className="text-xs text-stone-550 dark:text-stone-400 line-clamp-1 mt-1">
++          <p className="text-xs text-stone-500 dark:text-stone-400 line-clamp-1 mt-1">
+             {restaurant.cuisine.join(', ')}
+           </p>
+ 
+@@ -58,7 +58,7 @@ export const RestaurantListItemCard: React.FC<RestaurantListItemCardProps> = ({
+             {restaurant.featuredDishes.slice(0, 3).map((dish) => (
+               <span
+                 key={dish}
+-                className="text-[10px] font-semibold text-stone-500 dark:text-stone-400 bg-stone-105 dark:bg-stone-800 px-2.5 py-1 rounded-full"
++                className="text-[10px] font-semibold text-stone-500 dark:text-stone-400 bg-stone-100 dark:bg-stone-800 px-2.5 py-1 rounded-full"
+               >
+                 {dish}
+               </span>
+@@ -67,7 +67,7 @@ export const RestaurantListItemCard: React.FC<RestaurantListItemCardProps> = ({
+         </div>
+ 
+         {/* Core Meta Details */}
+-        <div className="flex items-center justify-between border-t border-stone-100 dark:border-stone-800 pt-3 text-xs font-bold text-stone-605 dark:text-stone-400">
++        <div className="flex items-center justify-between border-t border-stone-100 dark:border-stone-800 pt-3 text-xs font-bold text-stone-600 dark:text-stone-400">
+           <div className="flex items-center gap-1">
+             <Clock className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+             <span>{restaurant.deliveryTime} mins</span>
+diff --git a/src/components/web/SignInPage.tsx b/src/components/web/SignInPage.tsx
+index 4b5e075..9893a80 100644
+--- a/src/components/web/SignInPage.tsx
++++ b/src/components/web/SignInPage.tsx
+@@ -1,17 +1,31 @@
+-import React, { useState } from 'react';
+-import { Phone, Mail, ArrowRight, ShieldCheck } from 'lucide-react';
++import React, { useEffect, useState } from 'react';
++import { Phone, Mail, ArrowRight, ShieldCheck, Store, User } from 'lucide-react';
+ import { APP_NAME } from '../../brand';
+ 
++export type SignInMode = 'customer' | 'vendor';
++
+ interface SignInPageProps {
+   onSignIn: (payload: { phone: string; email: string }) => void;
+-  onNavigate: (page: string) => void;
++  onVendorSignIn: (payload: { phone: string; email: string }) => void;
++  onNavigate: (page: string, data?: unknown) => void;
++  initialMode?: SignInMode;
+ }
+ 
+-export const SignInPage: React.FC<SignInPageProps> = ({ onSignIn, onNavigate }) => {
++export const SignInPage: React.FC<SignInPageProps> = ({
++  onSignIn,
++  onVendorSignIn,
++  onNavigate,
++  initialMode = 'customer',
++}) => {
++  const [mode, setMode] = useState<SignInMode>(initialMode);
+   const [phone, setPhone] = useState('');
+   const [email, setEmail] = useState('');
+   const [error, setError] = useState('');
+ 
++  useEffect(() => {
++    setMode(initialMode);
++  }, [initialMode]);
++
+   const handleSubmit = (e: React.FormEvent) => {
+     e.preventDefault();
+     const phoneDigits = phone.replace(/\D/g, '');
+@@ -24,9 +38,22 @@ export const SignInPage: React.FC<SignInPageProps> = ({ onSignIn, onNavigate })
+       return;
+     }
+     setError('');
+-    onSignIn({ phone: phone.trim(), email: email.trim() });
++    const payload = { phone: phone.trim(), email: email.trim() };
++    if (mode === 'vendor') {
++      onVendorSignIn(payload);
++    } else {
++      onSignIn(payload);
++    }
+   };
+ 
++  const modeDescription =
++    mode === 'customer'
++      ? 'Sign in to plan your events — guests, budget, vendors, feast & timelines.'
++      : 'Manage your business listing, enquiries, and services.';
++
++  const submitLabel =
++    mode === 'vendor' ? 'Sign in to vendor dashboard' : 'Sign in to event planner';
++
+   return (
+     <div className="min-h-[calc(100vh-4rem)] bg-stone-50 dark:bg-stone-900 px-4 py-12 sm:py-16">
+       <div className="mx-auto max-w-md">
+@@ -34,10 +61,43 @@ export const SignInPage: React.FC<SignInPageProps> = ({ onSignIn, onNavigate })
+           <span className="inline-block text-[10px] font-bold uppercase tracking-widest text-[#C51C13] bg-orange-50 dark:bg-stone-800 px-3 py-1 rounded-full">
+             Account
+           </span>
+-          <h1 className="font-display text-3xl text-stone-900 dark:text-white mt-3">Sign in to {APP_NAME}</h1>
+-          <p className="text-sm text-stone-600 dark:text-stone-400 mt-2">
+-            Use your mobile and email to access your events, wallet, and saved vendors.
+-          </p>
++          <h1 className="font-display text-3xl text-stone-900 dark:text-white mt-3">
++            Sign in to {APP_NAME}
++          </h1>
++          <p className="text-sm text-stone-600 dark:text-stone-400 mt-2">{modeDescription}</p>
++        </div>
++
++        <div className="grid grid-cols-2 gap-1 rounded-lg border border-stone-200 dark:border-stone-700 p-1 mb-6 bg-white dark:bg-stone-850">
++          <button
++            type="button"
++            onClick={() => {
++              setMode('customer');
++              setError('');
++            }}
++            className={`flex items-center justify-center gap-1.5 py-2.5 rounded-md text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
++              mode === 'customer'
++                ? 'bg-[#C51C13] text-white'
++                : 'text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800'
++            }`}
++          >
++            <User className="w-4 h-4 shrink-0" aria-hidden />
++            Customer
++          </button>
++          <button
++            type="button"
++            onClick={() => {
++              setMode('vendor');
++              setError('');
++            }}
++            className={`flex items-center justify-center gap-1.5 py-2.5 rounded-md text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
++              mode === 'vendor'
++                ? 'bg-[#C51C13] text-white'
++                : 'text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800'
++            }`}
++          >
++            <Store className="w-4 h-4 shrink-0" aria-hidden />
++            Vendor
++          </button>
+         </div>
+ 
+         <form
+@@ -58,7 +118,7 @@ export const SignInPage: React.FC<SignInPageProps> = ({ onSignIn, onNavigate })
+                 value={phone}
+                 onChange={(e) => setPhone(e.target.value)}
+                 placeholder="10-digit mobile number"
+-                className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-stone-50 dark:bg-stone-900"
++                className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700"
+               />
+             </div>
+           </div>
+@@ -75,8 +135,8 @@ export const SignInPage: React.FC<SignInPageProps> = ({ onSignIn, onNavigate })
+                 autoComplete="email"
+                 value={email}
+                 onChange={(e) => setEmail(e.target.value)}
+-                placeholder="you@example.com"
+-                className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-stone-50 dark:bg-stone-900"
++                placeholder={mode === 'vendor' ? 'business@example.com' : 'you@example.com'}
++                className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700"
+               />
+             </div>
+           </div>
+@@ -91,25 +151,40 @@ export const SignInPage: React.FC<SignInPageProps> = ({ onSignIn, onNavigate })
+             type="submit"
+             className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white font-semibold text-sm transition-colors cursor-pointer"
+           >
+-            Continue
++            {submitLabel}
+             <ArrowRight className="w-4 h-4" />
+           </button>
+ 
+           <p className="flex items-start gap-2 text-xs text-stone-500 leading-relaxed">
+             <ShieldCheck className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" aria-hidden />
+-            Demo sign-in for preview. OTP verification will be added before production launch.
++            Customer sign-in opens your event planning workspace. Vendors use the vendor tab.
+           </p>
+         </form>
+ 
+         <p className="text-center text-sm text-stone-600 dark:text-stone-400 mt-6">
+-          New to {APP_NAME}?{' '}
+-          <button
+-            type="button"
+-            onClick={() => onNavigate('landing')}
+-            className="font-semibold text-[#C51C13] hover:underline cursor-pointer"
+-          >
+-            Explore the homepage
+-          </button>
++          {mode === 'vendor' ? (
++            <>
++              New vendor?{' '}
++              <button
++                type="button"
++                onClick={() => onNavigate('list-your-service')}
++                className="font-semibold text-[#C51C13] hover:underline cursor-pointer"
++              >
++                Register your business
++              </button>
++            </>
++          ) : (
++            <>
++              New customer?{' '}
++              <button
++                type="button"
++                onClick={() => onNavigate('event-planner-register')}
++                className="font-semibold text-[#C51C13] hover:underline cursor-pointer"
++              >
++                Register to plan events
++              </button>
++            </>
++          )}
+         </p>
+       </div>
+     </div>
+diff --git a/src/components/web/UserProfilePage.tsx b/src/components/web/UserProfilePage.tsx
+index f82a418..bf1e798 100644
+--- a/src/components/web/UserProfilePage.tsx
++++ b/src/components/web/UserProfilePage.tsx
+@@ -1,5 +1,5 @@
+ import React, { useState } from 'react';
+-import { User, MapPin, History, Wallet, Award, Settings, Plus, RotateCcw, MessageSquare, CreditCard, LifeBuoy } from 'lucide-react';
++import { User, MapPin, History, Wallet, Award, Settings, Plus, RotateCcw, MessageSquare, CreditCard, LifeBuoy, CalendarPlus } from 'lucide-react';
+ import { UserProfile, SavedAddress } from '../../types';
+ import { AnimatedDiya } from './GoldenDeco';
+ 
+@@ -7,9 +7,17 @@ interface UserProfilePageProps {
+   userProfile: UserProfile;
+   onUpdateWallet: (newBalance: number) => void;
+   onNavigate: (page: string) => void;
++  isEventPlannerCustomer?: boolean;
++  onOpenPlannerWorkspace?: () => void;
+ }
+ 
+-export const UserProfilePage: React.FC<UserProfilePageProps> = ({ userProfile, onUpdateWallet, onNavigate }) => {
++export const UserProfilePage: React.FC<UserProfilePageProps> = ({
++  userProfile,
++  onUpdateWallet,
++  onNavigate,
++  isEventPlannerCustomer = false,
++  onOpenPlannerWorkspace,
++}) => {
+   const [activeTab, setActiveTab] = useState<'orders' | 'wallet' | 'addresses' | 'support' | 'settings'>('orders');
+   const [topUpAmount, setTopUpAmount] = useState('');
+   const [newStreet, setNewStreet] = useState('');
+@@ -56,6 +64,11 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ userProfile, o
+             <h2 className="text-2xl font-extrabold tracking-tight">{userProfile.name}</h2>
+             <p className="text-stone-400 text-xs sm:text-sm font-semibold">{userProfile.email} | {userProfile.phone}</p>
+             <div className="flex flex-wrap items-center gap-3 mt-2 text-xs">
++              {isEventPlannerCustomer && (
++                <span className="bg-rose-600 px-2 py-0.5 rounded font-bold font-mono uppercase text-white">
++                  Event planning customer
++                </span>
++              )}
+               <span className="bg-orange-600 px-2 py-0.5 rounded font-bold font-mono uppercase text-white">
+                 Festive Premium Member
+               </span>
+@@ -86,6 +99,27 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ userProfile, o
+         </div>
+       </div>
+ 
++      {isEventPlannerCustomer && onOpenPlannerWorkspace && (
++        <div className="rounded-2xl border border-orange-200 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-stone-800 dark:to-stone-850 dark:border-orange-900/40 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
++          <div className="text-left">
++            <h3 className="text-lg font-bold text-stone-900 dark:text-white flex items-center gap-2">
++              <CalendarPlus className="w-5 h-5 text-[#C51C13]" aria-hidden />
++              Event planning workspace
++            </h3>
++            <p className="text-sm text-stone-600 dark:text-stone-400 mt-1 max-w-xl">
++              Manage rituals, guests, feast, vendors, and budget from your customer planning tools.
++            </p>
++          </div>
++          <button
++            type="button"
++            onClick={onOpenPlannerWorkspace}
++            className="shrink-0 px-5 py-2.5 rounded-xl bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold cursor-pointer"
++          >
++            Open planning workspace
++          </button>
++        </div>
++      )}
++
+       {/* 2. TABBED METADATA INTERFACE */}
+       <div className="grid md:grid-cols-4 gap-8">
+         
+diff --git a/src/components/web/VendorCategoryPage.tsx b/src/components/web/VendorCategoryPage.tsx
+index 4d56709..78c4f4d 100644
+--- a/src/components/web/VendorCategoryPage.tsx
++++ b/src/components/web/VendorCategoryPage.tsx
+@@ -1,394 +1,82 @@
+-import React, { useState, useMemo, useEffect } from 'react';
+-import { AnimatePresence } from 'motion/react';
+-import { ArrowLeft, Search, Sparkles, SlidersHorizontal, Check } from 'lucide-react';
+-import { RangoliMandala } from './GoldenDeco';
+-
++import React, { useMemo } from 'react';
++import { ArrowRight, MapPin } from 'lucide-react';
++import { APP_NAME } from '../../brand';
+ import { CategoriesGrid, WEDDING_CATEGORIES, CategoryItem } from './VendorCategoryPage/CategoriesGrid';
+-import { VendorGridCard, ListingCardItem } from './VendorCategoryPage/VendorGridCard';
+-import { SubCategoryDetailsModal } from './VendorCategoryPage/SubCategoryDetailsModal';
+-import { InquiryModal, InquiryFormData } from './VendorCategoryPage/InquiryModal';
+-import { ALL_MOCK_VENDORS } from './VendorCategoryPage/mockData';
++import { TrendingVendorsSection } from './VendorCategoryPage/TrendingVendorsSection';
++import { getCityLabel } from './VendorCategoryPage/vendorCityFilter';
+ 
+ interface VendorCategoryPageProps {
+-  onNavigate: (page: string, data?: any) => void;
++  onNavigate: (page: string, data?: unknown) => void;
+   isDarkMode: boolean;
+-  initialSearchQuery?: string;
+-  initialCategoryId?: string;
+   initialCity?: string;
+ }
+ 
+ export const VendorCategoryPage: React.FC<VendorCategoryPageProps> = ({
+   onNavigate,
+-  initialSearchQuery = '',
+-  initialCategoryId = '',
+   initialCity = '',
+ }) => {
+-  const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
+-  const [bookmarkedIds, setBookmarkedIds] = useState<string[]>([]);
+-  const [selectedSubCategory, setSelectedSubCategory] = useState<CategoryItem | null>(null);
+-
+-  // Dynamic filter state
+-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
+-    initialCategoryId || null
+-  );
+-  const [selectedCity, setSelectedCity] = useState(initialCity);
+-  const [filterRating48, setFilterRating48] = useState(false);
+-  const [sortByOption, setSortByOption] = useState<'rating' | 'costAsc' | 'costDesc' | null>(null);
++  const cityLabel = useMemo(() => getCityLabel(initialCity), [initialCity]);
+ 
+-  // Inquiry form states
+-  const [showInquiryModal, setShowInquiryModal] = useState(false);
+-  const [inquiryTarget, setInquiryTarget] = useState<ListingCardItem | null>(null);
+-  const [formData, setFormData] = useState<InquiryFormData>({
+-    name: '',
+-    phone: '',
+-    date: '',
+-    message: '',
+-    estimatedGuests: '150-300'
+-  });
+-  const [showCelebration, setShowCelebration] = useState(false);
+-
+-  useEffect(() => {
+-    setSearchQuery(initialSearchQuery);
+-    setSelectedCategoryId(initialCategoryId || null);
+-    setSelectedCity(initialCity);
+-  }, [initialSearchQuery, initialCategoryId, initialCity]);
+-
+-  // Toggle bookmark / favorite
+-  const handleToggleBookmark = (id: string, e: React.MouseEvent) => {
+-    e.stopPropagation();
+-    setBookmarkedIds((prev) =>
+-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+-    );
++  const handleSelectCategory = (cat: CategoryItem) => {
++    onNavigate('vendor-list', { categoryId: cat.id, city: initialCity });
+   };
+ 
+-  // Trigger inquiry modal
+-  const handleOpenInquiry = (item: ListingCardItem, e: React.MouseEvent) => {
+-    e.stopPropagation();
+-    setInquiryTarget(item);
+-    setShowInquiryModal(true);
+-  };
+-
+-  // Filter Categories list based on search bar
+-  const filteredCategories = useMemo(() => {
+-    return WEDDING_CATEGORIES.filter(cat => 
+-      cat.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+-      cat.subtext.toLowerCase().includes(searchQuery.toLowerCase())
+-    );
+-  }, [searchQuery]);
+-
+-  // Filtered list of service providers based on active category, search string, rating status & sort selections
+-  const filteredVendors = useMemo(() => {
+-    let list = [...ALL_MOCK_VENDORS];
+-
+-    // 1. Category Filter
+-    if (selectedCategoryId) {
+-      list = list.filter(vendor => vendor.category === selectedCategoryId);
+-    }
+-
+-    // 2. City filter
+-    if (selectedCity.trim() !== '') {
+-      const cityQ = selectedCity.toLowerCase();
+-      list = list.filter((vendor) => vendor.location.toLowerCase().includes(cityQ));
+-    }
+-
+-    // 3. Search query filter
+-    if (searchQuery.trim() !== '') {
+-      const q = searchQuery.toLowerCase();
+-      list = list.filter(
+-        (vendor) =>
+-          vendor.name.toLowerCase().includes(q) || vendor.location.toLowerCase().includes(q)
+-      );
+-    }
+-
+-    // 4. Rating filter (Top Rated 4.8+)
+-    if (filterRating48) {
+-      list = list.filter(vendor => vendor.rating >= 4.8);
+-    }
+-
+-    // 5. Sorting
+-    if (sortByOption === 'rating') {
+-      list.sort((a, b) => b.rating - a.rating);
+-    } else if (sortByOption === 'costAsc') {
+-      const parsePrice = (priceStr: string) => {
+-        const cleaned = priceStr.replace(/[^\d]/g, '');
+-        return cleaned ? parseInt(cleaned, 10) : 0;
+-      };
+-      list.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
+-    } else if (sortByOption === 'costDesc') {
+-      const parsePrice = (priceStr: string) => {
+-        const cleaned = priceStr.replace(/[^\d]/g, '');
+-        return cleaned ? parseInt(cleaned, 10) : 0;
+-      };
+-      list.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
+-    }
+-
+-    return list;
+-  }, [selectedCategoryId, selectedCity, searchQuery, filterRating48, sortByOption]);
+-
+-  const activeCategoryObject = useMemo(() => {
+-    return WEDDING_CATEGORIES.find(c => c.id === selectedCategoryId) || null;
+-  }, [selectedCategoryId]);
+-
+-  const handleApplyInquiry = (e: React.FormEvent) => {
+-    e.preventDefault();
+-    setShowCelebration(true);
+-    setTimeout(() => {
+-      setShowCelebration(false);
+-      setShowInquiryModal(false);
+-      setFormData({ name: '', phone: '', date: '', message: '', estimatedGuests: '150-300' });
+-    }, 4500);
++  const handleSelectVendor = (vendorId: string, categoryId: string) => {
++    onNavigate('vendor-details', { vendorId, categoryId });
+   };
+ 
+   return (
+-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12 min-h-screen bg-stone-50 dark:bg-stone-900 text-left relative" id="wedding-vendor-categories-view">
+-      
+-      {/* Decorative background mandalas */}
+-      <div className="absolute top-10 right-4 w-60 h-60 opacity-[0.03] dark:opacity-[0.05] pointer-events-none select-none">
+-        <RangoliMandala className="w-full h-full text-orange-500" />
+-      </div>
+-
+-      {/* HEADER SECTION & SEARCH BAR */}
+-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6" id="categories-header-block">
+-        <div className="space-y-2">
+-          <button
+-            onClick={() => {
+-              if (selectedCategoryId) {
+-                setSelectedCategoryId(null);
+-              } else {
+-                onNavigate('landing');
+-              }
+-            }}
+-            className="flex items-center gap-1.5 text-xs font-bold text-orange-600 dark:text-orange-400 hover:underline mb-1 cursor-pointer"
+-            id="btn-back-landing-wedding"
+-          >
+-            <ArrowLeft className="w-3.5 h-3.5" />
+-            <span>{selectedCategoryId ? 'Back to All Categories' : 'Go Back Home'}</span>
+-          </button>
+-          
+-          <div className="flex items-center gap-2">
+-            <span className="p-1 px-2.5 bg-orange-100 dark:bg-orange-950/40 text-orange-700 dark:text-orange-400 text-[10px] font-extrabold tracking-wider uppercase rounded-full">
+-              Traditional Utsav Planning
+-            </span>
+-            <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
+-          </div>
+-
+-          <h2 className="serif text-3xl md:text-4xl font-extrabold italic text-stone-955 dark:text-white tracking-tight" id="wedding-heading-main">
+-            {activeCategoryObject ? `${activeCategoryObject.name} Specialists` : 'Wedding Vendor Directory'}
+-          </h2>
+-
+-          <p className="text-xs text-stone-500 dark:text-stone-400 max-w-2xl leading-relaxed">
+-            {activeCategoryObject 
+-              ? `Discover verified Sector 56 Noida direct providers specialized in traditional wedding ${activeCategoryObject.name.toLowerCase()} services.` 
+-              : 'Browse premium wedding decorators, traditional pandits, pre-wedding specialist shooters, mehendi artisans, royal wedding venues and bridal grooming experts in Sector 56 Noida.'
+-            }
++    <div className="min-h-screen bg-stone-50 dark:bg-stone-900" id="vendor-category-page">
++      <div className="bg-gradient-to-br from-[#C51C13] via-stone-900 to-amber-900 text-white">
++        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
++          <p className="text-[10px] font-semibold uppercase tracking-widest text-[#FFCB44]">
++            {APP_NAME} marketplace
+           </p>
+-        </div>
++          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mt-2">
++            <div className="space-y-2 max-w-xl">
++              <h1 className="heading-page text-3xl sm:text-4xl text-white">
++                Browse vendor categories
++              </h1>
++              <p className="text-sm text-amber-100/85 leading-relaxed">
++                Pick a service to compare vendors, filter by city, and request quotes.
++              </p>
++              {initialCity && (
++                <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/90 bg-white/10 px-2.5 py-1 rounded-full">
++                  <MapPin className="w-3.5 h-3.5 text-[#FFCB44]" aria-hidden />
++                  {cityLabel}
++                </p>
++              )}
++            </div>
+ 
+-        {/* Dynamic Category Search */}
+-        <div className="relative w-full md:w-80 shrink-0" id="search-wedding-group">
+-          <input
+-            type="text"
+-            placeholder={activeCategoryObject ? "Search within active category..." : "Search venue, makeup, decor..."}
+-            value={searchQuery}
+-            onChange={(e) => setSearchQuery(e.target.value)}
+-            className="w-full pl-9 pr-10 py-2.5 text-xs text-stone-805 dark:text-white placeholder-stone-400 bg-white dark:bg-stone-850 border border-stone-200 dark:border-stone-800 rounded-full focus:outline-none focus:ring-1 focus:ring-orange-500 transition-all shadow-sm"
+-          />
+-          <Search className="absolute left-3.5 top-3.5 w-4 h-4 text-stone-400" />
+-          {searchQuery && (
+-            <button 
+-              onClick={() => setSearchQuery('')}
+-              className="absolute right-3.5 top-3 text-xs text-stone-404 hover:text-stone-600 dark:hover:text-white cursor-pointer"
++            <button
++              type="button"
++              onClick={() => onNavigate('vendor-list', { city: initialCity })}
++              className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white text-[#C51C13] font-semibold shadow-lg hover:shadow-xl transition cursor-pointer"
+             >
+-              Clear
++              View all vendors
++              <ArrowRight className="w-4 h-4" aria-hidden />
+             </button>
+-          )}
++          </div>
+         </div>
+       </div>
+ 
+-      {/* QUICK CATEGORIES PILL SCROLLER BAR */}
+-      <div className="bg-amber-50/50 dark:bg-stone-850/40 p-3 rounded-2xl border border-amber-105/30 overflow-x-auto whitespace-nowrap scrollbar-none flex items-center gap-2" id="categories-pill-scroller">
+-        <span className="text-[10px] font-mono font-bold tracking-widest text-[#C51C13] dark:text-[#FFCB44] uppercase px-2 shrink-0">
+-          📍 Categories:
+-        </span>
+-        <button
+-          onClick={() => setSelectedCategoryId(null)}
+-          className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 cursor-pointer ${
+-            selectedCategoryId === null
+-              ? 'bg-[#C51C13] text-white shadow-sm'
+-              : 'bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-orange-50 dark:hover:bg-stone-700'
+-          }`}
+-          id="pill-cat-all"
+-        >
+-          All Categories Grid
+-        </button>
+-        {WEDDING_CATEGORIES.map((cat) => (
+-          <button
+-            key={cat.id}
+-            onClick={() => setSelectedCategoryId(cat.id)}
+-            className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer ${
+-              selectedCategoryId === cat.id
+-                ? 'bg-orange-600 text-white shadow-md'
+-                : 'bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-orange-50 dark:hover:bg-stone-700'
+-            }`}
+-            id={`pill-cat-${cat.id}`}
+-          >
+-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+-            <span>{cat.name}</span>
+-          </button>
+-        ))}
+-      </div>
+-
+-      {/* 2. WEDDING CATEGORIES GRID ONLY SHOWN WHEN NO SINGLE CATEGORY SELECTED */}
+-      {!selectedCategoryId ? (
+-        <section className="space-y-6" id="wedding-categories-grid-section">
+-          <div className="flex justify-between items-center border-b border-orange-100 dark:border-stone-800 pb-3">
+-            <h3 className="serif text-xl font-bold italic text-stone-900 dark:text-white">
+-              Discover Wedding Specialties
+-            </h3>
+-            <span className="hidden sm:inline text-xs font-mono text-stone-400">Click any category tile below to view individual filtered vendor listings</span>
+-          </div>
+-
+-          <CategoriesGrid
+-            selectedCategoryId={selectedCategoryId}
+-            onSelectCategory={(cat) => {
+-              setSelectedCategoryId(cat.id);
+-              window.scrollTo({ top: 300, behavior: 'smooth' });
+-            }}
+-          />
+-        </section>
+-      ) : (
+-        /* DETAILED SERVICE LISTINGS WITH FILTER STRIP */
+-        <section className="space-y-6" id="filtered-vendor-results-block">
+-          <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-4 border-b border-orange-100 dark:border-stone-800 pb-4">
+-            
+-            <div className="flex items-center gap-2">
+-              <SlidersHorizontal className="w-4 h-4 text-orange-600 shrink-0" />
+-              <button
+-                onClick={() => setFilterRating48(!filterRating48)}
+-                className={`p-1.5 px-3 rounded-full text-xs font-bold transition-all border cursor-pointer flex items-center gap-1 ${
+-                  filterRating48 
+-                    ? 'bg-orange-600 text-white border-orange-600' 
+-                    : 'bg-white text-stone-700 border-stone-205 dark:bg-stone-800 dark:text-stone-300 dark:border-stone-700'
+-                }`}
+-              >
+-                <span>⭐ Top Rated (4.8+)</span>
+-                {filterRating48 && <Check className="w-3 h-3" />}
+-              </button>
+-            </div>
+-
+-            {/* Sort Dropdown */}
+-            <div className="flex items-center gap-2">
+-              <span className="text-xs font-bold text-stone-400">Sort Providers:</span>
+-              <select
+-                value={sortByOption || ''}
+-                onChange={(e) => setSortByOption((e.target.value as any) || null)}
+-                className="p-1 px-3 bg-white dark:bg-stone-850 text-xs font-bold text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-800 rounded-lg outline-none focus:ring-1 focus:ring-orange-500 cursor-pointer"
+-              >
+-                <option value="">Auspicious Recommendations</option>
+-                <option value="rating">Rating: Highest First</option>
+-                <option value="costAsc">Price: Budget-friendly</option>
+-                <option value="costDesc">Price: Luxury First</option>
+-              </select>
+-            </div>
+-
+-          </div>
+-
+-          {/* Vendors Listing Grid */}
+-          <div className="space-y-4">
+-            <h3 className="serif text-lg font-black italic text-stone-900 dark:text-white flex items-center gap-2">
+-              <span>Verified directory list</span>
+-              <span className="text-xs font-mono font-bold bg-orange-100 dark:bg-amber-950/40 text-orange-600 dark:text-amber-400 p-1 px-2.5 rounded-full">
+-                {filteredVendors.length} Providers Available
+-              </span>
+-            </h3>
+-
+-            {filteredVendors.length === 0 ? (
+-              <div className="p-12 bg-white dark:bg-stone-850 rounded-2xl text-center border border-dashed border-orange-200 dark:border-stone-800 space-y-4 max-w-sm mx-auto">
+-                <span className="text-3xl">🏜️</span>
+-                <h4 className="font-bold text-stone-700 dark:text-stone-300">No Matching Specialists</h4>
+-                <p className="text-xs text-stone-400">We couldn't find matches under active search. Try clearing filters.</p>
+-                <button
+-                  onClick={() => {
+-                    setSearchQuery('');
+-                    setFilterRating48(false);
+-                    setSortByOption(null);
+-                  }}
+-                  className="px-4 py-1.5 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-lg transition"
+-                >
+-                  Reset Active Filters
+-                </button>
+-              </div>
+-            ) : (
+-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+-                {filteredVendors.map((item) => (
+-                  <VendorGridCard
+-                    key={item.id}
+-                    item={item}
+-                    bookmarkedIds={bookmarkedIds}
+-                    onToggleBookmark={handleToggleBookmark}
+-                    onOpenInquiry={handleOpenInquiry}
+-                  />
+-                ))}
+-              </div>
+-            )}
+-          </div>
+-        </section>
+-      )}
+-
+-      {/* 4. EXPLICIT CATEGORY PROMOTIONS SCROLLER */}
+-      {!selectedCategoryId && (
+-        <section className="space-y-4" id="promotions-corridor">
+-          <div className="flex justify-between items-center pb-2 border-b border-orange-100 dark:border-stone-800">
+-            <h3 className="serif text-xl font-bold italic text-stone-900 dark:text-white flex items-center gap-2">
+-              <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
+-              <span>Dussehra Spotlight Vendors</span>
+-            </h3>
+-            <span className="text-xs text-orange-600 dark:text-orange-400 font-bold hover:underline cursor-pointer">View Featured Partners</span>
+-          </div>
+-
+-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+-            {ALL_MOCK_VENDORS.slice(0, 4).map((item) => (
+-              <VendorGridCard
+-                key={item.id}
+-                item={item}
+-                bookmarkedIds={bookmarkedIds}
+-                onToggleBookmark={handleToggleBookmark}
+-                onOpenInquiry={handleOpenInquiry}
+-              />
+-            ))}
+-          </div>
+-        </section>
+-      )}
+-
+-      {/* 7. CLASSIC MODAL VIEW FOR EXPLICIT SUB-CATEGORY SPOTLIGHT VIEW */}
+-      <AnimatePresence>
+-        {selectedSubCategory && (
+-          <SubCategoryDetailsModal
+-            category={selectedSubCategory}
+-            onClose={() => setSelectedSubCategory(null)}
+-            onInquire={(dum) => {
+-              setSelectedSubCategory(null);
+-              setInquiryTarget(dum);
+-              setShowInquiryModal(true);
+-            }}
+-          />
+-        )}
+-      </AnimatePresence>
++      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
++        <div className="border-b border-stone-200 dark:border-stone-800 pb-3">
++          <h2 className="heading-section text-xl sm:text-2xl text-stone-900 dark:text-white">
++            Vendor categories
++          </h2>
++          <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
++            {WEDDING_CATEGORIES.length}+ service types
++          </p>
++        </div>
+ 
+-      {/* 8. ROYAL INQUIRY booking modal overlay */}
+-      <AnimatePresence>
+-        {showInquiryModal && inquiryTarget && (
+-          <InquiryModal
+-            inquiryTarget={inquiryTarget}
+-            formData={formData}
+-            setFormData={setFormData}
+-            showCelebration={showCelebration}
+-            onClose={() => setShowInquiryModal(false)}
+-            onSubmit={handleApplyInquiry}
+-          />
+-        )}
+-      </AnimatePresence>
++        <CategoriesGrid selectedCategoryId={null} onSelectCategory={handleSelectCategory} />
+ 
++        <TrendingVendorsSection
++          onSelectCategory={handleSelectCategory}
++          onSelectVendor={(vendor) => handleSelectVendor(vendor.id, vendor.category)}
++        />
++      </div>
+     </div>
+   );
+ };
+diff --git a/src/components/web/VendorCategoryPage/CategoriesGrid.tsx b/src/components/web/VendorCategoryPage/CategoriesGrid.tsx
+index d9b105f..232186e 100644
+--- a/src/components/web/VendorCategoryPage/CategoriesGrid.tsx
++++ b/src/components/web/VendorCategoryPage/CategoriesGrid.tsx
+@@ -1,5 +1,4 @@
+ import React from 'react';
+-// v
+ export interface CategoryItem {
+   id: string;
+   name: string;
+@@ -135,42 +134,76 @@ export const WEDDING_CATEGORIES: CategoryItem[] = [
+ interface CategoriesGridProps {
+   onSelectCategory: (cat: CategoryItem) => void;
+   selectedCategoryId: string | null;
++  searchQuery?: string;
+ }
+ 
+ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
+   onSelectCategory,
+   selectedCategoryId,
++  searchQuery = '',
+ }) => {
++  const q = searchQuery.trim().toLowerCase();
++  const visibleCategories = q
++    ? WEDDING_CATEGORIES.filter(
++        (cat) =>
++          cat.name.toLowerCase().includes(q) || cat.subtext.toLowerCase().includes(q)
++      )
++    : WEDDING_CATEGORIES;
++
++  if (visibleCategories.length === 0) {
++    return (
++      <p className="text-sm text-stone-500 dark:text-stone-400 py-8 text-center">
++        No categories match your search. Try a different term or browse all categories.
++      </p>
++    );
++  }
++
+   return (
+-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4" id="categories-boxes-row">
+-      {WEDDING_CATEGORIES.map((cat) => (
+-        <div
++    <>
++      <svg width="0" height="0" className="absolute" aria-hidden>
++        <defs>
++          <clipPath id="category-card-image-curve" clipPathUnits="objectBoundingBox">
++            <path d="M 0.26 0 Q 0 0.5 0.26 1 L 1 1 L 1 0 Z" />
++          </clipPath>
++        </defs>
++      </svg>
++
++      <div
++        className="grid grid-cols-2 gap-3 sm:gap-4"
++        id="categories-boxes-row"
++      >
++      {visibleCategories.map((cat) => (
++        <button
++          type="button"
+           key={cat.id}
+           onClick={() => onSelectCategory(cat)}
+-          className={`group rounded-2xl p-4 border text-left flex items-start gap-3 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg cursor-pointer select-none ${cat.bgColorLight} ${cat.bgColorDark} ${
+-            selectedCategoryId === cat.id ? 'ring-2 ring-orange-500 scale-[1.02]' : ''
++          aria-pressed={selectedCategoryId === cat.id}
++          className={`group relative flex h-[6.25rem] sm:h-[6.75rem] w-full min-w-0 overflow-hidden rounded-2xl border-0 text-left shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 cursor-pointer select-none ${cat.bgColorLight} ${cat.bgColorDark} ${
++            selectedCategoryId === cat.id ? 'ring-2 ring-[#C51C13] ring-offset-2 ring-offset-stone-50 dark:ring-offset-stone-900' : ''
+           }`}
+           id={`box-category-${cat.id}`}
+         >
+-          {/* Visual Category Photo Circle */}
+-          <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-white/20 shadow-md">
+-            <img
+-              src={cat.image}
+-              alt={cat.name}
+-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+-              referrerPolicy="no-referrer"
+-            />
+-          </div>
+-          <div className="space-y-0.5 truncate leading-tight">
+-            <h4 className="font-extrabold text-sm text-stone-900 dark:text-white group-hover:text-orange-600 transition-colors">
++          <div className="relative z-10 flex flex-1 flex-col justify-center gap-0.5 pl-3 sm:pl-4 pr-2 min-w-0">
++            <h4 className="font-bold text-[13px] sm:text-sm text-stone-900 dark:text-white leading-tight truncate group-hover:text-[#C51C13] dark:group-hover:text-orange-400 transition-colors">
+               {cat.name}
+             </h4>
+-            <p className="text-[10px] text-stone-500 dark:text-stone-400 truncate max-w-[140px]">
++            <p className="text-[10px] sm:text-[11px] text-stone-600/90 dark:text-stone-400 line-clamp-2 leading-snug pr-1">
+               {cat.subtext}
+             </p>
+           </div>
+-        </div>
++
++          <div className="relative h-full w-[40%] shrink-0 pointer-events-none">
++            <img
++              src={cat.image}
++              alt=""
++              className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
++              style={{ clipPath: 'url(#category-card-image-curve)' }}
++              referrerPolicy="no-referrer"
++            />
++          </div>
++        </button>
+       ))}
+-    </div>
++      </div>
++    </>
+   );
+ };
+diff --git a/src/components/web/VendorCategoryPage/VendorGridCard.tsx b/src/components/web/VendorCategoryPage/VendorGridCard.tsx
+index 4fe67a9..32d10fa 100644
+--- a/src/components/web/VendorCategoryPage/VendorGridCard.tsx
++++ b/src/components/web/VendorCategoryPage/VendorGridCard.tsx
+@@ -16,6 +16,7 @@ interface VendorGridCardProps {
+   bookmarkedIds: string[];
+   onToggleBookmark: (itemId: string, event: React.MouseEvent) => void;
+   onOpenInquiry: (item: ListingCardItem, event: React.MouseEvent) => void;
++  onSelect?: (item: ListingCardItem) => void;
+   priceLabel?: string;
+ }
+ 
+@@ -24,6 +25,7 @@ export const VendorGridCard: React.FC<VendorGridCardProps> = ({
+   bookmarkedIds,
+   onToggleBookmark,
+   onOpenInquiry,
++  onSelect,
+   priceLabel = "Service Fee",
+ }) => {
+   const isBookmarked = bookmarkedIds.includes(item.id);
+@@ -31,7 +33,19 @@ export const VendorGridCard: React.FC<VendorGridCardProps> = ({
+   return (
+     <div
+       key={item.id}
+-      className="bg-white dark:bg-stone-850 rounded-2xl overflow-hidden border border-stone-200 dark:border-stone-800 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group h-full"
++      role={onSelect ? 'button' : undefined}
++      tabIndex={onSelect ? 0 : undefined}
++      onClick={onSelect ? () => onSelect(item) : undefined}
++      onKeyDown={
++        onSelect
++          ? (e) => {
++              if (e.key === 'Enter' || e.key === ' ') onSelect(item);
++            }
++          : undefined
++      }
++      className={`bg-white dark:bg-stone-850 rounded-2xl overflow-hidden border border-stone-200 dark:border-stone-800 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group h-full ${
++        onSelect ? 'cursor-pointer' : ''
++      }`}
+     >
+       <div className="relative h-44 overflow-hidden bg-stone-100 shrink-0">
+         <img
+@@ -49,7 +63,9 @@ export const VendorGridCard: React.FC<VendorGridCardProps> = ({
+ 
+         {/* Favorite Bookmark */}
+         <button
++          type="button"
+           onClick={(e) => onToggleBookmark(item.id, e)}
++          aria-label={isBookmarked ? 'Remove from saved vendors' : 'Save vendor'}
+           className="absolute top-3 right-3 p-1.5 rounded-full bg-white/80 dark:bg-stone-900/80 hover:bg-white dark:hover:bg-stone-900 transition-colors shadow cursor-pointer z-10"
+         >
+           <Heart className={`w-3.5 h-3.5 shrink-0 ${isBookmarked ? 'fill-red-500 text-red-500' : 'text-stone-650 dark:text-stone-300'}`} />
+@@ -73,10 +89,11 @@ export const VendorGridCard: React.FC<VendorGridCardProps> = ({
+             <span className="font-black text-xs text-[#C51C13] dark:text-[#FFCB44] mt-0.5 truncate leading-none">{item.price}</span>
+           </div>
+           <button
++            type="button"
+             onClick={(e) => onOpenInquiry(item, e)}
+-            className="p-1 px-3 bg-orange-600 hover:bg-orange-700 text-white text-[10px] font-bold rounded cursor-pointer shrink-0 transition"
++            className="p-1.5 px-3 bg-[#C51C13] hover:bg-[#A2110A] text-white text-[10px] font-semibold rounded-lg cursor-pointer shrink-0 transition"
+           >
+-            Inquire
++            Get quote
+           </button>
+         </div>
+       </div>
+diff --git a/src/components/web/VendorCategoryPage/mockData.ts b/src/components/web/VendorCategoryPage/mockData.ts
+index ce70e02..2398583 100644
+--- a/src/components/web/VendorCategoryPage/mockData.ts
++++ b/src/components/web/VendorCategoryPage/mockData.ts
+@@ -6,12 +6,14 @@ export const ALL_MOCK_VENDORS: ListingCardItem[] = [
+   { id: 'vn-2', name: 'Crossroads Banquets Conventions', location: 'Sohna Road, Gurgaon', rating: 4.9, price: '₹ 2500 per plate', category: 'venues', image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=450&auto=format&fit=crop&q=80' },
+   { id: 'vn-3', name: 'Umaid Palace - Heritage Resort', location: 'Jaipur Road, Jaipur', rating: 5.0, price: '₹ 3500 per plate', category: 'venues', image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?w=450&auto=format&fit=crop&q=80' },
+   { id: 'vn-4', name: 'Shakuntalam Lawn & Resort', location: 'Sector 56, Noida', rating: 4.5, price: '₹ 1500 per plate', category: 'venues', image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=450&auto=format&fit=crop&q=80' },
+-  
++  { id: 'vn-5', name: 'Grand Marigold Convention', location: 'Greater Noida West', rating: 4.7, price: '₹ 1800 per plate', category: 'venues', image: 'https://images.unsplash.com/photo-1478146896981-badbfeadab6b?w=450&auto=format&fit=crop&q=80' },
++
+   // Photographers
+   { id: 'ph-1', name: 'WEDDING COLORS - Cinematic Frames', location: 'Sector 62, Noida NCR', rating: 5.0, price: '₹ 20000 onwards', category: 'photographers', image: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=450&auto=format&fit=crop&q=80' },
+   { id: 'ph-2', name: 'Clicktech Production Studio', location: 'Sahakar Nagar, Bangalore', rating: 4.9, price: '₹ 10000 onwards', category: 'photographers', image: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=450&auto=format&fit=crop&q=80' },
+   { id: 'ph-3', name: 'Couple of Lights Cinema', location: 'Sector 15, Noida', rating: 4.7, price: '₹ 14000 onwards', category: 'photographers', image: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=450&auto=format&fit=crop&q=80' },
+   { id: 'ph-4', name: 'VsnapU Premium Media', location: 'Panjim, Goa', rating: 4.5, price: '₹ 22000 onwards', category: 'photographers', image: 'https://images.unsplash.com/photo-1520854221256-17451cc35953?w=450&auto=format&fit=crop&q=80' },
++  { id: 'ph-5', name: 'Frame & Flame Studios', location: 'Sector 18, Noida', rating: 4.8, price: '₹ 16000 onwards', category: 'photographers', image: 'https://images.unsplash.com/photo-1492681290082-e932832941de?w=450&auto=format&fit=crop&q=80' },
+ 
+   // Makeup Artists
+   { id: 'mu-1', name: 'Beyond Beauty By Achala', location: 'Sector 50, Noida', rating: 5.0, price: '₹ 12000 onwards', category: 'makeup', image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=450&auto=format&fit=crop&q=80' },
+diff --git a/src/data.ts b/src/data.ts
+index 8663a69..c941f9e 100644
+--- a/src/data.ts
++++ b/src/data.ts
+@@ -305,6 +305,7 @@ export const MOCK_USER_PROFILE: UserProfile = {
+   name: "Gaurav Sharma",
+   email: "gaurav.sharma@utsav.com",
+   phone: "+91 98765 43210",
++  customerType: 'standard',
+   walletBalance: 1250,
+   royaltyPoints: 480,
+   addresses: [
+diff --git a/src/types.ts b/src/types.ts
+index c5fd353..2d9fa83 100644
+--- a/src/types.ts
++++ b/src/types.ts
+@@ -74,10 +74,14 @@ export interface SupportTicket {
+   messages: { sender: 'User' | 'Support'; text: string; time: string }[];
+ }
+ 
++export type CustomerType = 'standard' | 'event-planner';
++
+ export interface UserProfile {
+   name: string;
+   email: string;
+   phone: string;
++  /** Event planners are customers with access to the planning workspace. */
++  customerType?: CustomerType;
+   walletBalance: number;
+   royaltyPoints: number;
+   addresses: SavedAddress[];
+diff --git a/vite.config.ts b/vite.config.ts
+index fc23e76..3074fcb 100644
+--- a/vite.config.ts
++++ b/vite.config.ts
+@@ -5,6 +5,7 @@ import {defineConfig} from 'vite';
+ 
+ export default defineConfig(() => {
+   return {
++    appType: 'spa' as const,
+     plugins: [react(), tailwindcss()],
+     resolve: {
+       alias: {

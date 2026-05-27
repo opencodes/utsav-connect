@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarPlus, Search, ClipboardList, Store, UserPlus, BadgeCheck } from 'lucide-react';
+import { CalendarPlus, Search, ClipboardList, Store, UserPlus, BadgeCheck, ArrowRight } from 'lucide-react';
 import { LandingSection, LandingSectionHeader } from './LandingSection';
 
 interface PlatformHowItWorksSectionProps {
@@ -46,11 +46,11 @@ export const PlatformHowItWorksSection: React.FC<PlatformHowItWorksSectionProps>
   ];
 
   return (
-    <LandingSection id="how-it-works" tone="sand" showTexture={false} showMandala={false}>
+    <LandingSection id="platform-overview" tone="white" showTexture={false} showMandala={false} className="scroll-mt-28">
       <LandingSectionHeader
         eyebrow="One platform, two journeys"
         title="How our app works"
-        description="Families plan ceremonies with clarity. Local vendors reach the right hosts — without scattered calls and paper registers."
+        description="Quick overview for hosts and vendors. For timelines, FAQs, and detailed walkthroughs, read the full guide."
       />
 
       <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
@@ -109,6 +109,20 @@ export const PlatformHowItWorksSection: React.FC<PlatformHowItWorksSectionProps>
             Register as a vendor
           </button>
         </div>
+      </div>
+
+      <div className="mt-10 pt-8 border-t border-stone-200/80 dark:border-stone-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <p className="text-sm text-stone-600 dark:text-stone-400 max-w-xl">
+          Want step-by-step details, vendor onboarding flow, and host checklists?
+        </p>
+        <button
+          type="button"
+          onClick={() => onNavigate('how-it-works')}
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 text-sm font-semibold hover:opacity-90 transition-opacity cursor-pointer shrink-0"
+        >
+          Read the full guide
+          <ArrowRight className="w-4 h-4" />
+        </button>
       </div>
     </LandingSection>
   );

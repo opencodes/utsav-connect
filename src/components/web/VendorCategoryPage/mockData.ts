@@ -6,12 +6,14 @@ export const ALL_MOCK_VENDORS: ListingCardItem[] = [
   { id: 'vn-2', name: 'Crossroads Banquets Conventions', location: 'Sohna Road, Gurgaon', rating: 4.9, price: '₹ 2500 per plate', category: 'venues', image: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=450&auto=format&fit=crop&q=80' },
   { id: 'vn-3', name: 'Umaid Palace - Heritage Resort', location: 'Jaipur Road, Jaipur', rating: 5.0, price: '₹ 3500 per plate', category: 'venues', image: 'https://images.unsplash.com/photo-1549417229-aa67d3263c09?w=450&auto=format&fit=crop&q=80' },
   { id: 'vn-4', name: 'Shakuntalam Lawn & Resort', location: 'Sector 56, Noida', rating: 4.5, price: '₹ 1500 per plate', category: 'venues', image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=450&auto=format&fit=crop&q=80' },
-  
+  { id: 'vn-5', name: 'Grand Marigold Convention', location: 'Greater Noida West', rating: 4.7, price: '₹ 1800 per plate', category: 'venues', image: 'https://images.unsplash.com/photo-1478146896981-badbfeadab6b?w=450&auto=format&fit=crop&q=80' },
+
   // Photographers
   { id: 'ph-1', name: 'WEDDING COLORS - Cinematic Frames', location: 'Sector 62, Noida NCR', rating: 5.0, price: '₹ 20000 onwards', category: 'photographers', image: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=450&auto=format&fit=crop&q=80' },
   { id: 'ph-2', name: 'Clicktech Production Studio', location: 'Sahakar Nagar, Bangalore', rating: 4.9, price: '₹ 10000 onwards', category: 'photographers', image: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=450&auto=format&fit=crop&q=80' },
   { id: 'ph-3', name: 'Couple of Lights Cinema', location: 'Sector 15, Noida', rating: 4.7, price: '₹ 14000 onwards', category: 'photographers', image: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=450&auto=format&fit=crop&q=80' },
   { id: 'ph-4', name: 'VsnapU Premium Media', location: 'Panjim, Goa', rating: 4.5, price: '₹ 22000 onwards', category: 'photographers', image: 'https://images.unsplash.com/photo-1520854221256-17451cc35953?w=450&auto=format&fit=crop&q=80' },
+  { id: 'ph-5', name: 'Frame & Flame Studios', location: 'Sector 18, Noida', rating: 4.8, price: '₹ 16000 onwards', category: 'photographers', image: 'https://images.unsplash.com/photo-1492681290082-e932832941de?w=450&auto=format&fit=crop&q=80' },
 
   // Makeup Artists
   { id: 'mu-1', name: 'Beyond Beauty By Achala', location: 'Sector 50, Noida', rating: 5.0, price: '₹ 12000 onwards', category: 'makeup', image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=450&auto=format&fit=crop&q=80' },

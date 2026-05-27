@@ -30,7 +30,8 @@ export const VendorCategoriesSection: React.FC<VendorCategoriesSectionProps> = (
           <button
             key={cat.id}
             type="button"
-            onClick={() => onNavigate('vendor-categories', { categoryId: cat.id })}
+            onClick={() => onNavigate('vendor-list', { categoryId: cat.id })}
+            aria-label={`${cat.name}, ${cat.count} plus vendors`}
             className="flex flex-col items-center p-2 sm:p-3 text-stone-800 dark:text-stone-100 hover:text-[#C51C13] dark:hover:text-orange-400 transition-colors cursor-pointer"
             id={`vendor-cat-${cat.id}`}
           >

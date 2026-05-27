@@ -43,7 +43,7 @@ export const FoodCategoriesSection: React.FC<FoodCategoriesSectionProps> = ({ on
         {WEDDING_SPECIALTIES.map((cat) => (
           <div
             key={cat.id}
-            onClick={() => onNavigate('vendor-categories', { categoryId: cat.id })}
+            onClick={() => onNavigate('vendor-list', { categoryId: cat.id })}
             className="flex flex-col items-center p-5 rounded-2xl bg-white dark:bg-stone-850 hover:bg-orange-50 dark:hover:bg-amber-950/20 border border-orange-100/40 dark:border-stone-800 cursor-pointer shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
             id={`cat-card-${cat.id}`}
           >

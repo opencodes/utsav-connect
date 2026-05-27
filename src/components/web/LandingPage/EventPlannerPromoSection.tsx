@@ -1,19 +1,7 @@
 import React from 'react';
-import {
-  CalendarDays,
-  Users,
-  Wallet,
-  UtensilsCrossed,
-  Store,
-  Package,
-  Gift,
-  ArrowRight,
-  CalendarPlus,
-  ListOrdered,
-  ClipboardCheck,
-} from 'lucide-react';
+import { Users, Wallet, ArrowRight, CalendarPlus, ClipboardCheck } from 'lucide-react';
 import { APP_NAME } from '../../../brand';
-import { LandingSection, LandingSectionHeader, landingBlockClass, landingSplitClass } from './LandingSection';
+import { LandingSection, LandingSectionHeader, landingSplitClass } from './LandingSection';
 
 interface EventPlannerPromoSectionProps {
   onNavigate: (page: string, data?: unknown) => void;
@@ -21,66 +9,24 @@ interface EventPlannerPromoSectionProps {
 
 const PLANNING_STEPS = [
   {
-    step: '01',
     title: 'Create your event',
     description: 'Add ceremony name, dates, city, and scale — your digital mandap for the whole function.',
     icon: CalendarPlus,
   },
   {
-    step: '02',
     title: 'Guests & rituals',
     description: 'Build guest lists, RSVP tracking, sub-events, and ritual timelines in one place.',
     icon: Users,
   },
   {
-    step: '03',
     title: 'Budget & bhoj',
     description: 'Set a budget, log expenses, and plan feast quantities per guest with satvik menus.',
     icon: Wallet,
   },
   {
-    step: '04',
     title: 'Vendors & inventory',
     description: 'Shortlist halwai, tent, décor, track bartan, cylinders, and chuman before the big day.',
     icon: ClipboardCheck,
-  },
-];
-
-const PLANNER_FEATURES = [
-  {
-    icon: CalendarDays,
-    title: 'Events & rituals',
-    description: 'Main ceremony, sangeet, and sub-events on one timeline.',
-  },
-  {
-    icon: Users,
-    title: 'Guests & RSVP',
-    description: 'Guest lists, groups, room allotments, and live RSVP tracking.',
-  },
-  {
-    icon: Wallet,
-    title: 'Budget tracker',
-    description: 'Set limits, log expenses, and stay on top of every payment.',
-  },
-  {
-    icon: UtensilsCrossed,
-    title: 'Feast / bhoj planning',
-    description: 'Menu quantities, satvik servings, and catering estimates per guest.',
-  },
-  {
-    icon: Store,
-    title: 'Vendor shortlist',
-    description: 'Halwai, tent, décor, and more — linked to your active event.',
-  },
-  {
-    icon: Package,
-    title: 'Bartan & inventory',
-    description: 'Track plates, cylinders, and misc items for the big day.',
-  },
-  {
-    icon: Gift,
-    title: 'Chuman & return gifts',
-    description: 'Assign gifts and mark what has been handed to each family.',
   },
 ];
 
@@ -88,24 +34,26 @@ const iconClass = 'w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0';
 
 export const EventPlannerPromoSection: React.FC<EventPlannerPromoSectionProps> = ({ onNavigate }) => {
   return (
-    <LandingSection id="event-planning-guide" tone="cream" className="scroll-mt-28">
+    <LandingSection id="event-planning-guide" tone="cream" className="scroll-mt-28" showMandala={false}>
       <LandingSectionHeader
+        align="center"
         eyebrow={`${APP_NAME} event planner`}
         title="How event planning works"
         description="From the first lagan discussion to the final aarti — organise every detail in four simple steps, then use built-in tools for guests, budget, feast, and vendors."
       />
 
-      <ol className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-6 lg:gap-8 mb-10 sm:mb-12">
+      <ol className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10 lg:gap-y-0 mb-10 sm:mb-12 list-none p-0 m-0">
         {PLANNING_STEPS.map((item) => {
           const Icon = item.icon;
           return (
-            <li key={item.step} className={`flex flex-col ${landingBlockClass}`}>
-              <span className="text-[10px] font-mono font-bold text-orange-600 uppercase tracking-widest">
-                Step {item.step}
-              </span>
-              <Icon className={`${iconClass} mt-3 mb-2`} />
-              <h3 className="font-display text-base text-[#C51C13] dark:text-white leading-snug">{item.title}</h3>
-              <p className="text-xs text-stone-600 dark:text-stone-400 mt-2 leading-relaxed flex-1">
+            <li key={item.title} className="flex flex-col items-center text-center min-w-0">
+              <Icon className={`${iconClass} mb-3`} aria-hidden />
+
+              <h3 className="font-display text-lg sm:text-xl text-[#C51C13] dark:text-white leading-snug min-h-[3.25rem]">
+                {item.title}
+              </h3>
+
+              <p className="text-sm text-stone-600 dark:text-stone-400 mt-2 leading-relaxed max-w-[16rem] mx-auto">
                 {item.description}
               </p>
             </li>
@@ -114,45 +62,38 @@ export const EventPlannerPromoSection: React.FC<EventPlannerPromoSectionProps> =
       </ol>
 
       <div className={landingSplitClass}>
-        <div className="flex items-center justify-center gap-2 mb-6">
-          <ListOrdered className="w-4 h-4 text-orange-600 dark:text-orange-400" />
-          <h3 className="text-sm font-bold uppercase tracking-widest text-stone-700 dark:text-stone-300">
-            Planner features included
-          </h3>
-        </div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-5 mb-8">
-          {PLANNER_FEATURES.map((feature) => {
-            const Icon = feature.icon;
-            return (
-              <div key={feature.title} className="flex gap-3">
-                <Icon className={iconClass} />
-                <div className="min-w-0">
-                  <h4 className="text-sm font-semibold text-stone-900 dark:text-white">{feature.title}</h4>
-                  <p className="text-xs text-stone-600 dark:text-stone-400 mt-1 leading-relaxed">
-                    {feature.description}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-center gap-4 pt-6 border-t border-stone-200/80 dark:border-stone-800">
-          <p className="text-sm text-stone-600 dark:text-stone-400 max-w-xl text-center sm:text-left mx-auto sm:mx-0">
+        <div className="flex flex-col items-center text-center gap-6">
+          <p className="text-sm text-stone-600 dark:text-stone-400 max-w-2xl">
             <span className="font-semibold text-stone-800 dark:text-stone-200">Free to start.</span> Open the
-            planner and add your first event — no vendor search required to begin.
+            planner and add your first event — guests, budget, feast, and vendors are covered in{' '}
+            <button
+              type="button"
+              onClick={() => document.getElementById('platform-overview')?.scrollIntoView({ behavior: 'smooth' })}
+              className="text-[#C51C13] dark:text-orange-400 font-semibold underline-offset-2 hover:underline cursor-pointer"
+            >
+              How our app works
+            </button>
+            .
           </p>
-          <button
-            type="button"
-            onClick={() => onNavigate('celebrations')}
-            id="btn-landing-open-planner"
-            className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white font-semibold text-sm transition-colors cursor-pointer shrink-0 mx-auto sm:mx-0"
-          >
-            <CalendarPlus className="w-5 h-5" />
-            Start planning
-            <ArrowRight className="w-4 h-4" />
-          </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() => onNavigate('event-planner-register')}
+              id="btn-landing-open-planner"
+              className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white font-semibold text-sm transition-colors cursor-pointer"
+            >
+              <CalendarPlus className="w-5 h-5" />
+              Register as event planner
+              <ArrowRight className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('sign-in')}
+              className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg border border-stone-300 dark:border-stone-600 text-stone-800 dark:text-stone-200 font-semibold text-sm hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors cursor-pointer"
+            >
+              Sign in
+            </button>
+          </div>
         </div>
       </div>
     </LandingSection>

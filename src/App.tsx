@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
 // Customers views imports
@@ -9,15 +9,26 @@ import { RestaurantListingPage } from './components/web/RestaurantListingPage';
 import { RestaurantDetailPage } from './components/web/RestaurantDetailPage';
 import { CartPage } from './components/web/CartPage';
 import { UserProfilePage } from './components/web/UserProfilePage';
+import { VendorProfilePage } from './components/web/VendorProfilePage';
+import { VendorProfileGate } from './components/web/VendorProfileGate';
+import {
+  MOCK_VENDOR_SESSION,
+  type VendorDashboardSession,
+} from './components/web/VendorProfilePage/vendorProfileData';
 import { VendorCategoryPage } from './components/web/VendorCategoryPage';
+import { VendorListPage } from './components/web/VendorListPage';
+import { VendorDetailsPage } from './components/web/VendorDetailsPage';
 import { PlannedEventsShowcase } from './components/web/PlannedEventsShowcase';
 import { PortfolioPage } from './components/web/PortfolioPage';
 import { AboutUsPage } from './components/web/AboutUsPage';
 import { ContactUsPage } from './components/web/ContactUsPage';
+import { VendorRegistrationPage } from './components/web/VendorRegistrationPage';
 import { HowItWorksPage } from './components/web/HowItWorksPage';
 import { TermsPage } from './components/web/TermsPage';
 import { PrivacyPolicyPage } from './components/web/PrivacyPolicyPage';
 import { CancellationPolicyPage } from './components/web/CancellationPolicyPage';
+import { SignInPage, type SignInMode } from './components/web/SignInPage';
+import { EventPlannerRegistrationPage } from './components/web/EventPlannerRegistrationPage';
 import { MarigoldToran, RangoliMandala } from './components/web/GoldenDeco';
 import { LANDING_HERO_SHELL_CLASS } from './components/web/landingHeroShell';
 
@@ -42,29 +53,82 @@ import { PlannerInventory } from './components/PlannerInventory';
 // Types & Data
 import { FoodItem, CartItem, UserProfile } from './types';
 import { MOCK_USER_PROFILE } from './data';
+import type { CustomerType } from './types';
+import {
+  type NavigateData,
+  type ParsedRoute,
+  pageToPath,
+  parseLocation,
+  pushRoute,
+  replaceRoute,
+} from './routing';
+
+function getInitialRoute(): ParsedRoute {
+  return parseLocation();
+}
+
+const COMMERCE_ADMIN_TABS = new Set([
+  'dashboard',
+  'restaurants',
+  'orders',
+  'customers',
+  'marketing',
+]);
+
+function plannerDefaultTab(current: string): string {
+  return COMMERCE_ADMIN_TABS.has(current) ? 'planner-events' : current;
+}
+
+function isPlannerCustomer(loggedIn: boolean, customerType?: CustomerType): boolean {
+  return loggedIn && customerType === 'event-planner';
+}
 
 export default function App() {
+  const initialRoute = getInitialRoute();
+
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isAdminMode, setIsAdminMode] = useState(false);
 
   // Customer states info
-  const [currentPage, setCurrentPage] = useState<string>('landing');
+  const [currentPage, setCurrentPage] = useState<string>(initialRoute.page);
+  const [selectedCity, setSelectedCity] = useState(
+    initialRoute.vendorSearch?.city || 'noida'
+  );
   const [currentLocation, setCurrentLocation] = useState<string>('Sector 56, Noida, UP');
-  const [selectedRestId, setSelectedRestId] = useState<string>('rest-1');
+  const [selectedRestId, setSelectedRestId] = useState<string>(
+    initialRoute.restaurantId || 'rest-1'
+  );
+  const [selectedVendorId, setSelectedVendorId] = useState<string>(initialRoute.vendorId || '');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile>(MOCK_USER_PROFILE);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isVendorLoggedIn, setIsVendorLoggedIn] = useState(false);
+  const isEventPlannerCustomer = isPlannerCustomer(
+    isLoggedIn,
+    userProfile.customerType
+  );
+  const [signInInitialMode, setSignInInitialMode] = useState<SignInMode>('customer');
+  const [vendorSession, setVendorSession] =
+    useState<VendorDashboardSession>(MOCK_VENDOR_SESSION);
   const [vendorSearchFilters, setVendorSearchFilters] = useState({
-    search: '',
-    categoryId: '',
-    city: '',
+    search: initialRoute.vendorSearch?.search ?? '',
+    categoryId: initialRoute.vendorSearch?.categoryId ?? '',
+    city: initialRoute.vendorSearch?.city ?? '',
   });
   const [eventPlannerSearch, setEventPlannerSearch] = useState({
-    eventName: '',
-    location: '',
-    date: '',
-    eventType: '',
+    eventName: initialRoute.eventPlannerSearch?.eventName ?? '',
+    location: initialRoute.eventPlannerSearch?.location ?? '',
+    date: initialRoute.eventPlannerSearch?.date ?? '',
+    eventType: initialRoute.eventPlannerSearch?.eventType ?? '',
   });
+  const [eventPlannerRegisterPrefill, setEventPlannerRegisterPrefill] = useState<{
+    eventName?: string;
+    location?: string;
+    date?: string;
+    eventType?: string;
+    city?: string;
+  }>({});
+  const [registerFromHome, setRegisterFromHome] = useState(false);
 
   // Admin dynamic states
   const [currentAdminTab, setCurrentAdminTab] = useState<string>('dashboard');
@@ -74,38 +138,143 @@ export default function App() {
     setIsDarkMode((prev) => !prev);
   };
 
+  const applyRoute = useCallback(
+    (route: ParsedRoute, options?: { scroll?: boolean }) => {
+      if (route.admin) {
+        if (!isLoggedIn) {
+          setSignInInitialMode('customer');
+          setIsAdminMode(false);
+          setCurrentPage('sign-in');
+          if (window.location.pathname === '/admin') {
+            replaceRoute(pageToPath('sign-in'));
+          }
+          return;
+        }
+        setCurrentAdminTab((tab) => plannerDefaultTab(tab));
+        setIsAdminMode(true);
+        return;
+      }
+
+      setIsAdminMode(false);
+
+      let page = route.page;
+      if (page === 'account' && !isLoggedIn) {
+        page = 'sign-in';
+      }
+      if (page === 'vendor-details' && !route.vendorId) {
+        page = 'vendor-list';
+      }
+
+      setCurrentPage(page);
+
+      if (route.restaurantId) {
+        setSelectedRestId(route.restaurantId);
+      }
+      if (route.vendorId) {
+        setSelectedVendorId(route.vendorId);
+      }
+      if (route.vendorSearch) {
+        setVendorSearchFilters(route.vendorSearch);
+        if (route.vendorSearch.city) {
+          setSelectedCity(route.vendorSearch.city);
+        }
+      }
+      if (route.eventPlannerSearch) {
+        setEventPlannerSearch(route.eventPlannerSearch);
+      }
+
+      if (options?.scroll !== false) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    },
+    [isLoggedIn]
+  );
+
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setCurrentPage('landing');
+    setIsVendorLoggedIn(false);
+    setUserProfile((prev) => ({ ...prev, customerType: 'standard' }));
+    setIsAdminMode(false);
+    const path = pageToPath('landing');
+    pushRoute(path);
+    applyRoute({ page: 'landing' });
   };
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDarkMode);
   }, [isDarkMode]);
 
-  const handleNavigatePage = (
-    pageName: string,
-    data?: {
-      restaurantId?: string;
-      search?: string;
-      categoryId?: string;
-      city?: string;
-      eventName?: string;
-      location?: string;
-      date?: string;
-      eventType?: string;
+  useEffect(() => {
+    const onPopState = () => {
+      applyRoute(parseLocation(), { scroll: true });
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, [applyRoute]);
+
+  useEffect(() => {
+    const route = parseLocation();
+    if (route.admin) {
+      if (!isLoggedIn) {
+        const path = pageToPath('sign-in');
+        if (window.location.pathname === '/admin') {
+          replaceRoute(path);
+        }
+        setIsAdminMode(false);
+        setCurrentPage('sign-in');
+        setSignInInitialMode('customer');
+      } else {
+        setIsAdminMode(true);
+        setCurrentAdminTab((tab) => plannerDefaultTab(tab));
+      }
     }
-  ) => {
+    if (route.page === 'account' && !isLoggedIn) {
+      replaceRoute('/sign-in');
+      setCurrentPage('sign-in');
+    }
+    if (window.location.hash && (route.page === 'landing' || currentPage === 'landing')) {
+      const id = window.location.hash.slice(1);
+      window.setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount for deep links
+  }, []);
+
+  const handleCityChange = (city: string) => {
+    setSelectedCity(city);
+    window.dispatchEvent(new CustomEvent('hero-city-change', { detail: { city } }));
+  };
+
+  const handleNavigatePage = (pageName: string, data?: NavigateData) => {
+    if (data?.signInAs === 'planner' || data?.eventPlannerSignup || data?.signInAs === 'customer') {
+      setSignInInitialMode('customer');
+    } else if (data?.signInAs === 'vendor') {
+      setSignInInitialMode('vendor');
+    } else if (pageName !== 'sign-in') {
+      setSignInInitialMode('customer');
+    }
+
+    if (pageName === 'account' && !isLoggedIn) {
+      const path = pageToPath('sign-in', data, selectedCity);
+      pushRoute(path);
+      applyRoute({ page: 'sign-in' });
+      return;
+    }
+
     if (data?.restaurantId) {
       setSelectedRestId(data.restaurantId);
     }
-    if (pageName === 'vendor-categories') {
+    if (data?.vendorId) {
+      setSelectedVendorId(data.vendorId);
+    }
+    if (pageName === 'vendor-list') {
       setVendorSearchFilters({
         search: data?.search ?? '',
         categoryId: data?.categoryId ?? '',
-        city: data?.city ?? '',
+        city: data?.city ?? selectedCity,
       });
-    } else if (pageName !== 'vendor-categories') {
+    } else if (pageName !== 'vendor-list') {
       setVendorSearchFilters({ search: '', categoryId: '', city: '' });
     }
     if (pageName === 'celebrations') {
@@ -118,8 +287,133 @@ export default function App() {
     } else if (pageName !== 'celebrations') {
       setEventPlannerSearch({ eventName: '', location: '', date: '', eventType: '' });
     }
-    setCurrentPage(pageName);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (pageName === 'event-planner-register') {
+      setEventPlannerRegisterPrefill({
+        eventName: data?.eventName,
+        location: data?.location,
+        date: data?.date,
+        eventType: data?.eventType,
+        city: data?.city ?? selectedCity,
+      });
+      setRegisterFromHome(Boolean(data?.fromHome));
+    }
+
+    const path = pageToPath(pageName, data, selectedCity);
+    pushRoute(path);
+    applyRoute(
+      {
+        page: pageName,
+        restaurantId: data?.restaurantId,
+        vendorId: data?.vendorId,
+        vendorSearch:
+          pageName === 'vendor-list' || pageName === 'vendor-categories'
+            ? {
+                search: data?.search ?? '',
+                categoryId: data?.categoryId ?? '',
+                city: data?.city ?? selectedCity,
+              }
+            : undefined,
+        eventPlannerSearch:
+          pageName === 'celebrations'
+            ? {
+                eventName: data?.eventName ?? '',
+                location: data?.location ?? '',
+                date: data?.date ?? '',
+                eventType: data?.eventType ?? '',
+              }
+            : undefined,
+      },
+      { scroll: true }
+    );
+  };
+
+  const openPlannerWorkspace = () => {
+    setCurrentAdminTab('planner-events');
+    setIsAdminMode(true);
+    pushRoute('/admin');
+    applyRoute({ page: 'landing', admin: true });
+  };
+
+  const formatCustomerPhone = (phone: string) =>
+    phone.startsWith('+') ? phone : `+91 ${phone.replace(/\D/g, '').slice(-10)}`;
+
+  const handleSignIn = ({ phone, email }: { phone: string; email: string }) => {
+    setUserProfile((prev) => ({
+      ...prev,
+      phone: formatCustomerPhone(phone),
+      email,
+      customerType: 'event-planner',
+    }));
+    setIsLoggedIn(true);
+    setIsVendorLoggedIn(false);
+    openPlannerWorkspace();
+  };
+
+  const handleEventPlannerRegister = (payload: {
+    fullName: string;
+    email: string;
+    phone: string;
+    companyName?: string;
+    primaryEventType: string;
+    city: string;
+    bio: string;
+    draftEvent?: {
+      eventName?: string;
+      location?: string;
+      date?: string;
+      eventType?: string;
+    };
+  }) => {
+    setUserProfile((prev) => ({
+      ...prev,
+      name: payload.fullName,
+      email: payload.email,
+      phone: formatCustomerPhone(payload.phone),
+      customerType: 'event-planner',
+    }));
+    setIsLoggedIn(true);
+    setIsVendorLoggedIn(false);
+    if (payload.draftEvent) {
+      setEventPlannerSearch({
+        eventName: payload.draftEvent.eventName ?? '',
+        location: payload.draftEvent.location ?? '',
+        date: payload.draftEvent.date ?? '',
+        eventType: payload.draftEvent.eventType ?? payload.primaryEventType,
+      });
+    }
+    openPlannerWorkspace();
+  };
+
+  const handleVendorSignIn = ({ phone, email }: { phone: string; email: string }) => {
+    setVendorSession((prev) => ({
+      ...prev,
+      phone: phone.startsWith('+') ? phone : `+91 ${phone.replace(/\D/g, '').slice(-10)}`,
+      email,
+    }));
+    setIsVendorLoggedIn(true);
+    const path = pageToPath('profile');
+    pushRoute(path);
+    applyRoute({ page: 'profile' });
+  };
+
+  const handleEnterAdmin = () => {
+    if (!isLoggedIn) {
+      const path = pageToPath('sign-in');
+      pushRoute(path);
+      applyRoute({ page: 'sign-in' });
+      setSignInInitialMode('customer');
+      return;
+    }
+    setCurrentAdminTab((tab) => plannerDefaultTab(tab));
+    setIsAdminMode(true);
+    pushRoute('/admin');
+  };
+
+  const handleExitAdmin = () => {
+    setIsAdminMode(false);
+    const path = pageToPath('landing');
+    pushRoute(path);
+    applyRoute({ page: 'landing' });
   };
 
   const handleAddToCart = (item: FoodItem, restId: string, restName: string) => {
@@ -194,11 +488,15 @@ export default function App() {
                 currentPage={currentPage}
                 isDarkMode={isDarkMode}
                 onToggleDarkMode={handleToggleDarkMode}
-                onSwitchToAdmin={() => setIsAdminMode(true)}
+                onSwitchToAdmin={handleEnterAdmin}
                 onLogout={handleLogout}
                 isLoggedIn={isLoggedIn}
+                isVendorLoggedIn={isVendorLoggedIn}
+                isEventPlannerCustomer={isEventPlannerCustomer}
                 userProfile={userProfile}
                 blendWithHero
+                selectedCity={selectedCity}
+                onCityChange={handleCityChange}
               />
               <AnimatePresence mode="wait">
                 <motion.div
@@ -208,7 +506,11 @@ export default function App() {
                   exit={{ opacity: 0, y: -12 }}
                   transition={{ duration: 0.35, ease: 'easeInOut' }}
                 >
-                  <LandingPage onNavigate={handleNavigatePage} />
+                  <LandingPage
+                    onNavigate={handleNavigatePage}
+                    selectedCity={selectedCity}
+                    onCityChange={handleCityChange}
+                  />
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -219,10 +521,14 @@ export default function App() {
                 currentPage={currentPage}
                 isDarkMode={isDarkMode}
                 onToggleDarkMode={handleToggleDarkMode}
-                onSwitchToAdmin={() => setIsAdminMode(true)}
+                onSwitchToAdmin={handleEnterAdmin}
                 onLogout={handleLogout}
                 isLoggedIn={isLoggedIn}
+                isVendorLoggedIn={isVendorLoggedIn}
+                isEventPlannerCustomer={isEventPlannerCustomer}
                 userProfile={userProfile}
+                selectedCity={selectedCity}
+                onCityChange={handleCityChange}
               />
               <main className="flex-grow">
                 <AnimatePresence mode="wait">
@@ -263,11 +569,32 @@ export default function App() {
                   />
                 )}
 
-                {currentPage === 'profile' && (
+                {currentPage === 'sign-in' && (
+                  <SignInPage
+                    initialMode={signInInitialMode}
+                    onSignIn={handleSignIn}
+                    onVendorSignIn={handleVendorSignIn}
+                    onNavigate={handleNavigatePage}
+                  />
+                )}
+
+                {currentPage === 'profile' &&
+                  (isVendorLoggedIn ? (
+                    <VendorProfilePage
+                      session={vendorSession}
+                      onNavigate={handleNavigatePage}
+                    />
+                  ) : (
+                    <VendorProfileGate onNavigate={handleNavigatePage} />
+                  ))}
+
+                {currentPage === 'account' && isLoggedIn && (
                   <UserProfilePage
                     userProfile={userProfile}
                     onUpdateWallet={handleUpdateWallet}
                     onNavigate={handleNavigatePage}
+                    isEventPlannerCustomer={isEventPlannerCustomer}
+                    onOpenPlannerWorkspace={openPlannerWorkspace}
                   />
                 )}
 
@@ -275,9 +602,25 @@ export default function App() {
                   <VendorCategoryPage
                     onNavigate={handleNavigatePage}
                     isDarkMode={isDarkMode}
+                    initialCity={selectedCity}
+                  />
+                )}
+
+                {currentPage === 'vendor-list' && (
+                  <VendorListPage
+                    onNavigate={handleNavigatePage}
+                    isDarkMode={isDarkMode}
                     initialSearchQuery={vendorSearchFilters.search}
                     initialCategoryId={vendorSearchFilters.categoryId}
-                    initialCity={vendorSearchFilters.city}
+                    initialCity={vendorSearchFilters.city || selectedCity}
+                  />
+                )}
+
+                {currentPage === 'vendor-details' && selectedVendorId && (
+                  <VendorDetailsPage
+                    onNavigate={handleNavigatePage}
+                    vendorId={selectedVendorId}
+                    initialCity={selectedCity}
                   />
                 )}
 
@@ -309,6 +652,23 @@ export default function App() {
                   />
                 )}
 
+                {currentPage === 'list-your-service' && (
+                  <VendorRegistrationPage
+                    onNavigate={handleNavigatePage}
+                    initialCity={selectedCity}
+                  />
+                )}
+
+                {currentPage === 'event-planner-register' && (
+                  <EventPlannerRegistrationPage
+                    onNavigate={handleNavigatePage}
+                    initialCity={selectedCity}
+                    initialPrefill={eventPlannerRegisterPrefill}
+                    startAtAccountStep={registerFromHome}
+                    onRegisterComplete={handleEventPlannerRegister}
+                  />
+                )}
+
                 {currentPage === 'how-it-works' && (
                   <HowItWorksPage
                     onNavigate={handleNavigatePage}
@@ -334,8 +694,8 @@ export default function App() {
 
           <Footer
             isDarkMode={isDarkMode}
+            currentPage={currentPage}
             onNavigate={handleNavigatePage}
-            onSwitchToAdmin={() => setIsAdminMode(true)}
           />
         </div>
       ) : (
@@ -346,13 +706,17 @@ export default function App() {
           <AdminSidebar
             currentAdminTab={currentAdminTab}
             onSelectTab={setCurrentAdminTab}
-            onExitAdmin={() => setIsAdminMode(false)}
+            onExitAdmin={handleExitAdmin}
+            plannerWorkspace={isEventPlannerCustomer}
           />
 
           {/* Main workspace container (Header + body) */}
           <div className="flex-1 flex flex-col overflow-hidden relative">
             
-            <AdminHeader currentTabName={currentAdminTab} />
+            <AdminHeader
+              currentTabName={currentAdminTab}
+              plannerWorkspace={isEventPlannerCustomer}
+            />
 
             {/* Admin view Router */}
             <main className="flex-1 p-6 overflow-y-auto space-y-6">

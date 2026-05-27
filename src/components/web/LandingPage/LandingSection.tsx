@@ -1,5 +1,6 @@
 import React from 'react';
 import { RangoliMandala } from '../GoldenDeco';
+import bannerBgSec2 from '../../../assets/banner-bg-sec-2.png';
 
 export type LandingSectionTone =
   | 'cream'
@@ -7,7 +8,9 @@ export type LandingSectionTone =
   | 'sand'
   | 'blush'
   | 'wine'
-  | 'parchment';
+  | 'white'
+  | 'parchment'
+  | 'banner';
 
 /** Maps tone → CSS texture class (see index.css `.landing-section-tone--*`) */
 const TONE_CLASS: Record<LandingSectionTone, string> = {
@@ -16,8 +19,12 @@ const TONE_CLASS: Record<LandingSectionTone, string> = {
   sand: 'landing-section-tone--sand',
   blush: 'landing-section-tone--blush',
   wine: 'landing-section-tone--wine',
+  white: 'landing-section-tone--white',
   parchment: 'landing-section-tone--parchment',
+  banner: 'landing-section-tone--banner',
 };
+
+export { bannerBgSec2 };
 
 /** Flat layout helpers — no card chrome, content sits on section background */
 export const landingBlockClass = 'py-1';
@@ -48,10 +55,19 @@ export const LandingSection: React.FC<LandingSectionProps> = ({
   showDivider = false,
   showTexture = true,
   showMandala = true,
-}) => (
+}) => {
+  const usesBannerBg = tone === 'banner';
+  const flatTexture = !showTexture && !usesBannerBg;
+
+  return (
   <section
     id={id}
-    className={`landing-section-tone ${TONE_CLASS[tone]} ${showTexture ? '' : 'landing-section-tone--flat'} w-full border-b-2 border-stone-300/70 dark:border-stone-700 ${className}`}
+    className={`landing-section-tone ${TONE_CLASS[tone]} ${flatTexture ? 'landing-section-tone--flat' : ''} w-full border-b-2 border-stone-300/70 dark:border-stone-700 ${className}`}
+    style={
+      usesBannerBg
+        ? ({ '--landing-banner-bg': `url(${bannerBgSec2})` } as React.CSSProperties)
+        : undefined
+    }
   >
     {showDivider && (
       <div
@@ -77,7 +93,8 @@ export const LandingSection: React.FC<LandingSectionProps> = ({
       {children}
     </div>
   </section>
-);
+  );
+};
 
 interface LandingSectionHeaderProps {
   eyebrow: string;

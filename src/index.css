@@ -269,6 +269,14 @@ button {
   background-position: 0 0, 0 0, 7px 7px;
 }
 
+.landing-section-tone--white {
+  background-color: #ffffff;
+}
+.landing-section-tone--white::before {
+  background-image: none;
+  content: none;
+}
+
 /* Parchment — manuscript lines + thread grain */
 .landing-section-tone--parchment {
   background-color: #f0eae0;

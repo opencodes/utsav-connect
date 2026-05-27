@@ -14,7 +14,7 @@ export const RestaurantListItemCard: React.FC<RestaurantListItemCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className="bg-white dark:bg-stone-850 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:scale-[1.005] transition-all border border-orange-100/40 dark:border-stone-800 cursor-pointer flex flex-col sm:flex-row h-full group"
+      className="bg-white dark:bg-stone-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:scale-[1.005] transition-all border border-orange-100/40 dark:border-stone-800 cursor-pointer flex flex-col sm:flex-row h-full group"
     >
       {/* Image Section */}
       <div className="relative w-full sm:w-48 h-48 sm:h-full shrink-0 overflow-hidden bg-stone-100">
@@ -49,7 +49,7 @@ export const RestaurantListItemCard: React.FC<RestaurantListItemCardProps> = ({
             </div>
           </div>
 
-          <p className="text-xs text-stone-550 dark:text-stone-400 line-clamp-1 mt-1">
+          <p className="text-xs text-stone-500 dark:text-stone-400 line-clamp-1 mt-1">
             {restaurant.cuisine.join(', ')}
           </p>
 
@@ -58,7 +58,7 @@ export const RestaurantListItemCard: React.FC<RestaurantListItemCardProps> = ({
             {restaurant.featuredDishes.slice(0, 3).map((dish) => (
               <span
                 key={dish}
-                className="text-[10px] font-semibold text-stone-500 dark:text-stone-400 bg-stone-105 dark:bg-stone-800 px-2.5 py-1 rounded-full"
+                className="text-[10px] font-semibold text-stone-500 dark:text-stone-400 bg-stone-100 dark:bg-stone-800 px-2.5 py-1 rounded-full"
               >
                 {dish}
               </span>
@@ -67,7 +67,7 @@ export const RestaurantListItemCard: React.FC<RestaurantListItemCardProps> = ({
         </div>
 
         {/* Core Meta Details */}
-        <div className="flex items-center justify-between border-t border-stone-100 dark:border-stone-800 pt-3 text-xs font-bold text-stone-605 dark:text-stone-400">
+        <div className="flex items-center justify-between border-t border-stone-100 dark:border-stone-800 pt-3 text-xs font-bold text-stone-600 dark:text-stone-400">
           <div className="flex items-center gap-1">
             <Clock className="w-3.5 h-3.5 text-orange-500 shrink-0" />
             <span>{restaurant.deliveryTime} mins</span>

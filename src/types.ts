@@ -74,10 +74,14 @@ export interface SupportTicket {
   messages: { sender: 'User' | 'Support'; text: string; time: string }[];
 }
 
+export type CustomerType = 'standard' | 'event-planner';
+
 export interface UserProfile {
   name: string;
   email: string;
   phone: string;
+  /** Event planners are customers with access to the planning workspace. */
+  customerType?: CustomerType;
   walletBalance: number;
   royaltyPoints: number;
   addresses: SavedAddress[];

@@ -101,17 +101,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     if (keyword.trim()) payload.search = keyword.trim();
     if (categoryId) payload.categoryId = categoryId;
     if (city) payload.city = city;
-    onNavigate('vendor-categories', Object.keys(payload).length > 0 ? payload : undefined);
+    onNavigate('vendor-list', Object.keys(payload).length > 0 ? payload : undefined);
   };
 
   const handleEventPlannerSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    const payload: HeroEventSearchPayload = {};
-    if (eventName.trim()) payload.eventName = eventName.trim();
-    if (eventLocation.trim()) payload.location = eventLocation.trim();
-    if (eventDate) payload.date = eventDate;
-    if (eventType) payload.eventType = eventType;
-    onNavigate('celebrations', Object.keys(payload).length > 0 ? payload : undefined);
+    onNavigate('event-planner-register', {
+      fromHome: true,
+      eventName: eventName.trim() || undefined,
+      location: eventLocation.trim() || undefined,
+      date: eventDate || undefined,
+      eventType: eventType || undefined,
+      city: city || selectedCity,
+    });
   };
 
   const applyPopularCity = (cityValue: string) => {
@@ -124,8 +126,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     setActiveTab('vendors');
   };
 
-  const scrollToVendorRegister = () => {
-    document.getElementById('vendor-register')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const goToVendorRegistration = () => {
+    onNavigate('list-your-service');
   };
 
   return (
@@ -400,10 +402,29 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
                     <button type="submit" id="btn-hero-planner-search" className="hero-planner-submit">
                       <CalendarPlus className="w-5 h-5 shrink-0" strokeWidth={2.25} />
-                      Plan your event
+                      Register &amp; plan your event
                     </button>
                     <p className="text-[11px] text-stone-500 mt-2">
-                      Add any details you have — you can refine your event in the planner.
+                      Create your free account, then open your planning workspace — guests, budget,
+                      vendors &amp; timelines.
+                    </p>
+                    <p className="text-[11px] text-stone-500 mt-3 pt-3 border-t border-stone-200/80">
+                      Already have an account?{' '}
+                      <button
+                        type="button"
+                        onClick={() => onNavigate('sign-in')}
+                        className="text-[#C51C13] font-semibold hover:underline cursor-pointer"
+                      >
+                        Sign in to continue planning
+                      </button>
+                      {' · '}
+                      <button
+                        type="button"
+                        onClick={() => onNavigate('celebrations')}
+                        className="text-[#C51C13] font-semibold hover:underline cursor-pointer"
+                      >
+                        Browse public events
+                      </button>
                     </p>
                   </form>
                 </div>
@@ -430,7 +451,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           <span>Are you a ceremony vendor?</span>
           <button
             type="button"
-            onClick={scrollToVendorRegister}
+            onClick={goToVendorRegistration}
             className="font-bold text-[#FFCB44] hover:text-amber-200 underline-offset-2 hover:underline cursor-pointer"
           >
             List your service on {APP_NAME}

@@ -305,6 +305,7 @@ export const MOCK_USER_PROFILE: UserProfile = {
   name: "Gaurav Sharma",
   email: "gaurav.sharma@utsav.com",
   phone: "+91 98765 43210",
+  customerType: 'standard',
   walletBalance: 1250,
   royaltyPoints: 480,
   addresses: [

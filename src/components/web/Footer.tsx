@@ -7,14 +7,31 @@ import { AppPhoneMockup } from './AppPhoneMockup';
 interface FooterProps {
   isDarkMode: boolean;
   currentPage?: string;
-  onNavigate?: (page: string) => void;
+  onNavigate?: (page: string, data?: unknown) => void;
 }
+
+const MORE_PAGES: { label: string; page: string; data?: unknown }[] = [
+  { label: 'Home', page: 'landing' },
+  { label: 'Vendor categories', page: 'vendor-categories' },
+  { label: 'Vendor list', page: 'vendor-list' },
+  { label: 'Vendor dashboard', page: 'profile' },
+  { label: 'Public vendor listing', page: 'vendor-details', data: { vendorId: 'vn-4' } },
+  { label: 'Event planner register', page: 'event-planner-register' },
+  { label: 'Browse events', page: 'celebrations' },
+  { label: 'Portfolio', page: 'portfolio' },
+  { label: 'Contact', page: 'contact' },
+  { label: 'List your service', page: 'list-your-service' },
+  { label: 'Restaurants', page: 'restaurants' },
+  { label: 'Restaurant menu', page: 'restaurant-detail', data: { restaurantId: 'rest-1' } },
+  { label: 'Cart', page: 'cart' },
+  { label: 'Sign in', page: 'sign-in' },
+];
 
 export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavigate }) => {
   const [storeNotice, setStoreNotice] = useState(false);
 
-  const goToPage = (page: string) => {
-    onNavigate?.(page);
+  const goToPage = (page: string, data?: unknown) => {
+    onNavigate?.(page, data);
   };
 
   const scrollToSection = (sectionId: string) => {
@@ -22,16 +39,20 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavig
       document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
     if (currentPage === 'landing') {
+      window.history.replaceState(null, '', `/#${sectionId}`);
       scroll();
       return;
     }
     goToPage('landing');
-    window.setTimeout(scroll, 450);
+    window.setTimeout(() => {
+      window.history.replaceState(null, '', `/#${sectionId}`);
+      scroll();
+    }, 450);
   };
 
-  const handlePageLink = (page: string, e: React.MouseEvent) => {
+  const handlePageLink = (page: string, e: React.MouseEvent, data?: unknown) => {
     e.preventDefault();
-    goToPage(page);
+    goToPage(page, data);
   };
 
   const handleHowItWorks = (e: React.MouseEvent) => {
@@ -178,7 +199,7 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavig
         <div className="absolute top-[280px] left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-amber-500/10 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 pt-16">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12" id="footer-links-grid">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-12" id="footer-links-grid">
             <div className="col-span-2 md:col-span-1 space-y-4">
               <button
                 type="button"
@@ -327,6 +348,25 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavig
                     {SUPPORT_EMAIL}
                   </a>
                 </li>
+              </ul>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="text-stone-500 font-bold text-sm tracking-wider uppercase mb-3">
+                More pages
+              </h4>
+              <ul className="space-y-2 text-sm text-stone-400">
+                {MORE_PAGES.map(({ label, page, data }) => (
+                  <li key={page + label}>
+                    <button
+                      type="button"
+                      onClick={(e) => handlePageLink(page, e, data)}
+                      className="hover:text-orange-400 transition-colors cursor-pointer text-left"
+                    >
+                      {label}
+                    </button>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>

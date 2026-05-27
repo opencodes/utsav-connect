@@ -91,11 +91,11 @@ export const FiltersRibbon: React.FC<FiltersRibbonProps> = ({
       {/* Right: Sort controls */}
       <div className="flex items-center gap-2">
         <ArrowUpDown className="w-4 h-4 text-orange-600 shrink-0" />
-        <span className="text-xs font-bold text-stone-550 dark:text-stone-405">Sort by:</span>
+        <span className="text-xs font-bold text-stone-500 dark:text-stone-400">Sort by:</span>
         <select
           value={sortBy || ''}
           onChange={(e) => setSortBy((e.target.value as any) || null)}
-          className="text-xs font-bold bg-transparent border border-orange-100 dark:border-stone-700 dark:bg-stone-800 p-1.5 rounded-lg text-stone-750 dark:text-stone-300 focus:outline-none focus:ring-1 focus:ring-orange-500 cursor-pointer"
+          className="text-xs font-bold bg-transparent border border-orange-100 dark:border-stone-700 dark:bg-stone-800 p-1.5 rounded-lg text-stone-700 dark:text-stone-300 focus:outline-none focus:ring-1 focus:ring-orange-500 cursor-pointer"
         >
           <option value="">Popularity/Standard</option>
           <option value="rating">Top Rated (⭐)</option>

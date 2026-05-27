@@ -75,16 +75,25 @@ export const EventPlannerPromoSection: React.FC<EventPlannerPromoSectionProps> =
             </button>
             .
           </p>
-          <button
-            type="button"
-            onClick={() => onNavigate('celebrations')}
-            id="btn-landing-open-planner"
-            className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white font-semibold text-sm transition-colors cursor-pointer shrink-0"
-          >
-            <CalendarPlus className="w-5 h-5" />
-            Start planning
-            <ArrowRight className="w-4 h-4" />
-          </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() => onNavigate('event-planner-register')}
+              id="btn-landing-open-planner"
+              className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white font-semibold text-sm transition-colors cursor-pointer"
+            >
+              <CalendarPlus className="w-5 h-5" />
+              Register as event planner
+              <ArrowRight className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('sign-in')}
+              className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg border border-stone-300 dark:border-stone-600 text-stone-800 dark:text-stone-200 font-semibold text-sm hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors cursor-pointer"
+            >
+              Sign in
+            </button>
+          </div>
         </div>
       </div>
     </LandingSection>

@@ -16,6 +16,7 @@ interface VendorGridCardProps {
   bookmarkedIds: string[];
   onToggleBookmark: (itemId: string, event: React.MouseEvent) => void;
   onOpenInquiry: (item: ListingCardItem, event: React.MouseEvent) => void;
+  onSelect?: (item: ListingCardItem) => void;
   priceLabel?: string;
 }
 
@@ -24,6 +25,7 @@ export const VendorGridCard: React.FC<VendorGridCardProps> = ({
   bookmarkedIds,
   onToggleBookmark,
   onOpenInquiry,
+  onSelect,
   priceLabel = "Service Fee",
 }) => {
   const isBookmarked = bookmarkedIds.includes(item.id);
@@ -31,7 +33,19 @@ export const VendorGridCard: React.FC<VendorGridCardProps> = ({
   return (
     <div
       key={item.id}
-      className="bg-white dark:bg-stone-850 rounded-2xl overflow-hidden border border-stone-200 dark:border-stone-800 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group h-full"
+      role={onSelect ? 'button' : undefined}
+      tabIndex={onSelect ? 0 : undefined}
+      onClick={onSelect ? () => onSelect(item) : undefined}
+      onKeyDown={
+        onSelect
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') onSelect(item);
+            }
+          : undefined
+      }
+      className={`bg-white dark:bg-stone-850 rounded-2xl overflow-hidden border border-stone-200 dark:border-stone-800 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group h-full ${
+        onSelect ? 'cursor-pointer' : ''
+      }`}
     >
       <div className="relative h-44 overflow-hidden bg-stone-100 shrink-0">
         <img
@@ -49,7 +63,9 @@ export const VendorGridCard: React.FC<VendorGridCardProps> = ({
 
         {/* Favorite Bookmark */}
         <button
+          type="button"
           onClick={(e) => onToggleBookmark(item.id, e)}
+          aria-label={isBookmarked ? 'Remove from saved vendors' : 'Save vendor'}
           className="absolute top-3 right-3 p-1.5 rounded-full bg-white/80 dark:bg-stone-900/80 hover:bg-white dark:hover:bg-stone-900 transition-colors shadow cursor-pointer z-10"
         >
           <Heart className={`w-3.5 h-3.5 shrink-0 ${isBookmarked ? 'fill-red-500 text-red-500' : 'text-stone-650 dark:text-stone-300'}`} />
@@ -73,10 +89,11 @@ export const VendorGridCard: React.FC<VendorGridCardProps> = ({
             <span className="font-black text-xs text-[#C51C13] dark:text-[#FFCB44] mt-0.5 truncate leading-none">{item.price}</span>
           </div>
           <button
+            type="button"
             onClick={(e) => onOpenInquiry(item, e)}
-            className="p-1 px-3 bg-orange-600 hover:bg-orange-700 text-white text-[10px] font-bold rounded cursor-pointer shrink-0 transition"
+            className="p-1.5 px-3 bg-[#C51C13] hover:bg-[#A2110A] text-white text-[10px] font-semibold rounded-lg cursor-pointer shrink-0 transition"
           >
-            Inquire
+            Get quote
           </button>
         </div>
       </div>

@@ -106,7 +106,7 @@ export const RestaurantListingPage: React.FC<RestaurantListingPageProps> = ({ on
         <div className="flex justify-between items-center px-1">
           <h3 className="text-lg font-black text-stone-900 dark:text-white flex items-center gap-1.5">
             <Filter className="w-4 h-4 text-orange-600" />
-            <span>Found {filteredRestaurants.length} Vendors Matches</span>
+            <span>Found {filteredRestaurants.length} restaurant matches</span>
           </h3>
           {(selectedCuisine || sortBy || filterPureVeg || filterOffers) && (
             <button
@@ -125,13 +125,13 @@ export const RestaurantListingPage: React.FC<RestaurantListingPageProps> = ({ on
 
         {filteredRestaurants.length === 0 ? (
           /* Empty state */
-          <div className="bg-white dark:bg-stone-850 rounded-2xl p-12 text-center border border-orange-50 dark:border-stone-800 space-y-4 max-w-md mx-auto" id="listing-empty-state">
+          <div className="bg-white dark:bg-stone-800 rounded-2xl p-12 text-center border border-orange-50 dark:border-stone-800 space-y-4 max-w-md mx-auto" id="listing-empty-state">
             <AnimatedDiya className="w-16 h-16 mx-auto animate-bounce filter drop-shadow" />
-            <h4 className="text-lg font-bold text-stone-850 dark:text-white">
-              No Festive Kitchen Matches Found
+            <h4 className="text-lg font-bold text-stone-900 dark:text-white">
+              No festive kitchen matches found
             </h4>
             <p className="text-xs text-stone-500 leading-relaxed">
-              We couldn't find any vendors that fit your current active search parameters. Try resetting your active filters or query.
+              We couldn&apos;t find any restaurants that fit your current search. Try resetting your filters or query.
             </p>
             <button
               onClick={() => {
@@ -163,7 +163,7 @@ export const RestaurantListingPage: React.FC<RestaurantListingPageProps> = ({ on
             <button
               onClick={handleSimulateInfiniteScroll}
               disabled={isInfiniteScrolling}
-              className="px-6 py-2.5 bg-white dark:bg-stone-850 hover:bg-orange-50 dark:hover:bg-amber-950/20 text-stone-800 dark:text-stone-200 hover:text-orange-600 dark:hover:text-amber-400 font-extrabold text-xs tracking-wider uppercase border border-orange-100 dark:border-stone-800 rounded-full shadow-md hover:shadow-lg disabled:opacity-50 transition-all flex items-center gap-2 cursor-pointer"
+              className="px-6 py-2.5 bg-white dark:bg-stone-800 hover:bg-orange-50 dark:hover:bg-amber-950/20 text-stone-800 dark:text-stone-200 hover:text-orange-600 dark:hover:text-amber-400 font-extrabold text-xs tracking-wider uppercase border border-orange-100 dark:border-stone-800 rounded-full shadow-md hover:shadow-lg disabled:opacity-50 transition-all flex items-center gap-2 cursor-pointer"
             >
               {isInfiniteScrolling ? (
                 <>
@@ -172,7 +172,7 @@ export const RestaurantListingPage: React.FC<RestaurantListingPageProps> = ({ on
                 </>
               ) : (
                 <>
-                  <span>Load More Vendors</span>
+                  <span>Load more restaurants</span>
                   <span>↓</span>
                 </>
               )}

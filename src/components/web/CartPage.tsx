@@ -110,8 +110,8 @@ export const CartPage: React.FC<CartPageProps> = ({
       onClearCart();
       setIsProcessingCheckout(false);
 
-      alert(`🪔 Success! Order Placed beautifully! ₹${grandTotal} deducted from Shree Wallet. Track progress inside User Profile.`);
-      onNavigate('profile');
+      alert(`🪔 Success! Order placed! ₹${grandTotal} deducted from Shree Wallet.`);
+      onNavigate('landing');
     }, 1500);
   };
 

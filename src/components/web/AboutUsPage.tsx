@@ -1,252 +1,226 @@
 import React from 'react';
-import { motion } from 'motion/react';
-import { Award, Heart, ShieldCheck, Flame, Star, Coffee, Sparkles } from 'lucide-react';
-import { APP_NAME } from '../../brand';
-import { AnimatedDiya, RangoliMandala, MithilaPaintingDivider, MithilaFrameCard } from './GoldenDeco';
+import { ArrowRight, Award, Mail, Search, Sparkles, Users } from 'lucide-react';
+import { APP_NAME, SUPPORT_EMAIL } from '../../brand';
+import { LandingSection, LandingSectionHeader } from './LandingPage/LandingSection';
 
 interface AboutUsPageProps {
-  onNavigate: (page: string) => void;
+  onNavigate: (page: string, data?: unknown) => void;
 }
+
+const STATS = [
+  { value: '500+', label: 'Listed vendors' },
+  { value: '150+', label: 'Events hosted' },
+  { value: '15k+', label: 'Guests served' },
+];
+
+const VALUES = [
+  {
+    icon: Users,
+    title: 'Verified marketplace',
+    description:
+      'Browse venues, caterers, décor, photography, pandits, and more — with ratings, packages, and city filters.',
+  },
+  {
+    icon: Sparkles,
+    title: 'Built for Indian celebrations',
+    description:
+      'Weddings, festivals, and society functions — tools and categories that match how families actually plan.',
+  },
+  {
+    icon: Award,
+    title: 'Quotes without the chaos',
+    description:
+      'Shortlist vendors, send enquiries, and keep planning in one place instead of scattered chats and PDFs.',
+  },
+];
 
 export const AboutUsPage: React.FC<AboutUsPageProps> = ({ onNavigate }) => {
   return (
-    <div className="pt-24 pb-16 bg-stone-50 dark:bg-stone-900 transition-colors duration-200" id="about-us-page">
-      
-      {/* HERO BANNER SECTION */}
-      <section className="relative overflow-hidden py-16 px-4 md:px-8 text-center bg-gradient-to-br from-stone-900 via-stone-955 to-orange-950 text-white rounded-3xl mx-4 sm:mx-6 lg:mx-8 shadow-2xl mb-16" id="about-hero">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-orange-500/10 rounded-full blur-[100px] pointer-events-none" />
-        <div className="absolute -right-16 -top-16 w-64 h-64 opacity-5 pointer-events-none">
-          <RangoliMandala className="w-full h-full text-orange-400" />
-        </div>
-        
-        <div className="max-w-3xl mx-auto space-y-6 relative z-10">
-          <div className="flex justify-center mb-4">
-            <AnimatedDiya className="w-12 h-12 text-orange-500" />
-          </div>
-          <span className="text-xs font-bold font-mono tracking-widest text-orange-400 uppercase bg-orange-950/40 border border-orange-500/20 px-4 py-1.5 rounded-full inline-block">
-            Our Heritage & Vision
-          </span>
-          <h1 className="text-4xl md:text-5xl font-serif font-black tracking-tight mt-2 leading-tight">
-            Crafting Holy Traditions & <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-orange-400 to-red-400">
-              Royal Indian Celebrations
-            </span>
-          </h1>
-          <p className="text-stone-300 text-sm md:text-base leading-relaxed max-w-2xl mx-auto font-sans">
-            At Ceremony & Utsav Bites, we preserve India's rich ceremonial heritage, connecting modern families to timeless Vedic rituals, premium traditional catering, and magical custom decorators.
-          </p>
-        </div>
-      </section>
-
-      {/* CORE PILARS / VALUES */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20" id="about-pillars">
-        <div className="text-center mb-12">
-          <h2 className="text-2xl md:text-3xl font-serif font-bold text-stone-900 dark:text-white uppercase tracking-wider">
-            Our Three Golden Pillars
-          </h2>
-          <div className="w-20 h-1 bg-gradient-to-r from-orange-500 to-amber-500 mx-auto mt-3 rounded-full" />
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-white dark:bg-stone-850 p-8 rounded-2xl border border-stone-100 dark:border-stone-800 shadow-md hover:shadow-xl transition-all hover:-translate-y-1 duration-200 flex flex-col items-center text-center space-y-4" id="pillar-food">
-            <div className="w-14 h-14 bg-red-50 dark:bg-red-950/30 text-orange-600 rounded-2xl flex items-center justify-center">
-              <Flame className="w-6 h-6 text-orange-600" />
-            </div>
-            <h3 className="text-lg font-bold font-serif text-stone-900 dark:text-white uppercase">Sattvik Shudh Feast</h3>
-            <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-sans">
-              We exclusively source pure organic cold-press oils, hand-ground spices, and pure cow ghee to curate divine, high-vibe wedding banquets certified by FSSAI and absolute spiritual standards.
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-stone-850 p-8 rounded-2xl border border-stone-100 dark:border-stone-800 shadow-md hover:shadow-xl transition-all hover:-translate-y-1 duration-200 flex flex-col items-center text-center space-y-4" id="pillar-rituals">
-            <div className="w-14 h-14 bg-amber-50 dark:bg-amber-950/30 text-amber-500 rounded-2xl flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-amber-500" />
-            </div>
-            <h3 className="text-lg font-bold font-serif text-stone-900 dark:text-white uppercase">Vedic Ceremonial Fidelity</h3>
-            <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-sans">
-              From Dwar Puja to Mandap rituals, we safeguard authentic ceremonial structures. Our coordination suite pairs families with approved certified scholars, pandits, and auspicious item kits.
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-stone-850 p-8 rounded-2xl border border-stone-100 dark:border-stone-800 shadow-md hover:shadow-xl transition-all hover:-translate-y-1 duration-200 flex flex-col items-center text-center space-y-4" id="pillar-design">
-            <div className="w-14 h-14 bg-orange-50 dark:bg-orange-950/30 text-red-600 rounded-2xl flex items-center justify-center">
-              <Award className="w-6 h-6 text-orange-600" />
-            </div>
-            <h3 className="text-lg font-bold font-serif text-stone-900 dark:text-white uppercase">Royal Spatial Canvas</h3>
-            <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-sans">
-              Hand-hung fresh marigold torans, beautifully traced sand rangoli mandalas, and royal vintage wooden seating are thoughtfully designed by native Indian karigars and master decorators.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <MithilaPaintingDivider className="my-12 opacity-90" />
-
-      {/* THE STORY OF WORK */}
-      <section className="bg-stone-100 dark:bg-stone-950 py-16 transition-colors duration-200 mb-20" id="about-story">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            
-            {/* Visual block */}
-            <div className="relative">
-              <div className="aspect-[4/3] bg-gradient-to-tr from-orange-600 to-amber-500 rounded-3xl p-1 relative shadow-2xl overflow-hidden group">
-                <div className="absolute inset-0 bg-stone-950/20 backdrop-blur-xs flex items-center justify-center">
-                  <RangoliMandala className="w-48 h-48 text-amber-100/20 animate-spin-slow" />
-                </div>
-                <div className="absolute bottom-6 left-6 right-6 bg-white/95 dark:bg-stone-900/95 p-6 rounded-2xl border border-stone-100 dark:border-stone-850 shadow-xl backdrop-blur-md">
-                  <div className="flex items-center gap-3">
-                    <span className="text-3xl">🪔</span>
-                    <div>
-                      <h4 className="text-sm font-bold text-stone-900 dark:text-white uppercase">Bespoke Heritage Award</h4>
-                      <p className="text-[10px] text-stone-500 dark:text-stone-400">Awarded "Best Authentic Event Planning Suite" in Northern India, 2025.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="absolute -top-6 -left-6 w-24 h-24 bg-amber-400/20 rounded-full blur-xl pointer-events-none" />
-              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-orange-600/10 rounded-full blur-xl pointer-events-none" />
-            </div>
-
-            {/* Story text */}
-            <div className="space-y-6">
-              <span className="text-[11px] font-mono tracking-widest text-orange-600 dark:text-orange-400 font-bold uppercase block">
-                How It Began // Since 2018
+    <div className="min-h-screen bg-[#FFFDF7] dark:bg-stone-900" id="about-us-page">
+      {/* Hero */}
+      <section className="border-b border-stone-200/80 dark:border-stone-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-28 pb-14 lg:pb-20">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+            <div className="space-y-6 text-left">
+              <span className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-orange-600 dark:text-amber-400">
+                <span className="h-px w-6 bg-gradient-to-r from-orange-500 to-amber-400" aria-hidden />
+                About {APP_NAME}
+                <span className="h-px w-6 bg-gradient-to-r from-amber-400 to-orange-500" aria-hidden />
               </span>
-              <h2 className="text-3xl font-serif font-black text-stone-900 dark:text-white uppercase tracking-tight">
-                Our Journey From Varanasi Ghats To Smart Planners
-              </h2>
-              <p className="text-xs md:text-sm text-stone-600 dark:text-stone-300 leading-relaxed font-sans">
-                Utsav Bites arose out of a burning desire to cure a persistent malady: the dilution of pure traditional ingredients and ritualistic integrity in modern Indian weddings. Witnessing chemical ghee, plastic garlands, and discomposed scheduling, our founders set out to build a platform that marries timeless aesthetics with state-of-the-art technological convenience.
+              <h1 className="heading-page text-3xl sm:text-4xl lg:text-[2.75rem] text-[#C51C13] dark:text-white">
+                One place to discover vendors you can trust
+              </h1>
+              <p className="text-sm sm:text-base text-stone-600 dark:text-stone-300 leading-relaxed max-w-xl">
+                {APP_NAME} helps families and hosts compare services, request quotes, and plan weddings and
+                festive events — from banquet halls and halwais to photographers and pandits.
               </p>
-              <p className="text-xs md:text-sm text-stone-600 dark:text-stone-300 leading-relaxed font-sans">
-                Today, we operate in 5 major regions, managing over 420 premier traditional caterers, 1,200 verified pandits, and a vibrant community of local flower growers, sweet smiths, and folk musicians.
-              </p>
-
-              <div className="grid grid-cols-3 gap-4 pt-4 border-t border-stone-200 dark:border-stone-800">
-                <div>
-                  <h5 className="text-2xl font-black text-orange-600 font-mono">15,000+</h5>
-                  <p className="text-[10px] uppercase font-bold text-stone-500 tracking-wider font-sans">Satiated Guests</p>
-                </div>
-                <div>
-                  <h5 className="text-2xl font-black text-orange-600 font-mono">150+</h5>
-                  <p className="text-[10px] uppercase font-bold text-stone-500 tracking-wider font-sans">Weddings Hosted</p>
-                </div>
-                <div>
-                  <h5 className="text-2xl font-black text-orange-600 font-mono">100%</h5>
-                  <p className="text-[10px] uppercase font-bold text-stone-500 tracking-wider font-sans">Satvik Promise</p>
-                </div>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => onNavigate('vendor-categories')}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer"
+                >
+                  Browse categories
+                  <ArrowRight className="w-4 h-4" aria-hidden />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('how-it-works')}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-stone-300 dark:border-stone-600 text-stone-800 dark:text-stone-100 text-sm font-semibold hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
+                >
+                  How it works
+                </button>
               </div>
             </div>
 
+            <div className="relative rounded-2xl overflow-hidden shadow-lg border border-orange-100/60 dark:border-stone-700 aspect-[4/3] lg:aspect-auto lg:min-h-[320px]">
+              <img
+                src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=900&auto=format&fit=crop&q=80"
+                alt=""
+                className="absolute inset-0 w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-stone-950/50 via-transparent to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-3">
+                {STATS.map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="rounded-xl bg-white/95 dark:bg-stone-900/90 backdrop-blur-sm px-3 py-2 border border-white/40 dark:border-stone-700 shadow-sm"
+                  >
+                    <p className="text-lg font-bold text-[#C51C13] dark:text-orange-400 leading-none">
+                      {stat.value}
+                    </p>
+                    <p className="text-[10px] font-medium text-stone-600 dark:text-stone-400 mt-0.5">
+                      {stat.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* SPECIAL INTERACTIVE MITHILA ART COMPONENT */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20" id="about-mithila-art-integration">
-        <MithilaFrameCard className="hover:scale-[1.005] transition-transform duration-300">
-          <div className="grid md:grid-cols-12 gap-6 items-center">
-            <div className="md:col-span-8 space-y-3">
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 bg-[#C51C13]/10 text-[#C51C13] text-[9px] font-black tracking-widest uppercase rounded">
-                  Sita's Wedding Ceremony Heritage
-                </span>
-                <span className="text-xs">🦚</span>
+      {/* Values */}
+      <LandingSection id="about-values" tone="white" showTexture={false} showMandala={false}>
+        <LandingSectionHeader
+          align="left"
+          eyebrow="Why we exist"
+          title="Planning should feel clear, not overwhelming"
+          description="We focus on discovery, trust signals, and simple next steps — so you spend less time chasing vendors and more time celebrating."
+        />
+        <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+          {VALUES.map(({ icon: Icon, title, description }) => (
+            <div
+              key={title}
+              className="rounded-2xl border border-stone-200/80 dark:border-stone-700 bg-stone-50/50 dark:bg-stone-800/40 p-6 space-y-4"
+            >
+              <div className="w-11 h-11 rounded-xl bg-orange-100 dark:bg-orange-950/50 flex items-center justify-center">
+                <Icon className="w-5 h-5 text-[#C51C13] dark:text-orange-400" aria-hidden />
               </div>
-              <h3 className="serif text-xl sm:text-2xl font-black italic text-[#C51C13] tracking-tight">
-                Authentic Mithila & Madhubani Artistry Studio
-              </h3>
-              <p className="text-xs sm:text-sm text-stone-700 leading-relaxed">
-                Madhubani painting originated in the ancient Mithila region when King Janak commissioned local artists to paint the entire palace walls for his daughter <strong>Sita&apos;s wedding to Lord Ram</strong>. To preserve this celestial heritage, {APP_NAME} empowers you to hire authentic native Mithila women karigars who design hand-painted Kohbar ghar murals, traditional invitations, and shadi mandap patterns.
-              </p>
-              <div className="flex flex-wrap gap-4 pt-1 font-mono text-[10px] text-stone-600 font-bold">
-                <span className="flex items-center gap-1">🌿 Natural Herbal Dyes</span>
-                <span className="flex items-center gap-1">✍️ Hand-drawn Nib & Bamboo Sticks</span>
-                <span className="flex items-center gap-1">🛖 Safe Local Co-ops Contribution</span>
+              <div className="space-y-2">
+                <h3 className="heading-card text-lg text-stone-900 dark:text-white">{title}</h3>
+                <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">{description}</p>
               </div>
             </div>
-            <div className="md:col-span-4 bg-[#FAF6E9] border-2 border-dashed border-[#C51C13]/40 p-4 rounded-xl text-center space-y-3 flex flex-col justify-center items-center">
-              <span className="text-3xl animate-bounce">🎨</span>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#C51C13]">Hire Mithila Art Troupe</span>
-              <p className="text-[10px] text-stone-500 leading-normal">
-                Order bespoke Kohbar paintings, hand-painted gift boxes, or canvas centerpieces for your grand day!
+          ))}
+        </div>
+      </LandingSection>
+
+      {/* Story */}
+      <LandingSection id="about-story" tone="parchment" showTexture={false} showMandala={false}>
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+          <div className="order-2 lg:order-1 space-y-5 text-left">
+            <div className="space-y-3">
+              <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-orange-600 dark:text-amber-400">
+                Our story
+              </span>
+              <h2 className="heading-section text-2xl sm:text-3xl text-[#C51C13] dark:text-white">
+                From WhatsApp forwards to a real marketplace
+              </h2>
+              <p className="text-sm sm:text-base text-stone-600 dark:text-stone-400 leading-relaxed">
+                {APP_NAME} started when hosts couldn&apos;t compare pricing, availability, or reviews across
+                cities. Vendors lost leads in group chats. We built a shared place where both sides meet with
+                clarity.
               </p>
+            </div>
+            <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
+              Today families search by category and city, save favourites, and request quotes. Vendors list
+              packages, respond faster, and build reputation through completed events — across NCR and
+              growing partner regions.
+            </p>
+            <a
+              href={`mailto:${SUPPORT_EMAIL}`}
+              className="inline-flex items-center gap-2 text-sm font-semibold text-[#C51C13] dark:text-orange-400 hover:underline"
+            >
+              <Mail className="w-4 h-4 shrink-0" aria-hidden />
+              {SUPPORT_EMAIL}
+            </a>
+          </div>
+          <div className="order-1 lg:order-2 rounded-2xl overflow-hidden border border-stone-200/80 dark:border-stone-700 shadow-md aspect-[4/3]">
+            <img
+              src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=900&auto=format&fit=crop&q=80"
+              alt=""
+              className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
+            />
+          </div>
+        </div>
+      </LandingSection>
+
+      {/* How we help */}
+      <LandingSection id="about-platform" tone="cream" showTexture={false} showMandala={false}>
+        <div className="rounded-2xl bg-white dark:bg-stone-800 border border-orange-100/80 dark:border-stone-700 p-6 sm:p-10 lg:p-12">
+          <div className="grid lg:grid-cols-2 gap-8 items-center">
+            <div className="space-y-4 text-left">
+              <h2 className="heading-section text-2xl sm:text-3xl text-[#C51C13] dark:text-white">
+                Explore the platform
+              </h2>
+              <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
+                Start with vendor categories, dive into listings with filters, open vendor profiles for services
+                and reviews, or plan an event from scratch.
+              </p>
+              <ul className="space-y-3 text-sm text-stone-700 dark:text-stone-300">
+                <li className="flex gap-3">
+                  <Search className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
+                  <span>Search by category, city, rating, and offers</span>
+                </li>
+                <li className="flex gap-3">
+                  <Users className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
+                  <span>Compare vendors side by side before you enquire</span>
+                </li>
+                <li className="flex gap-3">
+                  <Sparkles className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
+                  <span>Plan events with tools built for hosts and vendors</span>
+                </li>
+              </ul>
+            </div>
+            <div className="flex flex-col sm:flex-row lg:flex-col gap-3">
               <button
-                onClick={() => onNavigate('contact')}
-                className="w-full py-2 bg-[#C51C13] hover:bg-[#A2110A] text-white font-mono text-[10px] font-black uppercase tracking-wider rounded-lg transition-colors cursor-pointer"
+                type="button"
+                onClick={() => onNavigate('vendor-categories')}
+                className="w-full px-5 py-3 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer"
               >
-                Inquire Art Catalogue &rarr;
+                Find vendors
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate('celebrations')}
+                className="w-full px-5 py-3 rounded-lg border border-[#C51C13] text-[#C51C13] dark:text-orange-400 dark:border-orange-500 hover:bg-orange-50 dark:hover:bg-stone-900 text-sm font-semibold transition-colors cursor-pointer"
+              >
+                Plan an event
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate('contact')}
+                className="w-full px-5 py-3 rounded-lg text-stone-700 dark:text-stone-200 text-sm font-semibold hover:bg-stone-100 dark:hover:bg-stone-700/50 transition-colors cursor-pointer"
+              >
+                Contact our team
               </button>
             </div>
           </div>
-        </MithilaFrameCard>
-      </section>
-
-      {/* MEET OUR ARCHITECTS / LEADERSHIP */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16" id="about-team">
-        <div className="mb-12">
-          <h2 className="text-2xl md:text-3xl font-serif font-bold text-stone-900 dark:text-white uppercase tracking-wider">
-            Ceremonial Architects
-          </h2>
-          <p className="text-xs text-stone-500 dark:text-stone-400 max-w-md mx-auto mt-2 font-sans">
-            A collective of master chefs, Vedic scholars, luxury designers, and technology pioneers working jointly.
-          </p>
-          <div className="w-16 h-1 bg-orange-600 mx-auto mt-4 rounded-full" />
         </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          
-          <div className="bg-white dark:bg-stone-850 p-6 rounded-2xl border border-stone-100 dark:border-stone-800 shadow-md flex flex-col items-center text-center space-y-3" id="team-vimal">
-            <div className="w-24 h-24 bg-gradient-to-br from-amber-200 to-orange-400 rounded-full flex items-center justify-center text-3xl font-bold text-orange-950 font-serif shadow-inner border-2 border-orange-500/20">
-              VS
-            </div>
-            <div>
-              <h4 className="font-serif font-black text-stone-900 dark:text-white text-base">Vimal Shastri</h4>
-              <p className="text-[10px] font-mono tracking-wider text-orange-600 uppercase font-bold mt-0.5">Founder & Rituals Custodian</p>
-            </div>
-            <p className="text-xs text-stone-500 leading-relaxed font-sans mt-2">
-              Deeply trained in Sanskrit rituals at Banaras Hindu University, Vimal oversees the authenticity of our ceremonial modules and pandit boards.
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-stone-850 p-6 rounded-2xl border border-stone-100 dark:border-stone-800 shadow-md flex flex-col items-center text-center space-y-3" id="team-ananya">
-            <div className="w-24 h-24 bg-gradient-to-br from-pink-200 to-red-400 rounded-full flex items-center justify-center text-3xl font-bold text-orange-950 font-serif shadow-inner border-2 border-orange-500/20">
-              AM
-            </div>
-            <div>
-              <h4 className="font-serif font-black text-stone-900 dark:text-white text-base">Ananya Mishra</h4>
-              <p className="text-[10px] font-mono tracking-wider text-orange-600 uppercase font-bold mt-0.5">Director of Aesthetics & Decor</p>
-            </div>
-            <p className="text-xs text-stone-500 leading-relaxed font-sans mt-2">
-              With 12 years in premium luxury spatial designs, Ananya combines localized floral heritage with stunning modern lighting systems.
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-stone-850 p-6 rounded-2xl border border-stone-100 dark:border-stone-800 shadow-md flex flex-col items-center text-center space-y-3" id="team-rohit">
-            <div className="w-24 h-24 bg-gradient-to-br from-indigo-200 to-blue-400 rounded-full flex items-center justify-center text-3xl font-bold text-orange-950 font-serif shadow-inner border-2 border-orange-500/20">
-              RK
-            </div>
-            <div>
-              <h4 className="font-serif font-black text-stone-900 dark:text-white text-base">Rohit Kapoor</h4>
-              <p className="text-[10px] font-mono tracking-wider text-orange-600 uppercase font-bold mt-0.5">Chief Feast Curator (Chef)</p>
-            </div>
-            <p className="text-xs text-stone-500 leading-relaxed font-sans mt-2">
-               Former Executive Chef specialized in traditional Awadhi, Bhojpuri, and Satvik cuisines. Rohit governs our pure ghee kitchens policy.
-            </p>
-          </div>
-
-        </div>
-
-        <div className="mt-12">
-          <button 
-            onClick={() => onNavigate('vendor-categories')}
-            className="px-8 py-3.5 bg-orange-600 hover:bg-orange-700 text-white font-mono text-xs font-black uppercase tracking-widest rounded-xl shadow-lg transition-transform hover:scale-105"
-          >
-            Find Wedding Vendors
-          </button>
-        </div>
-      </section>
-
+      </LandingSection>
     </div>
   );
 };

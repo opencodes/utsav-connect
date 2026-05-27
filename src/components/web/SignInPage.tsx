@@ -1,16 +1,30 @@
-import React, { useState } from 'react';
-import { Phone, Mail, ArrowRight, ShieldCheck } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Phone, Mail, ArrowRight, ShieldCheck, Store, User } from 'lucide-react';
 import { APP_NAME } from '../../brand';
+
+export type SignInMode = 'customer' | 'vendor';
 
 interface SignInPageProps {
   onSignIn: (payload: { phone: string; email: string }) => void;
-  onNavigate: (page: string) => void;
+  onVendorSignIn: (payload: { phone: string; email: string }) => void;
+  onNavigate: (page: string, data?: unknown) => void;
+  initialMode?: SignInMode;
 }
 
-export const SignInPage: React.FC<SignInPageProps> = ({ onSignIn, onNavigate }) => {
+export const SignInPage: React.FC<SignInPageProps> = ({
+  onSignIn,
+  onVendorSignIn,
+  onNavigate,
+  initialMode = 'customer',
+}) => {
+  const [mode, setMode] = useState<SignInMode>(initialMode);
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setMode(initialMode);
+  }, [initialMode]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,8 +38,21 @@ export const SignInPage: React.FC<SignInPageProps> = ({ onSignIn, onNavigate }) 
       return;
     }
     setError('');
-    onSignIn({ phone: phone.trim(), email: email.trim() });
+    const payload = { phone: phone.trim(), email: email.trim() };
+    if (mode === 'vendor') {
+      onVendorSignIn(payload);
+    } else {
+      onSignIn(payload);
+    }
   };
+
+  const modeDescription =
+    mode === 'customer'
+      ? 'Sign in to plan your events — guests, budget, vendors, feast & timelines.'
+      : 'Manage your business listing, enquiries, and services.';
+
+  const submitLabel =
+    mode === 'vendor' ? 'Sign in to vendor dashboard' : 'Sign in to event planner';
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-stone-50 dark:bg-stone-900 px-4 py-12 sm:py-16">
@@ -34,10 +61,43 @@ export const SignInPage: React.FC<SignInPageProps> = ({ onSignIn, onNavigate }) 
           <span className="inline-block text-[10px] font-bold uppercase tracking-widest text-[#C51C13] bg-orange-50 dark:bg-stone-800 px-3 py-1 rounded-full">
             Account
           </span>
-          <h1 className="font-display text-3xl text-stone-900 dark:text-white mt-3">Sign in to {APP_NAME}</h1>
-          <p className="text-sm text-stone-600 dark:text-stone-400 mt-2">
-            Use your mobile and email to access your events, wallet, and saved vendors.
-          </p>
+          <h1 className="font-display text-3xl text-stone-900 dark:text-white mt-3">
+            Sign in to {APP_NAME}
+          </h1>
+          <p className="text-sm text-stone-600 dark:text-stone-400 mt-2">{modeDescription}</p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-1 rounded-lg border border-stone-200 dark:border-stone-700 p-1 mb-6 bg-white dark:bg-stone-850">
+          <button
+            type="button"
+            onClick={() => {
+              setMode('customer');
+              setError('');
+            }}
+            className={`flex items-center justify-center gap-1.5 py-2.5 rounded-md text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
+              mode === 'customer'
+                ? 'bg-[#C51C13] text-white'
+                : 'text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800'
+            }`}
+          >
+            <User className="w-4 h-4 shrink-0" aria-hidden />
+            Customer
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setMode('vendor');
+              setError('');
+            }}
+            className={`flex items-center justify-center gap-1.5 py-2.5 rounded-md text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
+              mode === 'vendor'
+                ? 'bg-[#C51C13] text-white'
+                : 'text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800'
+            }`}
+          >
+            <Store className="w-4 h-4 shrink-0" aria-hidden />
+            Vendor
+          </button>
         </div>
 
         <form
@@ -58,7 +118,7 @@ export const SignInPage: React.FC<SignInPageProps> = ({ onSignIn, onNavigate }) 
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="10-digit mobile number"
-                className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-stone-50 dark:bg-stone-900"
+                className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700"
               />
             </div>
           </div>
@@ -75,8 +135,8 @@ export const SignInPage: React.FC<SignInPageProps> = ({ onSignIn, onNavigate }) 
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-stone-50 dark:bg-stone-900"
+                placeholder={mode === 'vendor' ? 'business@example.com' : 'you@example.com'}
+                className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700"
               />
             </div>
           </div>
@@ -91,25 +151,40 @@ export const SignInPage: React.FC<SignInPageProps> = ({ onSignIn, onNavigate }) 
             type="submit"
             className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white font-semibold text-sm transition-colors cursor-pointer"
           >
-            Continue
+            {submitLabel}
             <ArrowRight className="w-4 h-4" />
           </button>
 
           <p className="flex items-start gap-2 text-xs text-stone-500 leading-relaxed">
             <ShieldCheck className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" aria-hidden />
-            Demo sign-in for preview. OTP verification will be added before production launch.
+            Customer sign-in opens your event planning workspace. Vendors use the vendor tab.
           </p>
         </form>
 
         <p className="text-center text-sm text-stone-600 dark:text-stone-400 mt-6">
-          New to {APP_NAME}?{' '}
-          <button
-            type="button"
-            onClick={() => onNavigate('landing')}
-            className="font-semibold text-[#C51C13] hover:underline cursor-pointer"
-          >
-            Explore the homepage
-          </button>
+          {mode === 'vendor' ? (
+            <>
+              New vendor?{' '}
+              <button
+                type="button"
+                onClick={() => onNavigate('list-your-service')}
+                className="font-semibold text-[#C51C13] hover:underline cursor-pointer"
+              >
+                Register your business
+              </button>
+            </>
+          ) : (
+            <>
+              New customer?{' '}
+              <button
+                type="button"
+                onClick={() => onNavigate('event-planner-register')}
+                className="font-semibold text-[#C51C13] hover:underline cursor-pointer"
+              >
+                Register to plan events
+              </button>
+            </>
+          )}
         </p>
       </div>
     </div>

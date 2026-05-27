@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, MapPin, History, Wallet, Award, Settings, Plus, RotateCcw, MessageSquare, CreditCard, LifeBuoy } from 'lucide-react';
+import { User, MapPin, History, Wallet, Award, Settings, Plus, RotateCcw, MessageSquare, CreditCard, LifeBuoy, CalendarPlus } from 'lucide-react';
 import { UserProfile, SavedAddress } from '../../types';
 import { AnimatedDiya } from './GoldenDeco';
 
@@ -7,9 +7,17 @@ interface UserProfilePageProps {
   userProfile: UserProfile;
   onUpdateWallet: (newBalance: number) => void;
   onNavigate: (page: string) => void;
+  isEventPlannerCustomer?: boolean;
+  onOpenPlannerWorkspace?: () => void;
 }
 
-export const UserProfilePage: React.FC<UserProfilePageProps> = ({ userProfile, onUpdateWallet, onNavigate }) => {
+export const UserProfilePage: React.FC<UserProfilePageProps> = ({
+  userProfile,
+  onUpdateWallet,
+  onNavigate,
+  isEventPlannerCustomer = false,
+  onOpenPlannerWorkspace,
+}) => {
   const [activeTab, setActiveTab] = useState<'orders' | 'wallet' | 'addresses' | 'support' | 'settings'>('orders');
   const [topUpAmount, setTopUpAmount] = useState('');
   const [newStreet, setNewStreet] = useState('');
@@ -56,6 +64,11 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ userProfile, o
             <h2 className="text-2xl font-extrabold tracking-tight">{userProfile.name}</h2>
             <p className="text-stone-400 text-xs sm:text-sm font-semibold">{userProfile.email} | {userProfile.phone}</p>
             <div className="flex flex-wrap items-center gap-3 mt-2 text-xs">
+              {isEventPlannerCustomer && (
+                <span className="bg-rose-600 px-2 py-0.5 rounded font-bold font-mono uppercase text-white">
+                  Event planning customer
+                </span>
+              )}
               <span className="bg-orange-600 px-2 py-0.5 rounded font-bold font-mono uppercase text-white">
                 Festive Premium Member
               </span>
@@ -85,6 +98,27 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({ userProfile, o
           </div>
         </div>
       </div>
+
+      {isEventPlannerCustomer && onOpenPlannerWorkspace && (
+        <div className="rounded-2xl border border-orange-200 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-stone-800 dark:to-stone-850 dark:border-orange-900/40 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="text-left">
+            <h3 className="text-lg font-bold text-stone-900 dark:text-white flex items-center gap-2">
+              <CalendarPlus className="w-5 h-5 text-[#C51C13]" aria-hidden />
+              Event planning workspace
+            </h3>
+            <p className="text-sm text-stone-600 dark:text-stone-400 mt-1 max-w-xl">
+              Manage rituals, guests, feast, vendors, and budget from your customer planning tools.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onOpenPlannerWorkspace}
+            className="shrink-0 px-5 py-2.5 rounded-xl bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold cursor-pointer"
+          >
+            Open planning workspace
+          </button>
+        </div>
+      )}
 
       {/* 2. TABBED METADATA INTERFACE */}
       <div className="grid md:grid-cols-4 gap-8">

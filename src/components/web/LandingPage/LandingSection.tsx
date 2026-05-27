@@ -7,7 +7,6 @@ export type LandingSectionTone =
   | 'sand'
   | 'blush'
   | 'wine'
-  | 'white'
   | 'parchment';
 
 /** Maps tone → CSS texture class (see index.css `.landing-section-tone--*`) */
@@ -17,7 +16,6 @@ const TONE_CLASS: Record<LandingSectionTone, string> = {
   sand: 'landing-section-tone--sand',
   blush: 'landing-section-tone--blush',
   wine: 'landing-section-tone--wine',
-  white: 'landing-section-tone--white',   
   parchment: 'landing-section-tone--parchment',
 };
 

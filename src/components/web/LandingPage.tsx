@@ -9,12 +9,23 @@ import { CustomerTestimonialsSection } from './LandingPage/CustomerTestimonialsS
 
 interface LandingPageProps {
   onNavigate: (page: string, data?: unknown) => void;
+  selectedCity: string;
+  onCityChange: (city: string) => void;
 }
 
-export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate }) => {
+export const LandingPage: React.FC<LandingPageProps> = ({
+  onNavigate,
+  selectedCity,
+  onCityChange,
+}) => {
   return (
     <div id="landing-page-container" className="w-full">
-      <HeroSection onNavigate={onNavigate} embeddedInShell />
+      <HeroSection
+        onNavigate={onNavigate}
+        embeddedInShell
+        selectedCity={selectedCity}
+        onCityChange={onCityChange}
+      />
       <EventPlannerPromoSection onNavigate={onNavigate} />
       <VendorCategoriesSection onNavigate={onNavigate} />
       <PlatformHowItWorksSection onNavigate={onNavigate} />

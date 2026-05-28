@@ -25,6 +25,24 @@ export async function fetchVendor(id: string): Promise<ListingCardItem | null> {
   }
 }
 
+/** Authenticated fetch for vendor dashboard (includes pending_review listings). */
+export async function fetchVendorDashboard(
+  id: string
+): Promise<(ListingCardItem & { status?: string }) | null> {
+  if (!id) {
+    return null;
+  }
+  try {
+    const data = await apiRequest<{ vendor: ListingCardItem & { status?: string } }>(
+      `/vendors/${id}/dashboard`,
+      { auth: true }
+    );
+    return data.vendor ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function registerVendor(body: Record<string, unknown>): Promise<ListingCardItem> {
   const data = await apiRequest<{ vendor: ListingCardItem }>('/vendors/register', {
     method: 'POST',
@@ -71,6 +89,21 @@ export async function addVendorService(
   return apiRequest(`/vendors/${vendorId}/services`, {
     method: 'POST',
     body: service,
+    auth: true,
+  });
+}
+
+export async function changeVendorPassword(
+  vendorId: string,
+  body: { currentPassword: string; newPassword: string; confirmPassword?: string }
+): Promise<{ changed: boolean }> {
+  return apiRequest(`/vendors/${vendorId}/change-password`, {
+    method: 'POST',
+    body: {
+      currentPassword: body.currentPassword,
+      newPassword: body.newPassword,
+      confirmPassword: body.confirmPassword ?? body.newPassword,
+    },
     auth: true,
   });
 }

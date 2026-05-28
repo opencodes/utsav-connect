@@ -1,6 +1,11 @@
 /** Planner localStorage — synced to API when authenticated. */
 
 import { getApiToken } from './api/config';
+import {
+  flattenRitualsFromSubEvents,
+  normalizeSubEventsFromStorage,
+  type PlannerSubEvent,
+} from './plannerSubEventTypes';
 
 let plannerSaveTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -109,10 +114,13 @@ export function loadPlannerEventsBundle(): {
   rituals: unknown[];
 } {
   purgeLegacyPlannerSeedData();
+  const rawSubEvents = readPlannerStorage(PLANNER_STORAGE_KEYS.subEvents, []);
+  const rawRituals = readPlannerStorage(PLANNER_STORAGE_KEYS.rituals, []);
+  const subEvents = normalizeSubEventsFromStorage(rawSubEvents, rawRituals);
   return {
     events: readPlannerStorage(PLANNER_STORAGE_KEYS.events, []),
-    subEvents: readPlannerStorage(PLANNER_STORAGE_KEYS.subEvents, []),
-    rituals: readPlannerStorage(PLANNER_STORAGE_KEYS.rituals, []),
+    subEvents,
+    rituals: flattenRitualsFromSubEvents(subEvents),
   };
 }
 
@@ -133,6 +141,43 @@ export function writePlannerStorage<T>(key: string, value: T): void {
     // private mode / quota
   }
   schedulePlannerApiSave();
+}
+
+/** Write sub-events (+ flat rituals) to localStorage and debounced API sync. */
+export function persistPlannerSubEventsLocal(subEvents: PlannerSubEvent[]): void {
+  writePlannerStorage(PLANNER_STORAGE_KEYS.subEvents, subEvents);
+  writePlannerStorage(PLANNER_STORAGE_KEYS.rituals, flattenRitualsFromSubEvents(subEvents));
+}
+
+/** Save sub-events to MongoDB via planner workspace API (requires sign-in). */
+export async function persistPlannerSubEventsToDatabase(
+  subEvents: PlannerSubEvent[]
+): Promise<void> {
+  const rituals = flattenRitualsFromSubEvents(subEvents);
+  try {
+    window.localStorage.setItem(PLANNER_STORAGE_KEYS.subEvents, JSON.stringify(subEvents));
+    window.localStorage.setItem(PLANNER_STORAGE_KEYS.rituals, JSON.stringify(rituals));
+  } catch {
+    // private mode / quota
+  }
+
+  if (!getApiToken()) {
+    schedulePlannerApiSave();
+    return;
+  }
+
+  if (plannerSaveTimer) {
+    clearTimeout(plannerSaveTimer);
+    plannerSaveTimer = null;
+  }
+
+  const { readPlannerWorkspaceFromStorage, savePlannerWorkspace } = await import('./api/planner');
+  const workspace = readPlannerWorkspaceFromStorage();
+  await savePlannerWorkspace({
+    ...workspace,
+    subEvents,
+    rituals,
+  });
 }
 
 function schedulePlannerApiSave(): void {

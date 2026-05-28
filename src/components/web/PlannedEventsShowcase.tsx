@@ -4,6 +4,7 @@ import { Calendar, Users, Check, Search, Plus, Clock, MapPin, Sparkles, X, Chevr
 import { MarigoldToran, RangoliMandala, AnimatedDiya } from './GoldenDeco';
 import { HERO_EVENT_TYPES } from './LandingPage/heroEventSearch';
 import { loadPlannerEventsBundle, readPlannerStorage, PLANNER_STORAGE_KEYS } from '../../plannerStorage';
+import { formatSubEventDisplayName } from '../../plannerSubEventTypes';
 
 const EVENT_TYPE_KEYWORDS: Record<string, string[]> = {
   wedding: ['wedding', 'shadi', 'ceremony'],
@@ -48,9 +49,11 @@ interface Ritual {
 interface SubEvent {
   id: string;
   name: string;
+  date?: string;
   time: string;
   venue: string;
   notes: string;
+  rituals?: { id: string; name: string; description: string; duration: string }[];
 }
 
 interface WeddingEvent {
@@ -741,9 +744,13 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                   </h3>
 
                   <div className="relative border-l-2 border-orange-200 dark:border-orange-950 pl-5 ml-2.5 space-y-6">
-                    {subEvents.map((sub, sidx) => (
+                    {subEvents.map((sub, sidx) => {
+                      const subRituals =
+                        sub.rituals && sub.rituals.length > 0
+                          ? sub.rituals
+                          : rituals.filter((r) => r.subEventId === sub.id);
+                      return (
                       <div key={sub.id} className="relative group text-left">
-                        {/* Bullet */}
                         <div className="absolute -left-[30px] top-1.5 w-4 h-4 bg-[#C51C13] dark:bg-orange-500 rounded-full border-2 border-white dark:border-stone-850 flex items-center justify-center text-white text-[8px] font-bold">
                           {sidx + 1}
                         </div>
@@ -751,12 +758,14 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                         <div>
                           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                             <h4 className="text-stone-900 dark:text-white font-extrabold text-sm">
-                              {sub.name}
+                              {formatSubEventDisplayName(sub.name, sub.date ?? '')}
                             </h4>
-                            <span className="text-xs font-black font-mono text-[#C51C13] dark:text-orange-400 flex items-center gap-1 shrink-0">
-                              <Clock className="w-3.5 h-3.5" />
-                              <span>{sub.time} IST</span>
-                            </span>
+                            <div className="flex flex-wrap items-center gap-2 shrink-0">
+                              <span className="text-xs font-black font-mono text-[#C51C13] dark:text-orange-400 flex items-center gap-1">
+                                <Clock className="w-3.5 h-3.5" />
+                                <span>{sub.time} IST</span>
+                              </span>
+                            </div>
                           </div>
 
                           <p className="text-[11px] text-amber-900 dark:text-amber-400 font-bold flex items-center gap-1 mt-0.5">
@@ -769,9 +778,26 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                               Organizer notes: {sub.notes}
                             </p>
                           )}
+
+                          {subRituals.length > 0 ? (
+                            <ul className="mt-2 space-y-1 pl-1">
+                              {subRituals.map((rit) => (
+                                <li
+                                  key={rit.id}
+                                  className="text-[11px] text-stone-600 dark:text-stone-400 flex items-center gap-1.5"
+                                >
+                                  <span className="text-orange-600 font-bold">🏵</span>
+                                  <span className="font-semibold text-[#C51C13] dark:text-orange-400">
+                                    {rit.name}
+                                  </span>
+                                  <span className="text-stone-400">· {rit.duration}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          ) : null}
                         </div>
                       </div>
-                    ))}
+                    );})}
 
                     {subEvents.length === 0 && (
                       <div className="p-4 text-center text-xs text-stone-400">

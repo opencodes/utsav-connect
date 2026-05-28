@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Phone, Mail, ArrowRight, ShieldCheck, Store, User } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Store, User } from 'lucide-react';
 import { APP_NAME } from '../../brand';
 
 export type SignInMode = 'customer' | 'vendor';
 
 interface SignInPageProps {
   onSignIn: (payload: {
-    phone: string;
-    email: string;
+    identifier: string;
+    password: string;
     customerType?: 'standard' | 'event-planner';
   }) => void | Promise<void>;
-  onVendorSignIn: (payload: { phone: string; email: string }) => void | Promise<void>;
+  onVendorSignIn: (payload: { identifier: string; password: string }) => void | Promise<void>;
   onNavigate: (page: string, data?: unknown) => void;
   initialMode?: SignInMode;
+  initialCustomerIdentifier?: string;
+  successMessage?: string;
   isLoading?: boolean;
 }
 
@@ -21,36 +23,58 @@ export const SignInPage: React.FC<SignInPageProps> = ({
   onVendorSignIn,
   onNavigate,
   initialMode = 'customer',
+  initialCustomerIdentifier = '',
+  successMessage = '',
   isLoading = false,
 }) => {
   const [mode, setMode] = useState<SignInMode>(initialMode);
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
+  const [vendorIdentifier, setVendorIdentifier] = useState('');
+  const [customerIdentifier, setCustomerIdentifier] = useState(initialCustomerIdentifier);
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
     setMode(initialMode);
   }, [initialMode]);
 
+  useEffect(() => {
+    if (initialCustomerIdentifier) {
+      setCustomerIdentifier(initialCustomerIdentifier);
+    }
+  }, [initialCustomerIdentifier]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const phoneDigits = phone.replace(/\D/g, '');
-    if (phoneDigits.length < 10) {
-      setError('Enter a valid 10-digit mobile number.');
+    if (mode === 'vendor') {
+      const identifier = vendorIdentifier.trim();
+      if (!identifier) {
+        setError('Enter your email or phone.');
+        return;
+      }
+      if (!password.trim()) {
+        setError('Enter your password.');
+        return;
+      }
+      setError('');
+      try {
+        await onVendorSignIn({ identifier, password: password.trim() });
+      } catch {
+        setError('Sign in failed. Check the API is running at localhost:8080.');
+      }
       return;
     }
-    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      setError('Enter a valid email address.');
+    const identifier = customerIdentifier.trim();
+    if (!identifier) {
+      setError('Enter your email or phone.');
+      return;
+    }
+    if (!password.trim()) {
+      setError('Enter your password.');
       return;
     }
     setError('');
-    const payload = { phone: phone.trim(), email: email.trim() };
     try {
-      if (mode === 'vendor') {
-        await onVendorSignIn(payload);
-      } else {
-        await onSignIn({ ...payload, customerType: 'event-planner' });
-      }
+      await onSignIn({ identifier, password: password.trim(), customerType: 'event-planner' });
     } catch {
       setError('Sign in failed. Check the API is running at localhost:8080.');
     }
@@ -76,6 +100,15 @@ export const SignInPage: React.FC<SignInPageProps> = ({
           </h1>
           <p className="text-sm text-stone-600 dark:text-stone-400 mt-2">{modeDescription}</p>
         </div>
+
+        {successMessage && mode === 'customer' && (
+          <div
+            className="mb-6 rounded-lg border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/40 px-4 py-3 text-sm text-green-800 dark:text-green-200"
+            role="status"
+          >
+            {successMessage}
+          </div>
+        )}
 
         <div className="grid grid-cols-2 gap-1 rounded-lg border border-stone-200 dark:border-stone-700 p-1 mb-6 bg-white dark:bg-stone-850">
           <button
@@ -114,39 +147,60 @@ export const SignInPage: React.FC<SignInPageProps> = ({
           onSubmit={handleSubmit}
           className="bg-white dark:bg-stone-850 rounded-2xl border border-stone-200 dark:border-stone-700 p-6 sm:p-8 shadow-sm space-y-5"
         >
-          <div>
-            <label htmlFor="signin-phone" className="block text-xs font-bold tracking-wide text-stone-500 mb-1.5">
-              Mobile number
-            </label>
-            <div className="relative">
-              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" aria-hidden />
+          {mode === 'vendor' ? (
+            <div>
+              <label
+                htmlFor="signin-vendor-identifier"
+                className="block text-xs font-bold tracking-wide text-stone-500 mb-1.5"
+              >
+                Email or phone
+              </label>
               <input
-                id="signin-phone"
-                type="tel"
-                inputMode="tel"
-                autoComplete="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="10-digit mobile number"
-                className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700"
+                id="signin-vendor-identifier"
+                type="text"
+                autoComplete="username"
+                value={vendorIdentifier}
+                onChange={(e) => setVendorIdentifier(e.target.value)}
+                placeholder="business@example.com or 9876543210"
+                className="w-full px-3 py-2.5 rounded-lg bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700"
               />
             </div>
-          </div>
+          ) : (
+            <div>
+              <label
+                htmlFor="signin-customer-identifier"
+                className="block text-xs font-bold tracking-wide text-stone-500 mb-1.5"
+              >
+                Email or phone
+              </label>
+              <input
+                id="signin-customer-identifier"
+                type="text"
+                autoComplete="username"
+                value={customerIdentifier}
+                onChange={(e) => setCustomerIdentifier(e.target.value)}
+                placeholder="you@example.com or 9876543210"
+                className="w-full px-3 py-2.5 rounded-lg bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700"
+              />
+            </div>
+          )}
 
           <div>
-            <label htmlFor="signin-email" className="block text-xs font-bold tracking-wide text-stone-500 mb-1.5">
-              Email
+            <label
+              htmlFor="signin-password"
+              className="block text-xs font-bold tracking-wide text-stone-500 mb-1.5"
+            >
+              Password
             </label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" aria-hidden />
               <input
-                id="signin-email"
-                type="email"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={mode === 'vendor' ? 'business@example.com' : 'you@example.com'}
-                className="w-full pl-10 pr-3 py-2.5 rounded-lg bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700"
+                id="signin-password"
+                type="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Your password"
+                className="w-full px-3 py-2.5 rounded-lg bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700"
               />
             </div>
           </div>

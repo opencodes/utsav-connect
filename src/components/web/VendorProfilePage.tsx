@@ -28,7 +28,8 @@ import { readImageFileAsDataUrl } from './VendorProfilePage/imageUploadUtils';
 import type { VendorDashboardSession, VendorEnquiry } from './VendorProfilePage/vendorProfileData';
 import {
   addVendorService,
-  fetchVendor,
+  changeVendorPassword,
+  fetchVendorDashboard,
   fetchVendorEnquiries,
   updateVendorProfile,
 } from '../../api/vendors';
@@ -81,6 +82,12 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
   const [settingsError, setSettingsError] = useState('');
   const [settingsSaved, setSettingsSaved] = useState(false);
   const [savingSettings, setSavingSettings] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSaved, setPasswordSaved] = useState(false);
+  const [savingPassword, setSavingPassword] = useState(false);
   const [addressLine1, setAddressLine1] = useState('');
   const [addressLine2, setAddressLine2] = useState('');
   const [landmark, setLandmark] = useState('');
@@ -90,19 +97,24 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
   const [villagesServed, setVillagesServed] = useState<string[]>(['']);
   const profileImageInputRef = useRef<HTMLInputElement>(null);
   const [vendor, setVendor] = useState<VendorDetailProfile | null>(null);
+  const [listingLoading, setListingLoading] = useState(false);
+  const [listingStatus, setListingStatus] = useState<string | undefined>();
 
   const [enquiries, setEnquiries] = useState<VendorEnquiry[]>([]);
 
   useEffect(() => {
     if (!session.vendorId) {
       setVendor(null);
+      setListingLoading(false);
       return;
     }
     let cancelled = false;
-    void fetchVendor(session.vendorId)
+    setListingLoading(true);
+    void fetchVendorDashboard(session.vendorId)
       .then((listing) => {
         if (cancelled) return;
         if (listing) {
+          setListingStatus(listing.status);
           const profile = buildVendorDetailProfile(listing);
           setVendor(profile);
           setServices(profile.services);
@@ -121,10 +133,17 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
           );
         } else {
           setVendor(null);
+          setListingStatus(undefined);
         }
       })
       .catch(() => {
-        if (!cancelled) setVendor(null);
+        if (!cancelled) {
+          setVendor(null);
+          setListingStatus(undefined);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setListingLoading(false);
       });
     return () => {
       cancelled = true;
@@ -220,6 +239,40 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
     }
   };
 
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError('');
+    setPasswordSaved(false);
+    if (!currentPassword.trim() || !newPassword.trim()) {
+      setPasswordError('Enter current password and new password.');
+      return;
+    }
+    if (newPassword.trim().length < 8) {
+      setPasswordError('New password must be at least 8 characters.');
+      return;
+    }
+    if (newPassword.trim() !== (confirmPassword.trim() || newPassword.trim())) {
+      setPasswordError('Passwords do not match.');
+      return;
+    }
+    setSavingPassword(true);
+    try {
+      await changeVendorPassword(session.vendorId, {
+        currentPassword: currentPassword.trim(),
+        newPassword: newPassword.trim(),
+        confirmPassword: (confirmPassword.trim() || newPassword.trim()).trim(),
+      });
+      setPasswordSaved(true);
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch {
+      setPasswordError('Could not change password. Check your current password and try again.');
+    } finally {
+      setSavingPassword(false);
+    }
+  };
+
   const serviceCategoryOptions = useMemo(() => {
     const fromServices = services.map((s) => s.category).filter(Boolean);
     return [...new Set([...fromServices, ...DEFAULT_SERVICE_CATEGORIES])];
@@ -263,10 +316,22 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
     { id: 'settings', label: 'Settings', icon: <Settings className="w-4 h-4" /> },
   ];
 
+  if (listingLoading) {
+    return (
+      <div className="min-h-screen bg-[#FFFDF7] dark:bg-stone-900 px-4 pt-28 pb-16 text-center">
+        <p className="text-stone-600 dark:text-stone-400">Loading your listing…</p>
+      </div>
+    );
+  }
+
   if (!vendor) {
     return (
       <div className="min-h-screen bg-[#FFFDF7] dark:bg-stone-900 px-4 pt-28 pb-16 text-center">
-        <p className="text-stone-600 dark:text-stone-400">Listing not found.</p>
+        <p className="text-stone-600 dark:text-stone-400">
+          {!session.vendorId
+            ? 'Sign in again to load your vendor dashboard.'
+            : 'Listing not found.'}
+        </p>
         <button
           type="button"
           onClick={() => onNavigate('list-your-service')}
@@ -280,6 +345,15 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
 
   return (
     <div className="min-h-screen bg-[#FFFDF7] dark:bg-stone-900" id="vendor-profile-page">
+      {listingStatus === 'pending_review' && (
+        <div
+          className="bg-amber-50 dark:bg-amber-950/40 border-b border-amber-200 dark:border-amber-800 px-4 py-3 text-center text-sm text-amber-900 dark:text-amber-100"
+          role="status"
+        >
+          Your listing is under review. You can manage your profile here; it will appear publicly
+          once approved.
+        </div>
+      )}
       {/* Top hero banner */}
       <div
         className="relative w-full h-44 sm:h-52 md:h-56 overflow-hidden"
@@ -745,6 +819,87 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                   Add your full business address and villages you serve. Families use this to find
                   vendors near their event location.
                 </p>
+
+                <div className="rounded-2xl border border-stone-200/80 dark:border-stone-700 bg-white dark:bg-stone-800 p-6 space-y-4">
+                  <h3 className="heading-card text-base text-stone-900 dark:text-white">
+                    Change password
+                  </h3>
+                  <form onSubmit={handleChangePassword} className="space-y-4">
+                    {passwordError && (
+                      <p
+                        className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900/50 rounded-lg px-3 py-2"
+                        role="alert"
+                      >
+                        {passwordError}
+                      </p>
+                    )}
+                    {passwordSaved && (
+                      <p
+                        className="text-sm text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-100 dark:border-green-900/50 rounded-lg px-3 py-2"
+                        role="status"
+                      >
+                        Password updated.
+                      </p>
+                    )}
+                    <div className="space-y-1.5">
+                      <label
+                        htmlFor="vendor-current-password"
+                        className="text-xs font-semibold text-stone-700 dark:text-stone-300"
+                      >
+                        Current password
+                      </label>
+                      <input
+                        id="vendor-current-password"
+                        type="password"
+                        autoComplete="current-password"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        className={INPUT_CLASS}
+                      />
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label
+                          htmlFor="vendor-new-password"
+                          className="text-xs font-semibold text-stone-700 dark:text-stone-300"
+                        >
+                          New password
+                        </label>
+                        <input
+                          id="vendor-new-password"
+                          type="password"
+                          autoComplete="new-password"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          className={INPUT_CLASS}
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label
+                          htmlFor="vendor-confirm-password"
+                          className="text-xs font-semibold text-stone-700 dark:text-stone-300"
+                        >
+                          Confirm password
+                        </label>
+                        <input
+                          id="vendor-confirm-password"
+                          type="password"
+                          autoComplete="new-password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          className={INPUT_CLASS}
+                        />
+                      </div>
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={savingPassword}
+                      className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer disabled:opacity-60"
+                    >
+                      {savingPassword ? 'Updating…' : 'Update password'}
+                    </button>
+                  </form>
+                </div>
 
                 <form onSubmit={handleSaveSettings} className="space-y-6">
                   {settingsError && (

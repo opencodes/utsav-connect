@@ -1,4 +1,5 @@
 import { apiRequest } from './client';
+import { clearAuthSession } from '../authStorage';
 import { setApiToken } from './config';
 import type { CustomerType } from '../types';
 
@@ -22,15 +23,16 @@ export type AuthSession = {
 };
 
 export async function signInCustomer(
-  phone: string,
-  email: string,
+  params: { phone?: string; email?: string },
+  password: string,
   profile?: { name?: string; customerType?: CustomerType }
 ): Promise<AuthSession> {
   const data = await apiRequest<AuthSession>('/auth/sign-in', {
     method: 'POST',
     body: {
-      phone,
-      email,
+      phone: params.phone,
+      email: params.email,
+      password,
       name: profile?.name,
       customerType: profile?.customerType ?? 'standard',
     },
@@ -40,8 +42,8 @@ export async function signInCustomer(
 }
 
 export async function signInVendor(
-  phone: string,
-  email: string,
+  params: { phone?: string; email?: string },
+  password: string,
   vendorMeta?: {
     vendorId?: string;
     businessName?: string;
@@ -52,20 +54,32 @@ export async function signInVendor(
     '/auth/vendor/sign-in',
     {
       method: 'POST',
-      body: { phone, email, ...vendorMeta },
+      body: {
+        phone: params.phone,
+        email: params.email,
+        password,
+        ...vendorMeta,
+      },
     }
   );
   setApiToken(data.token);
   return data;
 }
 
-export async function registerEventPlanner(payload: Record<string, unknown>): Promise<AuthSession> {
-  const data = await apiRequest<AuthSession>('/auth/register/planner', {
+export type PlannerRegisterResult = {
+  registered: boolean;
+  user: ApiUser;
+  workspace?: { eventId: string; eventName: string };
+};
+
+/** Saves planner account + first event only when registration form is submitted (end of flow). */
+export async function registerEventPlanner(
+  payload: Record<string, unknown>
+): Promise<PlannerRegisterResult> {
+  return apiRequest<PlannerRegisterResult>('/auth/register/planner', {
     method: 'POST',
     body: payload,
   });
-  setApiToken(data.token);
-  return data;
 }
 
 export async function fetchAuthMe(): Promise<{ user: ApiUser }> {
@@ -73,5 +87,5 @@ export async function fetchAuthMe(): Promise<{ user: ApiUser }> {
 }
 
 export function clearApiSession(): void {
-  setApiToken(null);
+  clearAuthSession();
 }

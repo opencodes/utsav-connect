@@ -18,6 +18,7 @@ import LogoSvg from '../../assets/logo.svg';
 import LogoLightSvg from '../../assets/logo-light.svg';
 import { APP_NAME } from '../../brand';
 import { HERO_VENDOR_CITIES } from './LandingPage/heroVendorSearch';
+import { DEFAULT_CITY_VALUE } from '../../data/cities';
 
 interface CustomerHeaderProps {
   onNavigate: (page: string, data?: unknown) => void;
@@ -116,7 +117,9 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
   }, [cityMenuOpen]);
 
   const cityLabel =
-    HEADER_CITIES.find((c) => c.value === selectedCity)?.label ?? 'Noida';
+    HEADER_CITIES.find((c) => c.value === selectedCity)?.label ??
+    HEADER_CITIES.find((c) => c.value === DEFAULT_CITY_VALUE)?.label ??
+    selectedCity;
 
   const goTo = (page: string, data?: unknown) => {
     onNavigate(page, data);

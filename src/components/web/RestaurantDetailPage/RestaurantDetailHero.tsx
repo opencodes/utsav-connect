@@ -1,6 +1,7 @@
 import React from 'react';
 import { Heart, Star, Clock } from 'lucide-react';
 import { Restaurant } from '../../../types';
+import { RESTAURANT_HUB_ADDRESS } from '../../../data/cities';
 
 interface RestaurantDetailHeroProps {
   restaurant: Restaurant;
@@ -46,7 +47,7 @@ export const RestaurantDetailHero: React.FC<RestaurantDetailHeroProps> = ({
               {restaurant.cuisine.join(', ')}
             </p>
             <p className="text-xs text-stone-400">
-              Address: Sector 56, Noida, opposite major water fountain (Utsav hub)
+              Address: {RESTAURANT_HUB_ADDRESS}
             </p>
           </div>
 

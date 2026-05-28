@@ -4,13 +4,4 @@ export interface HeroVendorSearchPayload {
   city?: string;
 }
 
-export const HERO_VENDOR_CITIES = [
-  { value: '', label: 'All Cities' },
-  { value: 'noida', label: 'Noida' },
-  { value: 'delhi', label: 'Delhi NCR' },
-  { value: 'gurgaon', label: 'Gurgaon' },
-  { value: 'faridabad', label: 'Faridabad' },
-  { value: 'jaipur', label: 'Jaipur' },
-  { value: 'mumbai', label: 'Mumbai' },
-];
-
+export { HERO_VENDOR_CITIES } from '../../../data/cities';

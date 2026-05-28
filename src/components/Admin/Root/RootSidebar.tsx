@@ -1,11 +1,13 @@
 import React from 'react';
 import { Users, Store, ArrowLeft } from 'lucide-react';
+import type { AdminSessionDisplay } from '../adminSessionDisplay';
 
 interface RootSidebarProps {
   currentTab: string;
   onSelectTab: (tab: string) => void;
   onExit: () => void;
   onOpenAdminWorkspace?: () => void;
+  session?: AdminSessionDisplay;
 }
 
 export const RootSidebar: React.FC<RootSidebarProps> = ({
@@ -13,6 +15,7 @@ export const RootSidebar: React.FC<RootSidebarProps> = ({
   onSelectTab,
   onExit,
   onOpenAdminWorkspace,
+  session,
 }) => {
   const items = [
     { id: 'admin-users', name: 'Admin users', icon: Users },
@@ -55,7 +58,22 @@ export const RootSidebar: React.FC<RootSidebarProps> = ({
       </nav>
 
       <div className="admin-sidebar-footer">
-        <p className="admin-role-badge">Signed in as root</p>
+        {session ? (
+          <div className="admin-sidebar-user" id="root-sidebar-signed-in-user">
+            <div className="admin-sidebar-user-avatar" aria-hidden>
+              {session.initials}
+            </div>
+            <div className="admin-sidebar-user-meta min-w-0">
+              <p className="admin-sidebar-user-name truncate">{session.displayName}</p>
+              <p className="admin-sidebar-user-role">{session.roleLabel}</p>
+              {session.detailLine ? (
+                <p className="admin-sidebar-user-detail truncate">{session.detailLine}</p>
+              ) : null}
+            </div>
+          </div>
+        ) : (
+          <p className="admin-role-badge">Signed in as root</p>
+        )}
         <button type="button" onClick={onExit} className="admin-exit-btn">
           <ArrowLeft className="w-4 h-4 shrink-0" aria-hidden />
           <span>Sign out</span>

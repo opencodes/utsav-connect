@@ -11,6 +11,7 @@ import {
 import { APP_NAME, SUPPORT_EMAIL } from '../../brand';
 import { LandingSection } from './LandingPage/LandingSection';
 import { PageBanner } from './PageBanner';
+import { CONTACT_CITY_PLACEHOLDER, OFFICE_ADDRESS_LINES } from '../../data/cities';
 
 interface ContactUsPageProps {
   onNavigate: (page: string, data?: unknown) => void;
@@ -134,9 +135,9 @@ export const ContactUsPage: React.FC<ContactUsPageProps> = ({ onNavigate }) => {
                   <div>
                     <p className="font-semibold text-stone-900 dark:text-white">Office</p>
                     <p>
-                      Sector 62, Noida, Uttar Pradesh 201309
+                      {OFFICE_ADDRESS_LINES[0]}
                       <br />
-                      National Capital Region, India
+                      {OFFICE_ADDRESS_LINES[1]}
                     </p>
                   </div>
                 </li>
@@ -280,7 +281,7 @@ export const ContactUsPage: React.FC<ContactUsPageProps> = ({ onNavigate }) => {
                       name="city"
                       value={formData.city}
                       onChange={handleChange}
-                      placeholder="e.g. Noida, Delhi"
+                      placeholder={CONTACT_CITY_PLACEHOLDER}
                       className={INPUT_CLASS}
                     />
                   </div>

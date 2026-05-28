@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { User, MapPin, History, Wallet, Award, Settings, Plus, RotateCcw, MessageSquare, CreditCard, LifeBuoy, CalendarPlus } from 'lucide-react';
 import { UserProfile, SavedAddress } from '../../types';
 import { AnimatedDiya } from './GoldenDeco';
+import { DEFAULT_CITY_REGION_LABEL } from '../../data/cities';
 
 interface UserProfilePageProps {
   userProfile: UserProfile;
@@ -44,7 +45,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
       id: `addr-${Date.now()}`,
       type: newType,
       addressLine: newStreet,
-      city: 'Noida, UP',
+      city: DEFAULT_CITY_REGION_LABEL,
     };
     setAddresses([...addresses, newAddr]);
     setNewStreet('');

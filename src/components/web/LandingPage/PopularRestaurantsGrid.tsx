@@ -3,6 +3,7 @@ import { Flame, Star, Clock } from 'lucide-react';
 import { fetchRestaurants } from '../../../api/restaurants';
 import type { Restaurant } from '../../../types';
 import { AnimatedDiya } from '../GoldenDeco';
+import { TRENDING_AREA_LABEL } from '../../../data/cities';
 
 interface PopularRestaurantsGridProps {
   onNavigate: (page: string, data?: any) => void;
@@ -32,7 +33,7 @@ export const PopularRestaurantsGrid: React.FC<PopularRestaurantsGridProps> = ({ 
             </span>
           </div>
           <h3 className="serif text-2xl md:text-3xl font-black italic text-stone-900 dark:text-white tracking-tight text-[#C51C13]">
-            Trending Vendors in Noida Sector 56
+            Trending Vendors in {TRENDING_AREA_LABEL}
           </h3>
         </div>
         <button

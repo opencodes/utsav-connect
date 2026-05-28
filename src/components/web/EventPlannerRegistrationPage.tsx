@@ -9,6 +9,7 @@ import {
   Send,
   User,
 } from 'lucide-react';
+import { ApiError } from '../../api/client';
 import { APP_NAME, SUPPORT_EMAIL } from '../../brand';
 import { LandingSection } from './LandingPage/LandingSection';
 import { PageBanner } from './PageBanner';
@@ -27,6 +28,7 @@ export interface EventPlannerRegistrationPayload {
   fullName: string;
   email: string;
   phone: string;
+  password: string;
   companyName?: string;
   primaryEventType: string;
   city: string;
@@ -46,7 +48,8 @@ interface EventPlannerRegistrationPageProps {
   initialPrefill?: EventPlannerRegisterPrefill;
   /** Skip event-details step when user already entered them on the homepage hero. */
   startAtAccountStep?: boolean;
-  onRegisterComplete?: (payload: EventPlannerRegistrationPayload) => void;
+  onRegisterComplete?: (payload: EventPlannerRegistrationPayload) => Promise<void>;
+  isRegistering?: boolean;
 }
 
 const INPUT_CLASS =
@@ -80,6 +83,7 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
   initialPrefill = {} as EventPlannerRegisterPrefill,
   startAtAccountStep = false,
   onRegisterComplete,
+  isRegistering = false,
 }) => {
   const [step, setStep] = useState(startAtAccountStep ? 1 : 0);
   const [formData, setFormData] = useState({ ...initialForm });
@@ -176,7 +180,7 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
     setStep(0);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateStep(0)) {
       setStep(0);
@@ -187,8 +191,9 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
 
     const payload: EventPlannerRegistrationPayload = {
       fullName: formData.fullName.trim(),
-      email: formData.email.trim(),
+      email: formData.email.trim().toLowerCase(),
       phone: formData.contactPhone.trim(),
+      password: formData.password,
       companyName: formData.companyName.trim() || undefined,
       primaryEventType: draftEvent.eventType ?? '',
       city: draftEvent.city ?? '',
@@ -204,10 +209,21 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
 
     if (onRegisterComplete) {
       setIsSubmitting(true);
-      window.setTimeout(() => {
-        onRegisterComplete(payload);
+      try {
+        await onRegisterComplete(payload);
+        setApplicationId(`PLNR-${Date.now().toString().slice(-6)}`);
+        setIsSubmitted(true);
+      } catch (err) {
+        const message =
+          err instanceof ApiError
+            ? err.message
+            : err instanceof Error && err.message
+              ? err.message
+              : 'Registration failed. Please try again.';
+        setFormError(message);
+      } finally {
         setIsSubmitting(false);
-      }, 400);
+      }
       return;
     }
 
@@ -242,7 +258,7 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
         variant="planner"
         eyebrow="Event planner"
         title={`Register as a ${APP_NAME} customer for event planning`}
-        description="Step 1: tell us about your event. Step 2: create your customer login — then open your planning workspace."
+        description="Step 1: event details. Step 2: your account. Everything is saved when you submit at the end — then sign in to open your workspace."
         imageSrc="https://images.unsplash.com/photo-1530103862673-de8c9a59d780?w=1400&auto=format&fit=crop&q=80"
         imageAlt="Festive event celebration"
       >
@@ -631,11 +647,15 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
                     ) : (
                       <button
                         type="submit"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || isRegistering}
                         className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] disabled:opacity-60 text-white text-sm font-semibold transition-colors cursor-pointer sm:ml-auto"
                       >
                         <Send className="w-4 h-4" aria-hidden />
-                        {isSubmitting ? 'Creating account…' : 'Create account & open workspace'}
+                        {isSubmitting || isRegistering
+                          ? 'Saving registration…'
+                          : onRegisterComplete
+                            ? 'Save & create account'
+                            : 'Create account & open workspace'}
                       </button>
                     )}
                   </div>
@@ -649,11 +669,22 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
                   </div>
                   <div className="space-y-2 text-center sm:text-left">
                     <h2 className="heading-card text-xl text-stone-900 dark:text-white">
-                      Application received
+                      {onRegisterComplete ? 'Registration saved' : 'Application received'}
                     </h2>
                     <p className="text-sm text-stone-600 dark:text-stone-400">
-                      Thanks, <strong>{formData.fullName}</strong>. Reference{' '}
-                      <strong className="font-mono">{applicationId}</strong>.
+                      Thanks, <strong>{formData.fullName}</strong>.
+                      {onRegisterComplete ? (
+                        <>
+                          {' '}
+                          Your account and event details have been saved. Sign in to open your
+                          planning workspace.
+                        </>
+                      ) : (
+                        <>
+                          {' '}
+                          Reference <strong className="font-mono">{applicationId}</strong>.
+                        </>
+                      )}
                     </p>
                   </div>
                 </div>

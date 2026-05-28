@@ -18,6 +18,7 @@ import { useVendorCategories } from '../../hooks/useVendorCategories';
 import { primaryLocationFromValues, resolveStateDistrictFromVendor } from '../../indiaLocations';
 import { StateDistrictSelect } from './StateDistrictSelect';
 import { registerVendor } from '../../api/vendors';
+import { DEFAULT_COUNTRY_CITY_LABEL } from '../../data/cities';
 
 interface VendorRegistrationPageProps {
   onNavigate: (page: string, data?: unknown) => void;
@@ -659,7 +660,7 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
             </span>
             <span className="inline-flex items-center gap-2">
               <MapPin className="w-4 h-4 text-[#C51C13] dark:text-orange-400" aria-hidden />
-              Noida, India
+              {DEFAULT_COUNTRY_CITY_LABEL}
             </span>
           </div>
           <button

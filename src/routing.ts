@@ -30,9 +30,82 @@ export interface EventPlannerSearchState {
   eventType: string;
 }
 
+export type AdminRouteAccess = 'platform' | 'planner';
+
+/** Platform commerce tabs under /admin/{id} */
+export const COMMERCE_ADMIN_TAB_IDS = [
+  'dashboard',
+  'restaurants',
+  'orders',
+  'customers',
+  'marketing',
+  'vendor-approvals',
+  'vendor-categories',
+] as const;
+
+/** Event planner workspace tabs under /admin/{id} */
+export const PLANNER_ADMIN_TAB_IDS = [
+  'planner-dashboard',
+  'planner-events',
+  'planner-events-create',
+  'planner-events-history',
+  'planner-guests',
+  'planner-feast',
+  'planner-vendors',
+  'planner-budget',
+  'planner-chuman',
+  'planner-inventory',
+] as const;
+
+const ALL_ADMIN_TAB_IDS = new Set<string>([
+  ...COMMERCE_ADMIN_TAB_IDS,
+  ...PLANNER_ADMIN_TAB_IDS,
+]);
+
+export function adminTabPath(tab: string): string {
+  return `/admin/${encodeURIComponent(tab.trim())}`;
+}
+
+export function isCommerceAdminTab(tab: string): boolean {
+  return (COMMERCE_ADMIN_TAB_IDS as readonly string[]).includes(tab);
+}
+
+export function isPlannerAdminTab(tab: string): boolean {
+  return (PLANNER_ADMIN_TAB_IDS as readonly string[]).includes(tab);
+}
+
+/** Pick a valid tab for the current admin session (planner vs platform). */
+export function resolveAdminTab(
+  tab: string | undefined,
+  options: { plannerWorkspace: boolean; platformAdmin: boolean }
+): string {
+  const requested = tab?.trim() ?? '';
+  if (requested && ALL_ADMIN_TAB_IDS.has(requested)) {
+    if (options.plannerWorkspace && !options.platformAdmin) {
+      return isPlannerAdminTab(requested) ? requested : 'planner-dashboard';
+    }
+    if (options.platformAdmin && !options.plannerWorkspace) {
+      return isCommerceAdminTab(requested) ? requested : 'dashboard';
+    }
+    if (isCommerceAdminTab(requested) || isPlannerAdminTab(requested)) {
+      return requested;
+    }
+  }
+  if (options.plannerWorkspace) {
+    return 'planner-dashboard';
+  }
+  if (options.platformAdmin) {
+    return 'dashboard';
+  }
+  return 'planner-dashboard';
+}
+
 export interface ParsedRoute {
   page: string;
   admin?: boolean;
+  adminTab?: string;
+  /** Bypasses stale auth state when opening admin right after sign-in. */
+  adminAccess?: AdminRouteAccess;
   root?: boolean;
   restaurantId?: string;
   vendorId?: string;
@@ -148,6 +221,15 @@ export function parseLocation(
 ): ParsedRoute {
   const params = new URLSearchParams(search);
   const path = pathname.replace(/\/+$/, '') || '/';
+
+  const adminTabMatch = path.match(/^\/admin\/([^/]+)$/);
+  if (adminTabMatch) {
+    return {
+      page: 'landing',
+      admin: true,
+      adminTab: decodeURIComponent(adminTabMatch[1]),
+    };
+  }
 
   if (path === '/admin') {
     return { page: 'landing', admin: true };

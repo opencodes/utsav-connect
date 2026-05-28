@@ -4,6 +4,7 @@ import { APP_NAME } from '../../../brand';
 import { RangoliMandala } from '../GoldenDeco';
 import heroBanner from '../../../assets/banner-1.png';
 import { HERO_VENDOR_CITIES, HeroVendorSearchPayload } from './heroVendorSearch';
+import { POPULAR_LOCALITIES } from '../../../data/cities';
 import { useVendorCategories } from '../../../hooks/useVendorCategories';
 import { getHeroCategoryOptions } from '../../../vendorCategories';
 import { HERO_EVENT_TYPES, HeroEventSearchPayload } from './heroEventSearch';
@@ -17,15 +18,6 @@ interface HeroSectionProps {
 }
 
 type HeroSearchTab = 'vendors' | 'planner';
-
-const POPULAR_LOCALITIES = [
-  { label: 'Noida', city: 'noida' },
-  { label: 'Delhi NCR', city: 'delhi' },
-  { label: 'Gurgaon', city: 'gurgaon' },
-  { label: 'Faridabad', city: 'faridabad' },
-  { label: 'Jaipur', city: 'jaipur' },
-  { label: 'Mumbai', city: 'mumbai' },
-] as const;
 
 const QUICK_VENDOR_TAGS = [
   { label: 'Halwai', categoryId: 'food' },
@@ -75,7 +67,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const [eventType, setEventType] = useState('');
 
   const cityHeadline =
-    HERO_VENDOR_CITIES.find((c) => c.value === city)?.label ?? 'Noida';
+    HERO_VENDOR_CITIES.find((c) => c.value === city)?.label ?? '—';
 
   useEffect(() => {
     setCity(selectedCity);

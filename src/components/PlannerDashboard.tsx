@@ -51,6 +51,16 @@ export const PlannerDashboard: React.FC<PlannerDashboardProps> = ({ onNavigateTa
     const guests = readPlannerStorage<PlannerGuest[]>(PLANNER_STORAGE_KEYS.guests, []);
     const subEvents = readPlannerStorage<unknown[]>(PLANNER_STORAGE_KEYS.subEvents, []);
     const rituals = readPlannerStorage<unknown[]>(PLANNER_STORAGE_KEYS.rituals, []);
+    const ritualCountFromSubs = Array.isArray(subEvents)
+      ? subEvents.reduce(
+          (n, row) =>
+            n +
+            (Array.isArray((row as { rituals?: unknown[] }).rituals)
+              ? (row as { rituals: unknown[] }).rituals.length
+              : 0),
+          0
+        )
+      : 0;
     const vendors = readPlannerStorage<unknown[]>(PLANNER_STORAGE_KEYS.vendors, []);
     const feast = readPlannerStorage<unknown[]>(PLANNER_STORAGE_KEYS.feast, []);
     const expenses = readPlannerStorage<PlannerExpense[]>(PLANNER_STORAGE_KEYS.expenses, []);
@@ -69,7 +79,7 @@ export const PlannerDashboard: React.FC<PlannerDashboardProps> = ({ onNavigateTa
       confirmedGuests,
       pendingGuests,
       subEventCount: subEvents.length,
-      ritualCount: rituals.length,
+      ritualCount: ritualCountFromSubs > 0 ? ritualCountFromSubs : rituals.length,
       vendorCount: vendors.length,
       feastCount: feast.length,
       spent,

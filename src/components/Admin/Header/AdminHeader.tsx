@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Bell, Search, RefreshCw } from 'lucide-react';
 import { APP_NAME } from '../../../brand';
+import type { AdminSessionDisplay } from '../adminSessionDisplay';
 
 const ADMIN_TAB_TITLES: Record<string, string> = {
   dashboard: 'Dashboard',
@@ -13,6 +14,8 @@ const ADMIN_TAB_TITLES: Record<string, string> = {
   'admin-users': 'Admin users',
   'planner-dashboard': 'Dashboard',
   'planner-events': 'Event details',
+  'planner-events-create': 'Create Event',
+  'planner-events-history': 'Event History',
   'planner-guests': 'Guests & RSVP',
   'planner-feast': 'Feast & Catering',
   'planner-vendors': 'Vendors',
@@ -28,12 +31,20 @@ function tabTitle(tabId: string): string {
 interface AdminHeaderProps {
   currentTabName: string;
   plannerWorkspace?: boolean;
+  session?: AdminSessionDisplay;
 }
 
 export const AdminHeader: React.FC<AdminHeaderProps> = ({
   currentTabName,
   plannerWorkspace = false,
+  session,
 }) => {
+  const user = session ?? {
+    displayName: plannerWorkspace ? 'Planner account' : 'Admin',
+    roleLabel: 'Active',
+    detailLine: '',
+    initials: plannerWorkspace ? 'EP' : 'AD',
+  };
   const [showNotifications, setShowNotifications] = useState(false);
   const displayTitle = tabTitle(currentTabName);
 
@@ -150,13 +161,19 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
           )}
         </div>
 
-        <div className="admin-user-chip hidden sm:flex">
+        <div
+          className="admin-user-chip hidden sm:flex"
+          title={[user.displayName, user.roleLabel, user.detailLine].filter(Boolean).join(' · ')}
+        >
           <div className="admin-user-avatar" aria-hidden>
-            {plannerWorkspace ? 'EP' : 'AD'}
+            {user.initials}
           </div>
-          <div>
-            <p className="admin-user-name">{plannerWorkspace ? 'Planner account' : 'Admin'}</p>
-            <p className="admin-user-status">Active</p>
+          <div className="admin-user-meta min-w-0">
+            <p className="admin-user-name truncate max-w-[10rem] lg:max-w-[14rem]">{user.displayName}</p>
+            <p className="admin-user-status">{user.roleLabel}</p>
+            {user.detailLine ? (
+              <p className="admin-user-detail truncate max-w-[10rem] lg:max-w-[14rem]">{user.detailLine}</p>
+            ) : null}
           </div>
         </div>
       </div>

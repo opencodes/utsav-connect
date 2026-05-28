@@ -1,16 +1,8 @@
 import { HERO_VENDOR_CITIES } from '../LandingPage/heroVendorSearch';
+import { CITY_MATCH_TERMS } from '../../../data/cities';
 
 /** Cities shown in vendor filters (excludes "All Cities") */
 export const VENDOR_FILTER_CITIES = HERO_VENDOR_CITIES.filter((c) => c.value);
-
-const CITY_MATCH_TERMS: Record<string, string[]> = {
-  noida: ['noida', 'noida ncr', 'noida extension', 'ghaziabad', 'indirapuram'],
-  delhi: ['delhi', 'ncr', 'new delhi', 'kamla nagar', 'chawri', 'chattarpur', 'tilak nagar'],
-  gurgaon: ['gurgaon', 'gurugram', 'sohna'],
-  faridabad: ['faridabad'],
-  jaipur: ['jaipur'],
-  mumbai: ['mumbai', 'bandra'],
-};
 
 export function getCityLabel(cityValue: string): string {
   if (!cityValue) return 'All cities';

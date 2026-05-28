@@ -1,5 +1,9 @@
 import { apiRequest } from './client';
 import { PLANNER_STORAGE_KEYS } from '../plannerStorage';
+import {
+  flattenRitualsFromSubEvents,
+  normalizeSubEventsFromStorage,
+} from '../plannerSubEventTypes';
 
 export type PlannerWorkspace = {
   events?: unknown[];
@@ -36,10 +40,14 @@ export async function savePlannerWorkspace(workspace: PlannerWorkspace): Promise
 
 /** Copy API workspace into planner localStorage keys (UI still reads localStorage). */
 export function applyPlannerWorkspaceToStorage(workspace: PlannerWorkspace): void {
+  const rawSubEvents = Array.isArray(workspace.subEvents) ? workspace.subEvents : [];
+  const rawRituals = Array.isArray(workspace.rituals) ? workspace.rituals : [];
+  const subEvents = normalizeSubEventsFromStorage(rawSubEvents, rawRituals);
+
   const pairs: [string, unknown][] = [
     [PLANNER_STORAGE_KEYS.events, workspace.events ?? []],
-    [PLANNER_STORAGE_KEYS.subEvents, workspace.subEvents ?? []],
-    [PLANNER_STORAGE_KEYS.rituals, workspace.rituals ?? []],
+    [PLANNER_STORAGE_KEYS.subEvents, subEvents],
+    [PLANNER_STORAGE_KEYS.rituals, flattenRitualsFromSubEvents(subEvents)],
     [PLANNER_STORAGE_KEYS.guests, workspace.guests ?? []],
     [PLANNER_STORAGE_KEYS.vendors, workspace.vendors ?? []],
     [PLANNER_STORAGE_KEYS.feast, workspace.feast ?? []],

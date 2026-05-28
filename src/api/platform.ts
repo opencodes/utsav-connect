@@ -1,4 +1,5 @@
 import { apiRequest } from './client';
+import { clearAuthSession } from '../authStorage';
 import { setApiToken } from './config';
 
 export type PlatformUser = {
@@ -54,7 +55,7 @@ export async function createRootAdmin(body: {
 }
 
 export function clearPlatformSession(): void {
-  setApiToken(null);
+  clearAuthSession();
 }
 
 export async function updateRootAdmin(

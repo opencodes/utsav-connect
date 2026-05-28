@@ -9,12 +9,15 @@ import {
   Tags,
   ArrowLeft,
   Calendar,
+  CalendarPlus,
+  History,
   ChefHat,
   Truck,
   IndianRupee,
   Gift,
 } from 'lucide-react';
 import { APP_NAME } from '../../../brand';
+import type { AdminSessionDisplay } from '../adminSessionDisplay';
 
 interface AdminSidebarProps {
   currentAdminTab: string;
@@ -24,6 +27,7 @@ interface AdminSidebarProps {
   plannerWorkspace?: boolean;
   /** Platform admin sees commerce + vendor operations. */
   platformAdmin?: boolean;
+  session?: AdminSessionDisplay;
 }
 
 export const AdminSidebar: React.FC<AdminSidebarProps> = ({
@@ -32,6 +36,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   onExitAdmin,
   plannerWorkspace = false,
   platformAdmin = false,
+  session,
 }) => {
   const menuItems = [
     { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard },
@@ -54,7 +59,15 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     { id: 'planner-inventory', name: 'Inventory', icon: ClipboardList },
   ];
 
-  const renderNavItem = (item: { id: string; name: string; icon: React.ElementType }) => {
+  const plannerEventItems = [
+    { id: 'planner-events-create', name: 'Create Event', icon: CalendarPlus },
+    { id: 'planner-events-history', name: 'Event History', icon: History },
+  ];
+
+  const renderNavItem = (
+    item: { id: string; name: string; icon: React.ElementType },
+    nested = false
+  ) => {
     const Icon = item.icon;
     const isActive = currentAdminTab === item.id;
     return (
@@ -62,7 +75,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
         key={item.id}
         type="button"
         onClick={() => onSelectTab(item.id)}
-        className="admin-nav-item"
+        className={`admin-nav-item${nested ? ' admin-nav-item--nested' : ''}`}
         data-active={isActive ? 'true' : 'false'}
         id={`admin-sib-btn-${item.id}`}
       >
@@ -97,20 +110,37 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           {plannerWorkspace && (
             <>
               <span className={`admin-nav-section ${platformAdmin ? 'mt-2' : ''}`}>Planning</span>
-              {plannerItems.map(renderNavItem)}
+              {plannerItems.map((item) => renderNavItem(item))}
+              <span className="admin-nav-section mt-2">Events</span>
+              {plannerEventItems.map((item) => renderNavItem(item, true))}
             </>
           )}
         </nav>
       </div>
 
       <div className="admin-sidebar-footer">
-        <p className="admin-role-badge">
-          {plannerWorkspace
-            ? 'Signed in as event planner'
-            : platformAdmin
-              ? 'Signed in as platform admin'
-              : 'Workspace'}
-        </p>
+        {session ? (
+          <div className="admin-sidebar-user" id="admin-sidebar-signed-in-user">
+            <div className="admin-sidebar-user-avatar" aria-hidden>
+              {session.initials}
+            </div>
+            <div className="admin-sidebar-user-meta min-w-0">
+              <p className="admin-sidebar-user-name truncate">{session.displayName}</p>
+              <p className="admin-sidebar-user-role">{session.roleLabel}</p>
+              {session.detailLine ? (
+                <p className="admin-sidebar-user-detail truncate">{session.detailLine}</p>
+              ) : null}
+            </div>
+          </div>
+        ) : (
+          <p className="admin-role-badge">
+            {plannerWorkspace
+              ? 'Signed in as event planner'
+              : platformAdmin
+                ? 'Signed in as platform admin'
+                : 'Workspace'}
+          </p>
+        )}
         <button type="button" onClick={onExitAdmin} className="admin-exit-btn" id="btn-admin-exit">
           <ArrowLeft className="w-4 h-4 shrink-0" aria-hidden />
           <span>{plannerWorkspace ? 'Back to site' : 'Exit admin'}</span>

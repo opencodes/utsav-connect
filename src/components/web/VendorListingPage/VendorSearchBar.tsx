@@ -1,6 +1,6 @@
 import React, { FormEvent } from 'react';
 import { ArrowUpDown, Check, Search, Sparkles, Star } from 'lucide-react';
-import { WEDDING_CATEGORIES } from '../VendorCategoryPage/CategoriesGrid';
+import type { CategoryItem } from '../VendorCategoryPage/CategoriesGrid';
 import { VENDOR_FILTER_CITIES } from '../VendorCategoryPage/vendorCityFilter';
 
 export interface VendorSearchDraft {
@@ -13,6 +13,7 @@ export interface VendorSearchDraft {
 }
 
 interface VendorSearchBarProps {
+  categories: CategoryItem[];
   draft: VendorSearchDraft;
   onDraftChange: (draft: VendorSearchDraft) => void;
   onSearch: () => void;
@@ -23,6 +24,7 @@ const selectClass =
   'text-xs font-bold bg-transparent border border-orange-100 dark:border-stone-700 dark:bg-stone-800 p-1.5 rounded-lg text-stone-700 dark:text-stone-300 focus:outline-none focus:ring-1 focus:ring-orange-500 cursor-pointer min-w-[7.5rem]';
 
 export const VendorSearchBar: React.FC<VendorSearchBarProps> = ({
+  categories,
   draft,
   onDraftChange,
   onSearch,
@@ -133,7 +135,7 @@ export const VendorSearchBar: React.FC<VendorSearchBarProps> = ({
             aria-label="Category"
           >
             <option value="">All</option>
-            {WEDDING_CATEGORIES.map((cat) => (
+            {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
                 {cat.name}
               </option>

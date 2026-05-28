@@ -1,11 +1,12 @@
 import React from 'react';
-import { IndianRupee, ShoppingCart, Users, Store } from 'lucide-react';
+import { IndianRupee, ShoppingCart, UserCheck, Users, Store } from 'lucide-react';
 
 interface Stats {
   totalRevenue: number;
   totalOrders: number;
   activeCustomers: number;
   activeRestaurants: number;
+  pendingVendors?: number;
 }
 
 interface DashboardStatsGridProps {
@@ -37,11 +38,17 @@ const STAT_CARDS = [
     icon: Store,
     iconClass: 'from-violet-600 to-pink-600',
   },
+  {
+    label: 'Vendors pending review',
+    value: (s: Stats) => String(s.pendingVendors ?? 0),
+    icon: UserCheck,
+    iconClass: 'from-amber-500 to-orange-600',
+  },
 ] as const;
 
 export const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ stats }) => {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4" id="admin-dashboard-stats-grid">
+    <div className="grid grid-cols-2 lg:grid-cols-5 gap-4" id="admin-dashboard-stats-grid">
       {STAT_CARDS.map((card) => {
         const Icon = card.icon;
         return (

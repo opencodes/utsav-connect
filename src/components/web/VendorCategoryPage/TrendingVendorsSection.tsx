@@ -1,15 +1,17 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Flame, MapPin, Star, TrendingUp } from 'lucide-react';
-import { WEDDING_CATEGORIES, CategoryItem } from './CategoriesGrid';
-import { ALL_MOCK_VENDORS } from './mockData';
-import { ListingCardItem } from './VendorGridCard';
+import { fetchVendors } from '../../../api/vendors';
+import type { CategoryItem } from './CategoriesGrid';
+import type { ListingCardItem } from './VendorGridCard';
 
-/** Trending vendors are shown from these 1–2 categories only */
+/** Trending vendors are shown from these categories when available. */
 export const TRENDING_VENDOR_CATEGORY_IDS = ['venues', 'photographers'] as const;
 
 const VENDORS_PER_ROW = 5;
 
 interface TrendingVendorsSectionProps {
+  categories: CategoryItem[];
+  city?: string;
   onSelectCategory: (cat: CategoryItem) => void;
   onSelectVendor: (vendor: ListingCardItem) => void;
 }
@@ -62,18 +64,50 @@ const TrendingVendorCard: React.FC<TrendingVendorCardProps> = ({ vendor, rank, o
 };
 
 export const TrendingVendorsSection: React.FC<TrendingVendorsSectionProps> = ({
+  categories,
+  city = '',
   onSelectCategory,
   onSelectVendor,
 }) => {
+  const [vendorsByCategory, setVendorsByCategory] = useState<
+    Record<string, ListingCardItem[]>
+  >({});
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      const entries = await Promise.all(
+        TRENDING_VENDOR_CATEGORY_IDS.map(async (categoryId) => {
+          try {
+            const vendors = await fetchVendors({
+              category: categoryId,
+              city: city || undefined,
+            });
+            const top = [...vendors]
+              .sort((a, b) => b.rating - a.rating)
+              .slice(0, VENDORS_PER_ROW);
+            return [categoryId, top] as const;
+          } catch {
+            return [categoryId, []] as const;
+          }
+        })
+      );
+      if (cancelled) return;
+      setVendorsByCategory(Object.fromEntries(entries));
+    };
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, [city]);
+
   const trendingByCategory = useMemo(() => {
     return TRENDING_VENDOR_CATEGORY_IDS.map((categoryId) => {
-      const cat = WEDDING_CATEGORIES.find((c) => c.id === categoryId);
-      const vendors = ALL_MOCK_VENDORS.filter((v) => v.category === categoryId)
-        .sort((a, b) => b.rating - a.rating)
-        .slice(0, VENDORS_PER_ROW);
+      const cat = categories.find((c) => c.id === categoryId);
+      const vendors = vendorsByCategory[categoryId] ?? [];
       return cat && vendors.length > 0 ? { cat, vendors } : null;
     }).filter((row): row is NonNullable<typeof row> => row !== null);
-  }, []);
+  }, [categories, vendorsByCategory]);
 
   if (trendingByCategory.length === 0) return null;
 

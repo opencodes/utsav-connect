@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { ArrowUpDown, Check, Star, Clock, Filter, Sparkles } from 'lucide-react';
-import { MOCK_RESTAURANTS } from '../../data';
 import { fetchRestaurants } from '../../api/restaurants';
 import type { Restaurant } from '../../types';
 import { AnimatedDiya } from './GoldenDeco';
@@ -14,16 +13,16 @@ interface RestaurantListingPageProps {
 }
 
 export const RestaurantListingPage: React.FC<RestaurantListingPageProps> = ({ onNavigate }) => {
-  const [restaurants, setRestaurants] = useState<Restaurant[]>(MOCK_RESTAURANTS);
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
 
   useEffect(() => {
     let cancelled = false;
     void fetchRestaurants()
       .then((list) => {
-        if (!cancelled && list.length > 0) setRestaurants(list);
+        if (!cancelled) setRestaurants(list);
       })
       .catch(() => {
-        if (!cancelled) setRestaurants(MOCK_RESTAURANTS);
+        if (!cancelled) setRestaurants([]);
       });
     return () => {
       cancelled = true;

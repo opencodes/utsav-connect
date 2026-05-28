@@ -22,6 +22,14 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({ onNavigate
         </button>
 
         <button
+          onClick={() => onNavigateTab('vendor-approvals')}
+          className="w-full py-2.5 px-3 bg-stone-50 hover:bg-orange-50 dark:bg-stone-900 dark:hover:bg-orange-950/20 text-stone-700 dark:text-stone-300 hover:text-orange-600 font-bold text-xs rounded-xl flex items-center justify-between border border-stone-200/50 dark:border-stone-800 cursor-pointer transition-all"
+        >
+          <span>Review pending vendors</span>
+          <ArrowUpRight className="w-4 h-4 shrink-0 text-orange-600" />
+        </button>
+
+        <button
           onClick={() => onNavigateTab('marketing')}
           className="w-full py-2.5 px-3 bg-stone-50 hover:bg-orange-50 dark:bg-stone-900 dark:hover:bg-orange-950/20 text-stone-700 dark:text-stone-300 hover:text-orange-600 font-bold text-xs rounded-xl flex items-center justify-between border border-stone-200/50 dark:border-stone-800 cursor-pointer transition-all"
         >

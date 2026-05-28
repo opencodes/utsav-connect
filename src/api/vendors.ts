@@ -33,6 +33,48 @@ export async function registerVendor(body: Record<string, unknown>): Promise<Lis
   return data.vendor;
 }
 
+export type VendorServicePayload = {
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  image: string;
+};
+
+export type VendorProfileUpdatePayload = {
+  addressLine1: string;
+  addressLine2?: string;
+  landmark?: string;
+  pinCode: string;
+  state: string;
+  district: string;
+  primaryLocation?: string;
+  villagesServed?: string[];
+  image?: string;
+};
+
+export async function updateVendorProfile(
+  vendorId: string,
+  body: VendorProfileUpdatePayload
+): Promise<{ vendor: ListingCardItem & Record<string, unknown> }> {
+  return apiRequest(`/vendors/${vendorId}`, {
+    method: 'PATCH',
+    body,
+    auth: true,
+  });
+}
+
+export async function addVendorService(
+  vendorId: string,
+  service: VendorServicePayload
+): Promise<{ service: VendorServicePayload & { id: string; rating?: number; ratingCount?: number } }> {
+  return apiRequest(`/vendors/${vendorId}/services`, {
+    method: 'POST',
+    body: service,
+    auth: true,
+  });
+}
+
 export async function submitVendorEnquiry(
   vendorId: string,
   body: {

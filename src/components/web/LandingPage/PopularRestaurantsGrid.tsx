@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Flame, Star, Clock } from 'lucide-react';
-import { MOCK_RESTAURANTS } from '../../../data';
 import { fetchRestaurants } from '../../../api/restaurants';
 import type { Restaurant } from '../../../types';
 import { AnimatedDiya } from '../GoldenDeco';
@@ -10,15 +9,15 @@ interface PopularRestaurantsGridProps {
 }
 
 export const PopularRestaurantsGrid: React.FC<PopularRestaurantsGridProps> = ({ onNavigate }) => {
-  const [restaurants, setRestaurants] = useState<Restaurant[]>(MOCK_RESTAURANTS.slice(0, 3));
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
 
   useEffect(() => {
     void fetchRestaurants()
       .then((list) => {
-        if (list.length > 0) setRestaurants(list.slice(0, 3));
+        setRestaurants(list.slice(0, 3));
       })
       .catch(() => {
-        setRestaurants(MOCK_RESTAURANTS.slice(0, 3));
+        setRestaurants([]);
       });
   }, []);
 

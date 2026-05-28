@@ -6,6 +6,7 @@ export const EMPTY_ADMIN_STATS: AdminStats = {
   totalRevenue: 0,
   activeCustomers: 0,
   activeRestaurants: 0,
+  pendingVendors: 0,
   revenueTrend: [],
   categorySales: [],
   recentOrders: [],

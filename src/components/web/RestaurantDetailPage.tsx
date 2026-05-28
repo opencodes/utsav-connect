@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { FoodItem, CartItem, Restaurant } from '../../types';
-import { MOCK_RESTAURANTS } from '../../data';
 import { fetchRestaurant } from '../../api/restaurants';
 import { RestaurantDetailHero } from './RestaurantDetailPage/RestaurantDetailHero';
 import { MenuCategoryToggleList } from './RestaurantDetailPage/MenuCategoryToggleList';
@@ -34,20 +33,10 @@ export const RestaurantDetailPage: React.FC<RestaurantDetailPageProps> = ({
     setLoading(true);
     void fetchRestaurant(restaurantId)
       .then((r) => {
-        if (cancelled) return;
-        if (r) setRestaurant(r);
-        else {
-          setRestaurant(
-            MOCK_RESTAURANTS.find((x) => x.id === restaurantId) ?? MOCK_RESTAURANTS[0]
-          );
-        }
+        if (!cancelled) setRestaurant(r);
       })
       .catch(() => {
-        if (!cancelled) {
-          setRestaurant(
-            MOCK_RESTAURANTS.find((x) => x.id === restaurantId) ?? MOCK_RESTAURANTS[0]
-          );
-        }
+        if (!cancelled) setRestaurant(null);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);

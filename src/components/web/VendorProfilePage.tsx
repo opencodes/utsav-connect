@@ -8,6 +8,7 @@ import {
   Eye,
   Inbox,
   LayoutGrid,
+  MapPin,
   MessageSquare,
   Pencil,
   Plus,
@@ -18,18 +19,29 @@ import {
 } from 'lucide-react';
 import { APP_NAME } from '../../brand';
 import { LandingSection } from './LandingPage/LandingSection';
-import { WEDDING_CATEGORIES } from './VendorCategoryPage/CategoriesGrid';
+import { useVendorCategories } from '../../hooks/useVendorCategories';
 import type { VendorServiceItem } from './VendorDetailPage/vendorServicesData';
 import { AddVendorServiceModal } from './VendorProfilePage/AddVendorServiceModal';
 import { ImageUploadField } from './VendorProfilePage/ImageUploadField';
 import { ServiceImagePicker } from './VendorProfilePage/ServiceImagePicker';
 import { readImageFileAsDataUrl } from './VendorProfilePage/imageUploadUtils';
+import type { VendorDashboardSession, VendorEnquiry } from './VendorProfilePage/vendorProfileData';
 import {
-  getVendorDashboardListing,
-  type VendorDashboardSession,
-  type VendorEnquiry,
-} from './VendorProfilePage/vendorProfileData';
-import { fetchVendor, fetchVendorEnquiries } from '../../api/vendors';
+  addVendorService,
+  fetchVendor,
+  fetchVendorEnquiries,
+  updateVendorProfile,
+} from '../../api/vendors';
+import { DynamicStringList, nonEmptyStrings } from './DynamicStringList';
+import {
+  primaryLocationFromValues,
+  resolveStateDistrictFromVendor,
+} from '../../indiaLocations';
+import { StateDistrictSelect } from './StateDistrictSelect';
+import { isBusinessAddressComplete } from '../../vendorAddressUtils';
+import { buildVendorDetailProfile } from './VendorDetailPage/vendorServicesData';
+import type { ListingCardItem } from './VendorCategoryPage/VendorGridCard';
+import type { VendorDetailProfile } from './VendorDetailPage/vendorServicesData';
 
 const DEFAULT_SERVICE_CATEGORIES = [
   'Venue packages',
@@ -58,26 +70,66 @@ const STATUS_STYLES: Record<VendorEnquiry['status'], string> = {
 };
 
 export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate, session }) => {
+  const { getLabel } = useVendorCategories();
   const [activeTab, setActiveTab] = useState<DashboardTab>('overview');
   const [services, setServices] = useState<VendorServiceItem[]>([]);
   const [profileImage, setProfileImage] = useState('');
   const [profileImageError, setProfileImageError] = useState('');
   const [showAddService, setShowAddService] = useState(false);
+  const [savingService, setSavingService] = useState(false);
+  const [serviceError, setServiceError] = useState('');
+  const [settingsError, setSettingsError] = useState('');
+  const [settingsSaved, setSettingsSaved] = useState(false);
+  const [savingSettings, setSavingSettings] = useState(false);
+  const [addressLine1, setAddressLine1] = useState('');
+  const [addressLine2, setAddressLine2] = useState('');
+  const [landmark, setLandmark] = useState('');
+  const [pinCode, setPinCode] = useState('');
+  const [profileState, setProfileState] = useState('');
+  const [profileDistrict, setProfileDistrict] = useState('');
+  const [villagesServed, setVillagesServed] = useState<string[]>(['']);
   const profileImageInputRef = useRef<HTMLInputElement>(null);
-
-  const vendor = useMemo(
-    () => getVendorDashboardListing(session.vendorId),
-    [session.vendorId]
-  );
+  const [vendor, setVendor] = useState<VendorDetailProfile | null>(null);
 
   const [enquiries, setEnquiries] = useState<VendorEnquiry[]>([]);
 
   useEffect(() => {
-    if (vendor) {
-      setServices(vendor.services);
-      setProfileImage(vendor.image);
+    if (!session.vendorId) {
+      setVendor(null);
+      return;
     }
-  }, [session.vendorId, vendor]);
+    let cancelled = false;
+    void fetchVendor(session.vendorId)
+      .then((listing) => {
+        if (cancelled) return;
+        if (listing) {
+          const profile = buildVendorDetailProfile(listing);
+          setVendor(profile);
+          setServices(profile.services);
+          setProfileImage(profile.image);
+          setAddressLine1(profile.addressLine1 ?? '');
+          setAddressLine2(profile.addressLine2 ?? '');
+          setLandmark(profile.landmark ?? '');
+          setPinCode(profile.pinCode ?? '');
+          const { state, district } = resolveStateDistrictFromVendor(profile);
+          setProfileState(state);
+          setProfileDistrict(district);
+          setVillagesServed(
+            profile.villagesServed && profile.villagesServed.length > 0
+              ? profile.villagesServed
+              : ['']
+          );
+        } else {
+          setVendor(null);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setVendor(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [session.vendorId]);
 
   useEffect(() => {
     void fetchVendorEnquiries(session.vendorId)
@@ -96,9 +148,6 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
         )
       )
       .catch(() => setEnquiries([]));
-    void fetchVendor(session.vendorId).catch(() => {
-      // listing detail optional
-    });
   }, [session.vendorId]);
 
   const handleProfileImageFile = async (file: File | undefined) => {
@@ -117,18 +166,84 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
   };
 
   const categoryName =
-    WEDDING_CATEGORIES.find((c) => c.id === vendor?.category)?.name ?? vendor?.category ?? '—';
+    vendor?.category ? getLabel(vendor.category) : '—';
 
   const newEnquiryCount = enquiries.filter((e) => e.status === 'New').length;
+
+  const profileComplete = isBusinessAddressComplete({
+    addressLine1,
+    addressLine2,
+    landmark,
+    pinCode,
+    state: profileState,
+    district: profileDistrict,
+  });
+
+  const handleSaveSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSettingsError('');
+    setSettingsSaved(false);
+    if (
+      !isBusinessAddressComplete({
+        addressLine1,
+        addressLine2,
+        landmark,
+        pinCode,
+        state: profileState,
+        district: profileDistrict,
+      })
+    ) {
+      setSettingsError('Please enter street address, PIN, state, and district.');
+      return;
+    }
+    setSavingSettings(true);
+    try {
+      const { vendor: updated } = await updateVendorProfile(session.vendorId, {
+        addressLine1: addressLine1.trim(),
+        addressLine2: addressLine2.trim(),
+        landmark: landmark.trim(),
+        pinCode: pinCode.trim(),
+        state: profileState,
+        district: profileDistrict,
+        primaryLocation: primaryLocationFromValues(profileState, profileDistrict),
+        villagesServed: nonEmptyStrings(villagesServed),
+        image: profileImage || vendor?.image,
+      });
+      const profile = buildVendorDetailProfile(updated as ListingCardItem);
+      setVendor(profile);
+      setProfileImage(profile.image);
+      setSettingsSaved(true);
+    } catch {
+      setSettingsError('Could not save settings. Try again.');
+    } finally {
+      setSavingSettings(false);
+    }
+  };
 
   const serviceCategoryOptions = useMemo(() => {
     const fromServices = services.map((s) => s.category).filter(Boolean);
     return [...new Set([...fromServices, ...DEFAULT_SERVICE_CATEGORIES])];
   }, [services]);
 
-  const handleAddService = (service: VendorServiceItem) => {
-    setServices((prev) => [...prev, service]);
-    setActiveTab('services');
+  const handleAddService = async (service: VendorServiceItem) => {
+    setSavingService(true);
+    setServiceError('');
+    try {
+      const { service: saved } = await addVendorService(session.vendorId, {
+        name: service.name,
+        description: service.description,
+        price: service.price,
+        category: service.category,
+        image: service.image,
+      });
+      setServices((prev) => [...prev, { ...service, id: saved.id ?? service.id }]);
+      setActiveTab('services');
+    } catch {
+      setServiceError('Could not save service. Check your connection and try again.');
+      throw new Error('save failed');
+    } finally {
+      setSavingService(false);
+    }
   };
 
   const handleRemoveService = (serviceId: string) => {
@@ -246,6 +361,18 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                 <span className="font-bold text-[#FFCB44]">{newEnquiryCount} new</span> guest{' '}
                 {newEnquiryCount === 1 ? 'enquiry' : 'enquiries'} — reply to grow bookings on{' '}
                 {APP_NAME}
+              </>
+            ) : !profileComplete ? (
+              <>
+                Complete your{' '}
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('settings')}
+                  className="font-bold text-[#FFCB44] underline cursor-pointer"
+                >
+                  business address &amp; villages
+                </button>{' '}
+                in Settings
               </>
             ) : (
               <>Your listing is live — add services so families can request quotes</>
@@ -514,6 +641,14 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
 
             {activeTab === 'services' && (
               <div className="space-y-4">
+                {serviceError && (
+                  <p
+                    className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900/50 rounded-lg px-3 py-2"
+                    role="alert"
+                  >
+                    {serviceError}
+                  </p>
+                )}
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <h2 className="heading-card text-lg text-stone-900 dark:text-white">
@@ -601,12 +736,34 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
             )}
 
             {activeTab === 'settings' && (
-              <div className="space-y-6 max-w-lg">
+              <div className="space-y-6 max-w-xl">
                 <h2 className="heading-card text-lg text-stone-900 dark:text-white flex items-center gap-2">
                   <Building2 className="w-5 h-5 text-[#C51C13] dark:text-orange-400" />
                   Business settings
                 </h2>
-                <div className="space-y-4">
+                <p className="text-sm text-stone-500 dark:text-stone-400">
+                  Add your full business address and villages you serve. Families use this to find
+                  vendors near their event location.
+                </p>
+
+                <form onSubmit={handleSaveSettings} className="space-y-6">
+                  {settingsError && (
+                    <p
+                      className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900/50 rounded-lg px-3 py-2"
+                      role="alert"
+                    >
+                      {settingsError}
+                    </p>
+                  )}
+                  {settingsSaved && (
+                    <p
+                      className="text-sm text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-950/30 border border-green-100 dark:border-green-900/50 rounded-lg px-3 py-2"
+                      role="status"
+                    >
+                      Settings saved successfully.
+                    </p>
+                  )}
+
                   <ImageUploadField
                     label="Profile cover photo"
                     value={profileImage || vendor.image}
@@ -619,54 +776,128 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                     hint="Used on your dashboard banner and public listing hero"
                   />
 
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-stone-700 dark:text-stone-300">
-                      Business name
-                    </label>
-                    <input
-                      type="text"
-                      readOnly
-                      value={session.businessName}
-                      className={INPUT_CLASS}
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-stone-700 dark:text-stone-300">
-                      Contact person
-                    </label>
-                    <input
-                      type="text"
-                      readOnly
-                      value={session.contactName}
-                      className={INPUT_CLASS}
-                    />
-                  </div>
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-stone-700 dark:text-stone-300">
-                        Email
+                        Business name
                       </label>
-                      <input type="email" readOnly value={session.email} className={INPUT_CLASS} />
+                      <input
+                        type="text"
+                        readOnly
+                        value={session.businessName}
+                        className={INPUT_CLASS}
+                      />
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-stone-700 dark:text-stone-300">
-                        Phone
+                        Contact person
                       </label>
-                      <input type="tel" readOnly value={session.phone} className={INPUT_CLASS} />
+                      <input
+                        type="text"
+                        readOnly
+                        value={session.contactName}
+                        className={INPUT_CLASS}
+                      />
                     </div>
                   </div>
-                  <p className="text-xs text-stone-500 dark:text-stone-400">
-                    To change listing details, submit an update via{' '}
-                    <button
-                      type="button"
-                      onClick={() => onNavigate('list-your-service')}
-                      className="text-[#C51C13] dark:text-orange-400 font-semibold hover:underline cursor-pointer"
-                    >
-                      vendor registration
-                    </button>{' '}
-                    or contact {APP_NAME} support.
-                  </p>
-                </div>
+
+                  <div className="rounded-xl border border-stone-200 dark:border-stone-700 p-4 space-y-4 bg-stone-50/50 dark:bg-stone-900/40">
+                    <p className="text-sm font-semibold text-stone-800 dark:text-stone-200 flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-[#C51C13] shrink-0" aria-hidden />
+                      Full business address *
+                    </p>
+
+                    <div className="space-y-1.5">
+                      <label htmlFor="settings-addressLine1" className="text-xs font-semibold text-stone-700 dark:text-stone-300">
+                        Street / building / area *
+                      </label>
+                      <input
+                        id="settings-addressLine1"
+                        type="text"
+                        value={addressLine1}
+                        onChange={(e) => setAddressLine1(e.target.value)}
+                        required
+                        placeholder="Shop no., building name, sector, village or locality"
+                        className={INPUT_CLASS}
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label htmlFor="settings-addressLine2" className="text-xs font-semibold text-stone-700 dark:text-stone-300">
+                        Address line 2
+                      </label>
+                      <input
+                        id="settings-addressLine2"
+                        type="text"
+                        value={addressLine2}
+                        onChange={(e) => setAddressLine2(e.target.value)}
+                        placeholder="Floor, wing, or additional line (optional)"
+                        className={INPUT_CLASS}
+                      />
+                    </div>
+
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label htmlFor="settings-landmark" className="text-xs font-semibold text-stone-700 dark:text-stone-300">
+                          Landmark
+                        </label>
+                        <input
+                          id="settings-landmark"
+                          type="text"
+                          value={landmark}
+                          onChange={(e) => setLandmark(e.target.value)}
+                          placeholder="Near temple, market, etc."
+                          className={INPUT_CLASS}
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label htmlFor="settings-pinCode" className="text-xs font-semibold text-stone-700 dark:text-stone-300">
+                          PIN code *
+                        </label>
+                        <input
+                          id="settings-pinCode"
+                          type="text"
+                          value={pinCode}
+                          onChange={(e) => setPinCode(e.target.value)}
+                          required
+                          inputMode="numeric"
+                          maxLength={6}
+                          placeholder="201301"
+                          className={INPUT_CLASS}
+                        />
+                      </div>
+                    </div>
+
+                    <StateDistrictSelect
+                      idPrefix="settings-address"
+                      state={profileState}
+                      district={profileDistrict}
+                      onStateChange={(state) => {
+                        setProfileState(state);
+                        setProfileDistrict('');
+                      }}
+                      onDistrictChange={setProfileDistrict}
+                    />
+                  </div>
+
+                  <DynamicStringList
+                    id="vendor-settings-villages"
+                    label="Villages you serve"
+                    hint="Add villages or localities where you take bookings. You can update this anytime."
+                    values={villagesServed}
+                    onChange={setVillagesServed}
+                    placeholder="e.g. Bisrakh, Dadri, Surajpur"
+                    addButtonLabel="Add another village"
+                  />
+
+                  <button
+                    type="submit"
+                    disabled={savingSettings}
+                    className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer disabled:opacity-60"
+                  >
+                    {savingSettings ? 'Saving…' : 'Save settings'}
+                  </button>
+                </form>
               </div>
             )}
           </div>
@@ -677,7 +908,10 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
         open={showAddService}
         categoryOptions={serviceCategoryOptions}
         defaultImage={profileImage || vendor.image}
-        onClose={() => setShowAddService(false)}
+        saving={savingService}
+        onClose={() => {
+          if (!savingService) setShowAddService(false);
+        }}
         onAdd={handleAddService}
       />
     </div>

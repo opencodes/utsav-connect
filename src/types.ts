@@ -76,10 +76,13 @@ export interface SupportTicket {
 
 export type CustomerType = 'standard' | 'event-planner';
 
+export type UserRole = 'customer' | 'admin' | 'vendor' | 'root';
+
 export interface UserProfile {
   name: string;
   email: string;
   phone: string;
+  role?: UserRole;
   /** Event planners are customers with access to the planning workspace. */
   customerType?: CustomerType;
   walletBalance: number;
@@ -94,6 +97,7 @@ export interface AdminStats {
   totalRevenue: number;
   activeCustomers: number;
   activeRestaurants: number;
+  pendingVendors?: number;
   revenueTrend: { date: string; revenue: number; orders: number }[];
   categorySales: { category: string; value: number }[];
   recentOrders: {

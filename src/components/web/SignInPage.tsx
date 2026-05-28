@@ -168,16 +168,17 @@ export const SignInPage: React.FC<SignInPageProps> = ({
 
           <button
             type="button"
-            onClick={() => window.location.assign('/admin')}
+            onClick={() => window.location.assign('/platform/sign-in')}
             className="w-full py-2.5 rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-700 dark:text-stone-200 text-sm font-semibold hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
             id="btn-open-admin-workspace"
           >
-            Open admin workspace (temporary)
+            Platform admin / root sign in
           </button>
 
           <p className="flex items-start gap-2 text-xs text-stone-500 leading-relaxed">
             <ShieldCheck className="w-4 h-4 text-orange-500 shrink-0 mt-0.5" aria-hidden />
-            Customer sign-in opens your event planning workspace. Vendors use the vendor tab.
+            Root users create admin accounts. Admins sign in with username and password at{' '}
+            <code className="text-[10px]">/platform/sign-in</code>.
           </p>
         </form>
 

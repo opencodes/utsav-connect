@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { ArrowRight, MapPin } from 'lucide-react';
 import { APP_NAME } from '../../brand';
-import { CategoriesGrid, WEDDING_CATEGORIES, CategoryItem } from './VendorCategoryPage/CategoriesGrid';
+import { useVendorCategories } from '../../hooks/useVendorCategories';
+import { CategoriesGrid, CategoryItem } from './VendorCategoryPage/CategoriesGrid';
 import { TrendingVendorsSection } from './VendorCategoryPage/TrendingVendorsSection';
 import { getCityLabel } from './VendorCategoryPage/vendorCityFilter';
 
@@ -16,6 +17,7 @@ export const VendorCategoryPage: React.FC<VendorCategoryPageProps> = ({
   initialCity = '',
 }) => {
   const cityLabel = useMemo(() => getCityLabel(initialCity), [initialCity]);
+  const { categories, loading } = useVendorCategories();
 
   const handleSelectCategory = (cat: CategoryItem) => {
     onNavigate('vendor-list', { categoryId: cat.id, city: initialCity });
@@ -29,9 +31,7 @@ export const VendorCategoryPage: React.FC<VendorCategoryPageProps> = ({
     <div className="min-h-screen bg-stone-50 dark:bg-stone-900" id="vendor-category-page">
       <div className="bg-gradient-to-br from-[#C51C13] via-stone-900 to-amber-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <p className="text-[10px] font-semibold text-[#FFCB44]">
-            {APP_NAME} marketplace
-          </p>
+          <p className="text-[10px] font-semibold text-[#FFCB44]">{APP_NAME} marketplace</p>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mt-2">
             <div className="space-y-2 max-w-xl">
               <h1 className="heading-page text-3xl sm:text-4xl text-white">
@@ -66,13 +66,20 @@ export const VendorCategoryPage: React.FC<VendorCategoryPageProps> = ({
             Vendor categories
           </h2>
           <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
-            {WEDDING_CATEGORIES.length}+ service types
+            {loading ? 'Loading…' : `${categories.length} service types`}
           </p>
         </div>
 
-        <CategoriesGrid selectedCategoryId={null} onSelectCategory={handleSelectCategory} />
+        <CategoriesGrid
+          categories={categories}
+          loading={loading}
+          selectedCategoryId={null}
+          onSelectCategory={handleSelectCategory}
+        />
 
         <TrendingVendorsSection
+          categories={categories}
+          city={initialCity}
           onSelectCategory={handleSelectCategory}
           onSelectVendor={(vendor) => handleSelectVendor(vendor.id, vendor.category)}
         />

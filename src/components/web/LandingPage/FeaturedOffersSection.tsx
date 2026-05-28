@@ -1,61 +1,21 @@
 import React, { useState } from 'react';
-import { Calendar, Users, Search, Sparkles, CheckCircle, Clock, MapPin, Gift, AlertCircle } from 'lucide-react';
+import { Calendar, Search, Sparkles, CheckCircle, Clock, MapPin, AlertCircle } from 'lucide-react';
 import { RangoliMandala, AnimatedDiya } from '../GoldenDeco';
 
 interface FeaturedOffersSectionProps {
   onNavigate: (page: string) => void;
 }
 
-// Sample offline database of guests matched precisely with PlannedEventsShowcase
-const GUEST_DATABASE = [
-  {
-    id: 'gst-1',
-    name: 'Pandey Jha Ji (Mama Ji)',
-    rsvpStatus: 'Confirmed',
-    group: 'Bride Family',
-    roomAllocated: 'VIP Palace Suite 101',
-    returnGiftItem: 'Premium Silver Diya Set',
-    notes: 'Requires ground floor accommodations; pure satvik fasting meals.'
-  },
-  {
-    id: 'gst-2',
-    name: 'Sushant Kumar Mishra',
-    rsvpStatus: 'Confirmed',
-    group: 'Groom Family',
-    roomAllocated: 'Heritage Room 104',
-    returnGiftItem: 'Classic Mithai Box',
-    notes: 'Driver accompanying; needs separate driver dome spacing.'
-  },
-  {
-    id: 'gst-3',
-    name: 'Apeksha Roy',
-    rsvpStatus: 'Pending',
-    group: 'Mutual Friends',
-    roomAllocated: 'De-lux Quad 202',
-    returnGiftItem: 'Silk Handloom Stole',
-    notes: 'Sangeet stage presenter; check microphone config on arrival.'
-  }
-];
-
 export const FeaturedOffersSection: React.FC<FeaturedOffersSectionProps> = ({ onNavigate }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResult, setSearchResult] = useState<typeof GUEST_DATABASE[0] | null>(null);
   const [searched, setSearched] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) {
-      setSearchResult(null);
       setSearched(false);
       return;
     }
-
-    const q = searchQuery.toLowerCase().trim();
-    const found = GUEST_DATABASE.find(g => 
-      g.name.toLowerCase().includes(q)
-    );
-
-    setSearchResult(found || null);
     setSearched(true);
   };
 
@@ -136,58 +96,21 @@ export const FeaturedOffersSection: React.FC<FeaturedOffersSectionProps> = ({ on
               {/* Real-time reactive query output box */}
               {searched && (
                 <div className="p-4 rounded-xl border animate-fade-in transition-all bg-stone-950/80">
-                  {searchResult ? (
-                    <div className="space-y-3.5">
-                      <div className="flex items-center justify-between border-b border-stone-800/50 pb-2">
-                        <span className="text-xs font-bold font-serif text-amber-400 block max-w-[140px] truncate">
-                          👨‍🍳 {searchResult.name}
-                        </span>
-                        <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full ${
-                          searchResult.rsvpStatus === 'Confirmed' 
-                            ? 'bg-emerald-950/40 text-emerald-400 border border-emerald-900/40' 
-                            : 'bg-amber-950/40 text-amber-400 border border-amber-800/30'
-                        }`}>
-                          {searchResult.rsvpStatus === 'Confirmed' ? '🟢 RSVP Confirmed' : '🕦 RSVP Pending'}
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3 text-[11px]">
-                        <div>
-                          <span className="text-stone-500 block">Family Cluster</span>
-                          <span className="font-semibold text-stone-300">{searchResult.group}</span>
-                        </div>
-                        <div>
-                          <span className="text-stone-500 block">Assigned Room</span>
-                          <span className="font-semibold text-amber-200">{searchResult.roomAllocated}</span>
-                        </div>
-                        <div>
-                          <span className="text-stone-500 block">Return Welcome Gift</span>
-                          <span className="font-semibold text-stone-300 flex items-center gap-1">
-                            <Gift className="w-3 h-3 text-orange-400 shrink-0" />
-                            {searchResult.returnGiftItem}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="bg-stone-900/60 p-2.5 rounded-lg border border-stone-850 text-[10px] text-stone-400 leading-relaxed italic">
-                        <strong>Guest Service Notes:</strong> "{searchResult.notes}"
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-center py-4 space-y-2">
-                      <AlertCircle className="w-7 h-7 text-stone-650 mx-auto" />
-                      <p className="text-xs text-stone-450">
-                        No match found for <strong className="text-stone-250 italic">"{searchQuery}"</strong> inside index.
-                      </p>
-                      <button
-                        type="button"
-                        onClick={() => onNavigate('celebrations')}
-                        className="text-[11px] font-bold text-orange-400 hover:text-orange-300 hover:underline block mx-auto cursor-pointer"
-                      >
-                        Click here to register custom family RSVP &rarr;
-                      </button>
-                    </div>
-                  )}
+                  <div className="text-center py-4 space-y-2">
+                    <AlertCircle className="w-7 h-7 text-stone-650 mx-auto" />
+                    <p className="text-xs text-stone-450">
+                      No guest record found for{' '}
+                      <strong className="text-stone-250 italic">&quot;{searchQuery}&quot;</strong>.
+                      Sign in to your event planner workspace to manage RSVPs.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => onNavigate('celebrations')}
+                      className="text-[11px] font-bold text-orange-400 hover:text-orange-300 hover:underline block mx-auto cursor-pointer"
+                    >
+                      Open RSVP registry &rarr;
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

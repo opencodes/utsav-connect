@@ -1,7 +1,8 @@
 import React from 'react';
 import { Heart, Star, Clock } from 'lucide-react';
 import { VendorDetailProfile } from './vendorServicesData';
-import { WEDDING_CATEGORIES } from '../VendorCategoryPage/CategoriesGrid';
+import { getCategoryLabel } from '../../../vendorCategories';
+import { formatStateDistrict } from '../../../indiaLocations';
 
 interface VendorDetailHeroProps {
   vendor: VendorDetailProfile;
@@ -10,7 +11,7 @@ interface VendorDetailHeroProps {
 }
 
 function categoryLabel(categoryId: string): string {
-  return WEDDING_CATEGORIES.find((c) => c.id === categoryId)?.name ?? 'Vendor';
+  return getCategoryLabel(categoryId) || 'Vendor';
 }
 
 export const VendorDetailHero: React.FC<VendorDetailHeroProps> = ({
@@ -54,7 +55,22 @@ export const VendorDetailHero: React.FC<VendorDetailHeroProps> = ({
               {vendor.name}
             </h2>
             <p className="text-sm text-stone-500 dark:text-stone-400">{category}</p>
-            <p className="text-xs text-stone-400">Location: {vendor.location}</p>
+            <p className="text-xs text-stone-400">
+              {vendor.businessAddress
+                ? `Address: ${vendor.businessAddress}${
+                    vendor.state && vendor.district
+                      ? `, ${formatStateDistrict(vendor.state, vendor.district)}`
+                      : ''
+                  }`
+                : vendor.state && vendor.district
+                  ? `Location: ${formatStateDistrict(vendor.state, vendor.district)}`
+                  : `Location: ${vendor.location}`}
+            </p>
+            {vendor.villagesServed && vendor.villagesServed.length > 0 && (
+              <p className="text-xs text-stone-500 dark:text-stone-400">
+                Villages served: {vendor.villagesServed.join(', ')}
+              </p>
+            )}
           </div>
 
           <div className="flex items-center gap-4 bg-orange-50/50 dark:bg-stone-900 p-4 rounded-2xl border border-orange-100/40 dark:border-stone-800 shrink-0">

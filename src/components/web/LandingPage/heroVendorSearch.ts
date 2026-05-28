@@ -14,13 +14,3 @@ export const HERO_VENDOR_CITIES = [
   { value: 'mumbai', label: 'Mumbai' },
 ];
 
-export const HERO_VENDOR_CATEGORIES = [
-  { value: '', label: 'All Categories' },
-  { value: 'venues', label: 'Venues & Banquets' },
-  { value: 'food', label: 'Catering & Halwai' },
-  { value: 'planning-decor', label: 'Decor & Mandap' },
-  { value: 'photographers', label: 'Photo & Video' },
-  { value: 'makeup', label: 'Bridal & Beauty' },
-  { value: 'music-dance', label: 'Music & Sangeet' },
-  { value: 'pandits', label: 'Pandits & Rituals' },
-];

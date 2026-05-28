@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Building2,
   CheckCircle2,
@@ -14,8 +14,9 @@ import {
 import { APP_NAME, SUPPORT_EMAIL } from '../../brand';
 import { LandingSection } from './LandingPage/LandingSection';
 import { PageBanner } from './PageBanner';
-import { WEDDING_CATEGORIES } from './VendorCategoryPage/CategoriesGrid';
-import { HERO_VENDOR_CITIES } from './LandingPage/heroVendorSearch';
+import { useVendorCategories } from '../../hooks/useVendorCategories';
+import { primaryLocationFromValues, resolveStateDistrictFromVendor } from '../../indiaLocations';
+import { StateDistrictSelect } from './StateDistrictSelect';
 import { registerVendor } from '../../api/vendors';
 
 interface VendorRegistrationPageProps {
@@ -53,9 +54,8 @@ const initialForm = {
   contactName: '',
   phone: '',
   email: '',
-  city: '',
-  address: '',
-  serviceAreas: '',
+  state: '',
+  district: '',
   description: '',
   website: '',
   gstNumber: '',
@@ -66,14 +66,21 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
   onNavigate,
   initialCity = '',
 }) => {
+  const { categories, getLabel } = useVendorCategories();
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({
     ...initialForm,
-    city: initialCity || '',
+    district: initialCity || '',
   });
   const [formError, setFormError] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [applicationId, setApplicationId] = useState('');
+
+  useEffect(() => {
+    if (!initialCity) return;
+    const { state, district } = resolveStateDistrictFromVendor({ city: initialCity });
+    setFormData((prev) => ({ ...prev, state, district }));
+  }, [initialCity]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -100,9 +107,10 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
         !formData.contactName.trim() ||
         !formData.phone.trim() ||
         !formData.email.trim() ||
-        !formData.city
+        !formData.state ||
+        !formData.district
       ) {
-        setFormError('Please complete contact details and select your primary city.');
+        setFormError('Please complete contact details and select your state and district.');
         return false;
       }
       return true;
@@ -137,12 +145,13 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
       const vendor = await registerVendor({
         businessName: formData.businessName,
         category: formData.categoryId,
-        location: formData.address
-          ? `${formData.address}, ${formData.city}`
-          : formData.city,
-        city: formData.city,
+        state: formData.state,
+        district: formData.district,
+        primaryLocation: primaryLocationFromValues(formData.state, formData.district),
+        contactName: formData.contactName,
         email: formData.email,
         phone: formData.phone,
+        description: formData.description,
         price: 'On request',
       });
       setApplicationId(vendor.id ?? `VND-${Date.now()}`);
@@ -155,15 +164,15 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
   const resetForm = () => {
     setIsSubmitted(false);
     setStep(0);
-    setFormData({ ...initialForm, city: initialCity || '' });
+    setFormData({ ...initialForm, district: initialCity || '' });
     setApplicationId('');
     setFormError('');
   };
 
-  const categoryLabel =
-    WEDDING_CATEGORIES.find((c) => c.id === formData.categoryId)?.name ?? formData.categoryId;
-  const cityLabel =
-    HERO_VENDOR_CITIES.find((c) => c.value === formData.city)?.label ?? formData.city;
+  const categoryLabel = formData.categoryId
+    ? getLabel(formData.categoryId)
+    : formData.categoryId;
+  const locationLabel = primaryLocationFromValues(formData.state, formData.district);
 
   return (
     <div className="min-h-screen bg-[#FFFDF7] dark:bg-stone-900" id="vendor-registration-page">
@@ -336,7 +345,7 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
                             className={INPUT_CLASS}
                           >
                             <option value="">Select category</option>
-                            {WEDDING_CATEGORIES.map((cat) => (
+                            {categories.map((cat) => (
                               <option key={cat.id} value={cat.id}>
                                 {cat.name}
                               </option>
@@ -429,60 +438,24 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
                         />
                       </div>
 
-                      <div className="grid sm:grid-cols-2 gap-4">
-                        <div className="space-y-1.5">
-                          <label htmlFor="vendor-city" className={LABEL_CLASS}>
-                            Primary city *
-                          </label>
-                          <select
-                            id="vendor-city"
-                            name="city"
-                            value={formData.city}
-                            onChange={handleChange}
-                            required
-                            className={INPUT_CLASS}
-                          >
-                            <option value="">Select city</option>
-                            {HERO_VENDOR_CITIES.filter((c) => c.value).map((c) => (
-                              <option key={c.value} value={c.value}>
-                                {c.label}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <div className="space-y-1.5">
-                          <label htmlFor="vendor-address" className={LABEL_CLASS}>
-                            Business address (optional)
-                          </label>
-                          <input
-                            id="vendor-address"
-                            type="text"
-                            name="address"
-                            value={formData.address}
-                            onChange={handleChange}
-                            placeholder="Area, landmark, pin code"
-                            className={INPUT_CLASS}
-                          />
-                        </div>
-                      </div>
+                      <StateDistrictSelect
+                        idPrefix="vendor-register"
+                        state={formData.state}
+                        district={formData.district}
+                        onStateChange={(state) =>
+                          setFormData((prev) => ({ ...prev, state, district: '' }))
+                        }
+                        onDistrictChange={(district) =>
+                          setFormData((prev) => ({ ...prev, district }))
+                        }
+                        stateLabel="State *"
+                        districtLabel="District *"
+                      />
 
-                      <div className="space-y-1.5">
-                        <label htmlFor="vendor-serviceAreas" className={LABEL_CLASS}>
-                          Service areas (optional)
-                        </label>
-                        <input
-                          id="vendor-serviceAreas"
-                          type="text"
-                          name="serviceAreas"
-                          value={formData.serviceAreas}
-                          onChange={handleChange}
-                          placeholder="e.g. Noida, Greater Noida, Delhi NCR"
-                          className={INPUT_CLASS}
-                        />
-                        <p className="text-xs text-stone-500 dark:text-stone-400">
-                          Cities or localities where you take bookings.
-                        </p>
-                      </div>
+                      <p className="text-xs text-stone-500 dark:text-stone-400 rounded-lg bg-amber-50/80 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/40 px-3 py-2">
+                        After approval, sign in to your vendor dashboard to add your full business
+                        address and the villages you serve.
+                      </p>
                     </div>
                   )}
 
@@ -637,8 +610,8 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
                     <span className="text-stone-900 dark:text-white text-right">{categoryLabel}</span>
                   </div>
                   <div className="flex justify-between gap-4">
-                    <span className="text-stone-500 dark:text-stone-400">City</span>
-                    <span className="text-stone-900 dark:text-white text-right">{cityLabel}</span>
+                    <span className="text-stone-500 dark:text-stone-400">State & district</span>
+                    <span className="text-stone-900 dark:text-white text-right">{locationLabel}</span>
                   </div>
                 </div>
 

@@ -2,9 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Filter } from 'lucide-react';
 import { APP_NAME } from '../../brand';
 import { AnimatedDiya } from './GoldenDeco';
-import { WEDDING_CATEGORIES } from './VendorCategoryPage/CategoriesGrid';
-import { ALL_MOCK_VENDORS } from './VendorCategoryPage/mockData';
 import { fetchVendors } from '../../api/vendors';
+import { useVendorCategories } from '../../hooks/useVendorCategories';
 import type { ListingCardItem } from './VendorCategoryPage/VendorGridCard';
 import { vendorMatchesCity } from './VendorCategoryPage/vendorCityFilter';
 import { HERO_VENDOR_CITIES } from './LandingPage/heroVendorSearch';
@@ -57,7 +56,8 @@ export const VendorListPage: React.FC<VendorListPageProps> = ({
   initialCategoryId = '',
   initialCity = '',
 }) => {
-  const [allVendors, setAllVendors] = useState<ListingCardItem[]>(ALL_MOCK_VENDORS);
+  const { categories, getLabel } = useVendorCategories();
+  const [allVendors, setAllVendors] = useState<ListingCardItem[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -67,10 +67,10 @@ export const VendorListPage: React.FC<VendorListPageProps> = ({
       q: initialSearchQuery || undefined,
     })
       .then((list) => {
-        if (!cancelled && list.length > 0) setAllVendors(list);
+        if (!cancelled) setAllVendors(list);
       })
       .catch(() => {
-        if (!cancelled) setAllVendors(ALL_MOCK_VENDORS);
+        if (!cancelled) setAllVendors([]);
       });
     return () => {
       cancelled = true;
@@ -163,7 +163,7 @@ export const VendorListPage: React.FC<VendorListPageProps> = ({
     }
 
     return list;
-  }, [searchQuery, selectedCategoryId, selectedCity, sortBy, ratingFilter, offersFilter]);
+  }, [allVendors, searchQuery, selectedCategoryId, selectedCity, sortBy, ratingFilter, offersFilter]);
 
   const handleSimulateInfiniteScroll = () => {
     setIsInfiniteScrolling(true);
@@ -184,9 +184,7 @@ export const VendorListPage: React.FC<VendorListPageProps> = ({
       offersFilter
   );
 
-  const activeCategoryLabel = selectedCategoryId
-    ? WEDDING_CATEGORIES.find((c) => c.id === selectedCategoryId)?.name
-    : null;
+  const activeCategoryLabel = selectedCategoryId ? getLabel(selectedCategoryId) : null;
 
   const activeCityLabel = selectedCity
     ? HERO_VENDOR_CITIES.find((c) => c.value === selectedCity)?.label
@@ -230,6 +228,7 @@ export const VendorListPage: React.FC<VendorListPageProps> = ({
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       <VendorSearchBar
+        categories={categories}
         draft={draft}
         onDraftChange={setDraft}
         onSearch={applySearch}

@@ -8,6 +8,7 @@ export async function fetchUserProfile(): Promise<UserProfile> {
       email: string;
       phone: string;
       customerType?: UserProfile['customerType'];
+      role?: UserProfile['role'];
       walletBalance: number;
       royaltyPoints: number;
       addresses: SavedAddress[];
@@ -22,6 +23,7 @@ export async function fetchUserProfile(): Promise<UserProfile> {
     email: p.email,
     phone: p.phone,
     customerType: p.customerType ?? 'standard',
+    role: p.role ?? 'customer',
     walletBalance: p.walletBalance ?? 0,
     royaltyPoints: p.royaltyPoints ?? 0,
     addresses: p.addresses ?? [],

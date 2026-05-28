@@ -33,6 +33,7 @@ export interface EventPlannerSearchState {
 export interface ParsedRoute {
   page: string;
   admin?: boolean;
+  root?: boolean;
   restaurantId?: string;
   vendorId?: string;
   vendorSearch?: VendorSearchState;
@@ -103,6 +104,8 @@ export function pageToPath(
       return '/cart';
     case 'sign-in':
       return '/sign-in';
+    case 'platform-sign-in':
+      return '/platform/sign-in';
     case 'profile':
       return '/profile';
     case 'account':
@@ -150,6 +153,14 @@ export function parseLocation(
     return { page: 'landing', admin: true };
   }
 
+  if (path === '/root') {
+    return { page: 'landing', root: true };
+  }
+
+  if (path === '/platform/sign-in') {
+    return { page: 'platform-sign-in' };
+  }
+
   if (path === '/' || path === '/home') {
     return { page: 'landing' };
   }
@@ -188,6 +199,7 @@ export function parseLocation(
   const staticPages: Record<string, string> = {
     '/cart': 'cart',
     '/sign-in': 'sign-in',
+    '/platform/sign-in': 'platform-sign-in',
     '/profile': 'profile',
     '/account': 'account',
     '/events': 'celebrations',

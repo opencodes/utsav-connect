@@ -12,7 +12,7 @@ import { UserProfilePage } from './components/web/UserProfilePage';
 import { VendorProfilePage } from './components/web/VendorProfilePage';
 import { VendorProfileGate } from './components/web/VendorProfileGate';
 import {
-  MOCK_VENDOR_SESSION,
+  EMPTY_VENDOR_SESSION,
   type VendorDashboardSession,
 } from './components/web/VendorProfilePage/vendorProfileData';
 import { VendorCategoryPage } from './components/web/VendorCategoryPage';
@@ -41,6 +41,17 @@ import { AdminManagement } from './components/Admin/Management/AdminManagement';
 import { AdminOrders } from './components/Admin/Orders/AdminOrders';
 import { AdminCustomers } from './components/Admin/Customers/AdminCustomers';
 import { AdminMarketing } from './components/Admin/Marketing/AdminMarketing';
+import { AdminVendors } from './components/Admin/Vendors/AdminVendors';
+import { AdminVendorCategories } from './components/Admin/Vendors/AdminVendorCategories';
+import { AdminEmptyState } from './components/Admin/AdminEmptyState';
+import { PlatformSignInPage } from './components/Admin/PlatformSignInPage';
+import { RootSidebar } from './components/Admin/Root/RootSidebar';
+import { RootAdminUsers } from './components/Admin/Root/RootAdminUsers';
+import {
+  clearPlatformSession,
+  fetchPlatformMe,
+  type PlatformUser,
+} from './api/platform';
 
 // Wedding & Traditional Planner Imports
 import { PlannerEvents } from './components/PlannerEvents';
@@ -53,7 +64,7 @@ import { PlannerInventory } from './components/PlannerInventory';
 
 // Types & Data
 import { FoodItem, CartItem, UserProfile } from './types';
-import { MOCK_USER_PROFILE } from './data';
+import { EMPTY_USER_PROFILE } from './data';
 import type { CustomerType } from './types';
 import {
   type NavigateData,
@@ -85,6 +96,8 @@ const COMMERCE_ADMIN_TABS = new Set([
   'orders',
   'customers',
   'marketing',
+  'vendor-approvals',
+  'vendor-categories',
 ]);
 
 function plannerDefaultTab(current: string): string {
@@ -105,6 +118,7 @@ export default function App() {
     isVendorLoggedIn?: boolean;
     userProfile?: Partial<UserProfile>;
     vendorSession?: Partial<VendorDashboardSession>;
+    platformUser?: PlatformUser | null;
   } => {
     try {
       const raw = window.localStorage.getItem(AUTH_STORAGE_KEY);
@@ -121,6 +135,10 @@ export default function App() {
         vendorSession:
           parsed.vendorSession && typeof parsed.vendorSession === 'object'
             ? (parsed.vendorSession as Partial<VendorDashboardSession>)
+            : undefined,
+        platformUser:
+          parsed.platformUser && typeof parsed.platformUser === 'object'
+            ? (parsed.platformUser as PlatformUser)
             : undefined,
       };
     } catch {
@@ -139,9 +157,15 @@ export default function App() {
 
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isAdminMode, setIsAdminMode] = useState(false);
+  const [isRootMode, setIsRootMode] = useState(
+    () => Boolean(initialRoute.root && storedAuth.platformUser?.role === 'root')
+  );
 
   // Customer states info
-  const [currentPage, setCurrentPage] = useState<string>(initialRoute.page);
+  const [currentPage, setCurrentPage] = useState<string>(() => {
+    if (initialRoute.page === 'platform-sign-in') return 'platform-sign-in';
+    return initialRoute.page;
+  });
   const [selectedCity, setSelectedCity] = useState(
     initialRoute.vendorSearch?.city || 'noida'
   );
@@ -152,7 +176,7 @@ export default function App() {
   const [selectedVendorId, setSelectedVendorId] = useState<string>(initialRoute.vendorId || '');
   const [cart, setCart] = useState<CartItem[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile>(() => ({
-    ...MOCK_USER_PROFILE,
+    ...EMPTY_USER_PROFILE,
     ...(storedAuth.userProfile ?? {}),
   }));
   const [isLoggedIn, setIsLoggedIn] = useState(
@@ -163,11 +187,17 @@ export default function App() {
     isLoggedIn,
     userProfile.customerType
   );
+  const [platformUser, setPlatformUser] = useState<PlatformUser | null>(
+    () => storedAuth.platformUser ?? null
+  );
+  const isPlatformOperator =
+    platformUser?.role === 'admin' || platformUser?.role === 'root';
+  const isRootUser = platformUser?.role === 'root';
   const [signInInitialMode, setSignInInitialMode] = useState<SignInMode>('customer');
   const [vendorSession, setVendorSession] = useState<VendorDashboardSession>(() => ({
-    ...MOCK_VENDOR_SESSION,
+    ...EMPTY_VENDOR_SESSION,
     ...(storedAuth.vendorSession ?? {}),
-    vendorId: (storedAuth.vendorSession as { vendorId?: string })?.vendorId ?? MOCK_VENDOR_SESSION.vendorId,
+    vendorId: (storedAuth.vendorSession as { vendorId?: string })?.vendorId ?? '',
   }));
   const [authLoading, setAuthLoading] = useState(false);
   const [vendorSearchFilters, setVendorSearchFilters] = useState({
@@ -192,6 +222,7 @@ export default function App() {
 
   // Admin dynamic states
   const [currentAdminTab, setCurrentAdminTab] = useState<string>('dashboard');
+  const [currentRootTab, setCurrentRootTab] = useState<string>('admin-users');
 
   useEffect(() => {
     if (isAdminMode) {
@@ -200,7 +231,25 @@ export default function App() {
   }, [isAdminMode]);
 
   useEffect(() => {
-    if (!isLoggedIn || !getApiToken()) return;
+    if (!getApiToken()) return;
+    let cancelled = false;
+    void fetchPlatformMe()
+      .then((account) => {
+        if (cancelled) return;
+        if (account.role === 'admin' || account.role === 'root') {
+          setPlatformUser(account);
+        }
+      })
+      .catch(() => {
+        // not a platform token
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isLoggedIn || !getApiToken() || isPlatformOperator) return;
     let cancelled = false;
     void fetchUserProfile()
       .then((profile) => {
@@ -212,7 +261,7 @@ export default function App() {
     return () => {
       cancelled = true;
     };
-  }, [isLoggedIn]);
+  }, [isLoggedIn, isPlatformOperator]);
 
   // Unified global callbacks & state helpers
   const handleToggleDarkMode = () => {
@@ -221,23 +270,41 @@ export default function App() {
 
   const applyRoute = useCallback(
     (route: ParsedRoute, options?: { scroll?: boolean }) => {
+      if (route.root) {
+        if (!isRootUser) {
+          setIsRootMode(false);
+          setCurrentPage('platform-sign-in');
+          if (window.location.pathname === '/root') {
+            replaceRoute('/platform/sign-in');
+          }
+          return;
+        }
+        setIsRootMode(true);
+        setIsAdminMode(false);
+        return;
+      }
+
       if (route.admin) {
-        if (!isLoggedIn) {
-          setSignInInitialMode('customer');
+        if (!isPlatformOperator) {
           setIsAdminMode(false);
-          setCurrentPage('sign-in');
+          setCurrentPage('platform-sign-in');
           if (window.location.pathname === '/admin') {
-            replaceRoute(pageToPath('sign-in'));
+            replaceRoute('/platform/sign-in');
           }
           return;
         }
         purgeLegacyPlannerSeedData();
-        setCurrentAdminTab((tab) => plannerDefaultTab(tab));
+        setCurrentAdminTab((tab) => {
+          if (isEventPlannerCustomer) return plannerDefaultTab(tab);
+          return COMMERCE_ADMIN_TABS.has(tab) ? tab : 'dashboard';
+        });
         setIsAdminMode(true);
+        setIsRootMode(false);
         return;
       }
 
       setIsAdminMode(false);
+      setIsRootMode(false);
 
       let page = route.page;
       if (page === 'account' && !isLoggedIn) {
@@ -269,15 +336,52 @@ export default function App() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     },
-    [isLoggedIn]
+    [isEventPlannerCustomer, isPlatformOperator, isRootUser]
+  );
+
+  const handleSignOutPlatform = useCallback(() => {
+    clearPlatformSession();
+    setPlatformUser(null);
+    setIsAdminMode(false);
+    setIsRootMode(false);
+    const path = pageToPath('landing');
+    pushRoute(path);
+    applyRoute({ page: 'landing' });
+  }, [applyRoute]);
+
+  const handlePlatformSignInSuccess = useCallback(
+    (role: 'root' | 'admin') => {
+      void fetchPlatformMe().then((account) => {
+        setPlatformUser(account);
+        setIsLoggedIn(false);
+        setIsVendorLoggedIn(false);
+        if (role === 'root') {
+          setIsRootMode(true);
+          setIsAdminMode(false);
+          setCurrentRootTab('admin-users');
+          pushRoute('/root');
+          applyRoute({ page: 'landing', root: true });
+        } else {
+          setIsRootMode(false);
+          setIsAdminMode(true);
+          setCurrentAdminTab('dashboard');
+          pushRoute('/admin');
+          applyRoute({ page: 'landing', admin: true });
+        }
+      });
+    },
+    [applyRoute]
   );
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     setIsVendorLoggedIn(false);
-    setUserProfile({ ...MOCK_USER_PROFILE, customerType: 'standard' });
+    setUserProfile({ ...EMPTY_USER_PROFILE, customerType: 'standard' });
     setIsAdminMode(false);
+    setIsRootMode(false);
+    setPlatformUser(null);
     clearApiSession();
+    clearPlatformSession();
     try {
       window.localStorage.removeItem(AUTH_STORAGE_KEY);
     } catch {
@@ -306,12 +410,13 @@ export default function App() {
             phone: vendorSession.phone,
             email: vendorSession.email,
           },
+          platformUser,
         })
       );
     } catch {
       // ignore storage errors (private mode / blocked)
     }
-  }, [isLoggedIn, isVendorLoggedIn, userProfile, vendorSession]);
+  }, [isLoggedIn, isVendorLoggedIn, userProfile, vendorSession, platformUser]);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDarkMode);
@@ -327,18 +432,21 @@ export default function App() {
 
   useEffect(() => {
     const route = parseLocation();
+    if (route.root && isRootUser) {
+      setIsRootMode(true);
+    }
     if (route.admin) {
-      if (!isLoggedIn) {
-        const path = pageToPath('sign-in');
+      if (!isPlatformOperator) {
         if (window.location.pathname === '/admin') {
-          replaceRoute(path);
+          replaceRoute('/platform/sign-in');
         }
         setIsAdminMode(false);
-        setCurrentPage('sign-in');
-        setSignInInitialMode('customer');
+        setCurrentPage('platform-sign-in');
       } else {
         setIsAdminMode(true);
-        setCurrentAdminTab((tab) => plannerDefaultTab(tab));
+        setCurrentAdminTab((tab) =>
+          isEventPlannerCustomer ? plannerDefaultTab(tab) : COMMERCE_ADMIN_TABS.has(tab) ? tab : 'dashboard'
+        );
       }
     }
     if (route.page === 'account' && !isLoggedIn) {
@@ -516,6 +624,9 @@ export default function App() {
     try {
       const session = await signInCustomer(phone, email, { customerType });
       setApiToken(session.token);
+      setPlatformUser(null);
+      setIsAdminMode(false);
+      setIsRootMode(false);
       const profile = await fetchUserProfile();
       setUserProfile(profile);
       setIsLoggedIn(true);
@@ -620,24 +731,37 @@ export default function App() {
   };
 
   const handleEnterAdmin = () => {
-    if (!isLoggedIn) {
-      const path = pageToPath('sign-in');
-      pushRoute(path);
-      applyRoute({ page: 'sign-in' });
-      setSignInInitialMode('customer');
+    if (isEventPlannerCustomer && isLoggedIn) {
+      purgeLegacyPlannerSeedData();
+      setCurrentAdminTab((tab) => plannerDefaultTab(tab));
+      setIsAdminMode(true);
+      pushRoute('/admin');
+      applyRoute({ page: 'landing', admin: true });
       return;
     }
-    purgeLegacyPlannerSeedData();
-    setCurrentAdminTab((tab) => plannerDefaultTab(tab));
-    setIsAdminMode(true);
-    pushRoute('/admin');
+    if (isPlatformOperator) {
+      purgeLegacyPlannerSeedData();
+      setCurrentAdminTab('dashboard');
+      setIsAdminMode(true);
+      pushRoute('/admin');
+      applyRoute({ page: 'landing', admin: true });
+      return;
+    }
+    pushRoute('/platform/sign-in');
+    setCurrentPage('platform-sign-in');
+    setIsAdminMode(false);
+    setIsRootMode(false);
   };
 
   const handleExitAdmin = () => {
     setIsAdminMode(false);
-    const path = pageToPath('landing');
-    pushRoute(path);
-    applyRoute({ page: 'landing' });
+    if (isRootUser) {
+      setIsRootMode(true);
+      pushRoute('/root');
+      applyRoute({ page: 'landing', root: true });
+      return;
+    }
+    handleSignOutPlatform();
   };
 
   const handleAddToCart = (item: FoodItem, restId: string, restName: string) => {
@@ -705,7 +829,27 @@ export default function App() {
       
 
       {/* 2. LAYOUT SPLIT: CUSTOMER PORTAL vs ENTERPRISE ADMIN SUITE */}
-      {!isAdminMode ? (
+      {isRootMode ? (
+        <div id="admin-portal-view">
+          <RootSidebar
+            currentTab={currentRootTab}
+            onSelectTab={setCurrentRootTab}
+            onExit={handleSignOutPlatform}
+            onOpenAdminWorkspace={() => {
+              setIsAdminMode(true);
+              setIsRootMode(false);
+              setCurrentAdminTab('dashboard');
+              pushRoute('/admin');
+            }}
+          />
+          <div id="admin-main">
+            <AdminHeader currentTabName={currentRootTab} />
+            <main className="p-6">
+              {currentRootTab === 'admin-users' && <RootAdminUsers />}
+            </main>
+          </div>
+        </div>
+      ) : !isAdminMode ? (
         
         /* ================= CUSTOMER PORTAL INTERFACE ================= */
         <div className="flex flex-col min-h-screen relative overflow-hidden" id="customer-portal-view">
@@ -805,6 +949,16 @@ export default function App() {
                     onRequireSignIn={() => {
                       setSignInInitialMode('customer');
                       handleNavigatePage('sign-in');
+                    }}
+                  />
+                )}
+
+                {currentPage === 'platform-sign-in' && (
+                  <PlatformSignInPage
+                    onSuccess={handlePlatformSignInSuccess}
+                    onBack={() => {
+                      pushRoute('/');
+                      applyRoute({ page: 'landing' });
                     }}
                   />
                 )}
@@ -948,6 +1102,7 @@ export default function App() {
             onSelectTab={setCurrentAdminTab}
             onExitAdmin={handleExitAdmin}
             plannerWorkspace={isEventPlannerCustomer}
+            platformAdmin={isPlatformOperator}
           />
 
           <div id="admin-main">
@@ -966,25 +1121,42 @@ export default function App() {
                   transition={{ duration: 0.25 }}
                   className="h-full"
                 >
-                  {currentAdminTab === 'dashboard' && (
+                  {currentAdminTab === 'dashboard' && isPlatformOperator && (
                     <AdminDashboard onNavigateTab={setCurrentAdminTab} />
                   )}
 
-                  {currentAdminTab === 'restaurants' && (
+                  {currentAdminTab === 'restaurants' && isPlatformOperator && (
                     <AdminManagement />
                   )}
 
-                  {currentAdminTab === 'orders' && (
+                  {currentAdminTab === 'orders' && isPlatformOperator && (
                     <AdminOrders />
                   )}
 
-                  {currentAdminTab === 'customers' && (
+                  {currentAdminTab === 'customers' && isPlatformOperator && (
                     <AdminCustomers />
                   )}
 
-                  {currentAdminTab === 'marketing' && (
+                  {currentAdminTab === 'marketing' && isPlatformOperator && (
                     <AdminMarketing />
                   )}
+
+                  {currentAdminTab === 'vendor-approvals' && isPlatformOperator && (
+                    <AdminVendors />
+                  )}
+
+                  {currentAdminTab === 'vendor-categories' && isPlatformOperator && (
+                    <AdminVendorCategories />
+                  )}
+
+                  {!isPlatformOperator &&
+                    !isEventPlannerCustomer &&
+                    COMMERCE_ADMIN_TABS.has(currentAdminTab) && (
+                      <AdminEmptyState
+                        title="Platform sign-in required"
+                        description="Sign in at /platform/sign-in with an admin account created by root."
+                      />
+                    )}
 
                   {currentAdminTab === 'planner-dashboard' && (
                     <PlannerDashboard onNavigateTab={setCurrentAdminTab} />

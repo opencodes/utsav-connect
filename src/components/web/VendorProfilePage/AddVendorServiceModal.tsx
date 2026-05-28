@@ -29,14 +29,16 @@ interface AddVendorServiceModalProps {
   open: boolean;
   categoryOptions: string[];
   defaultImage: string;
+  saving?: boolean;
   onClose: () => void;
-  onAdd: (service: VendorServiceItem) => void;
+  onAdd: (service: VendorServiceItem) => void | Promise<void>;
 }
 
 export const AddVendorServiceModal: React.FC<AddVendorServiceModalProps> = ({
   open,
   categoryOptions,
   defaultImage,
+  saving = false,
   onClose,
   onAdd,
 }) => {
@@ -61,12 +63,13 @@ export const AddVendorServiceModal: React.FC<AddVendorServiceModalProps> = ({
   };
 
   const handleClose = () => {
+    if (saving) return;
     setDraft(EMPTY_DRAFT(defaultImage));
     setError('');
     onClose();
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!draft.name.trim() || !draft.description.trim() || !draft.category) {
       setError('Please fill in service name, category, and description.');
@@ -82,19 +85,23 @@ export const AddVendorServiceModal: React.FC<AddVendorServiceModalProps> = ({
       return;
     }
 
-    onAdd({
-      id: `custom-${Date.now()}`,
-      name: draft.name.trim(),
-      description: draft.description.trim(),
-      price,
-      category: draft.category,
-      rating: 0,
-      ratingCount: 0,
-      image: draft.image,
-    });
-    setDraft(EMPTY_DRAFT(defaultImage));
-    setError('');
-    onClose();
+    try {
+      await onAdd({
+        id: `custom-${Date.now()}`,
+        name: draft.name.trim(),
+        description: draft.description.trim(),
+        price,
+        category: draft.category,
+        rating: 0,
+        ratingCount: 0,
+        image: draft.image,
+      });
+      setDraft(EMPTY_DRAFT(defaultImage));
+      setError('');
+      onClose();
+    } catch {
+      // Parent sets error message; keep modal open for corrections.
+    }
   };
 
   return (
@@ -126,7 +133,8 @@ export const AddVendorServiceModal: React.FC<AddVendorServiceModalProps> = ({
           <button
             type="button"
             onClick={handleClose}
-            className="p-2 rounded-lg text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors cursor-pointer"
+            disabled={saving}
+            className="p-2 rounded-lg text-stone-500 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors cursor-pointer disabled:opacity-50"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
@@ -221,7 +229,7 @@ export const AddVendorServiceModal: React.FC<AddVendorServiceModalProps> = ({
           </div>
 
           <p className="text-xs text-stone-500 dark:text-stone-400">
-            New services appear on your dashboard immediately. Public listing updates after a quick
+            New services appear on your dashboard after save. Public listing updates after a quick
             review.
           </p>
 
@@ -229,16 +237,18 @@ export const AddVendorServiceModal: React.FC<AddVendorServiceModalProps> = ({
             <button
               type="button"
               onClick={handleClose}
-              className="px-5 py-2.5 rounded-lg border border-stone-300 dark:border-stone-600 text-sm font-semibold text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors cursor-pointer"
+              disabled={saving}
+              className="px-5 py-2.5 rounded-lg border border-stone-300 dark:border-stone-600 text-sm font-semibold text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer sm:ml-auto"
+              disabled={saving}
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer sm:ml-auto disabled:opacity-60"
             >
               <Plus className="w-4 h-4" aria-hidden />
-              Add service
+              {saving ? 'Saving…' : 'Add service'}
             </button>
           </div>
         </form>

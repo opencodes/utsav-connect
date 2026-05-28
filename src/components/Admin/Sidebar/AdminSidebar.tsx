@@ -5,6 +5,8 @@ import {
   ClipboardList,
   Users,
   Megaphone,
+  UserCheck,
+  Tags,
   ArrowLeft,
   Calendar,
   ChefHat,
@@ -20,6 +22,8 @@ interface AdminSidebarProps {
   onExitAdmin: () => void;
   /** Event planners only see the Mithila planner tools (not commerce admin). */
   plannerWorkspace?: boolean;
+  /** Platform admin sees commerce + vendor operations. */
+  platformAdmin?: boolean;
 }
 
 export const AdminSidebar: React.FC<AdminSidebarProps> = ({
@@ -27,6 +31,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   onSelectTab,
   onExitAdmin,
   plannerWorkspace = false,
+  platformAdmin = false,
 }) => {
   const menuItems = [
     { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard },
@@ -34,6 +39,8 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     { id: 'orders', name: 'Order Logs', icon: ClipboardList },
     { id: 'customers', name: 'Customers', icon: Users },
     { id: 'marketing', name: 'Marketing', icon: Megaphone },
+    { id: 'vendor-approvals', name: 'Vendor approvals', icon: UserCheck },
+    { id: 'vendor-categories', name: 'Vendor categories', icon: Tags },
   ];
 
   const plannerItems = [
@@ -80,23 +87,29 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
 
       <div className="admin-sidebar-body">
         <nav className="p-3 space-y-1" aria-label="Admin navigation">
-          {!plannerWorkspace && (
+          {platformAdmin && (
             <>
               <span className="admin-nav-section">Commerce</span>
               {menuItems.map(renderNavItem)}
             </>
           )}
 
-          <span className={`admin-nav-section ${plannerWorkspace ? '' : 'mt-2'}`}>
-            {plannerWorkspace ? 'Planning' : 'Event planner'}
-          </span>
-          {plannerItems.map(renderNavItem)}
+          {plannerWorkspace && (
+            <>
+              <span className={`admin-nav-section ${platformAdmin ? 'mt-2' : ''}`}>Planning</span>
+              {plannerItems.map(renderNavItem)}
+            </>
+          )}
         </nav>
       </div>
 
       <div className="admin-sidebar-footer">
         <p className="admin-role-badge">
-          {plannerWorkspace ? 'Signed in as event planner' : 'Signed in as administrator'}
+          {plannerWorkspace
+            ? 'Signed in as event planner'
+            : platformAdmin
+              ? 'Signed in as platform admin'
+              : 'Workspace'}
         </p>
         <button type="button" onClick={onExitAdmin} className="admin-exit-btn" id="btn-admin-exit">
           <ArrowLeft className="w-4 h-4 shrink-0" aria-hidden />

@@ -3,11 +3,9 @@ import { Search, CalendarPlus, ChevronDown, MapPin, Calendar } from 'lucide-reac
 import { APP_NAME } from '../../../brand';
 import { RangoliMandala } from '../GoldenDeco';
 import heroBanner from '../../../assets/banner-1.png';
-import {
-  HERO_VENDOR_CATEGORIES,
-  HERO_VENDOR_CITIES,
-  HeroVendorSearchPayload,
-} from './heroVendorSearch';
+import { HERO_VENDOR_CITIES, HeroVendorSearchPayload } from './heroVendorSearch';
+import { useVendorCategories } from '../../../hooks/useVendorCategories';
+import { getHeroCategoryOptions } from '../../../vendorCategories';
 import { HERO_EVENT_TYPES, HeroEventSearchPayload } from './heroEventSearch';
 
 interface HeroSectionProps {
@@ -63,6 +61,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   selectedCity,
   onCityChange,
 }) => {
+  const { categories } = useVendorCategories();
+  const heroCategoryOptions = getHeroCategoryOptions(categories);
   const [activeTab, setActiveTab] = useState<HeroSearchTab>('vendors');
 
   const [city, setCity] = useState(selectedCity);
@@ -251,7 +251,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                               onChange={(e) => setCategoryId(e.target.value)}
                               className="hero-vendor-input hero-vendor-select"
                             >
-                              {HERO_VENDOR_CATEGORIES.map((c) => (
+                              {heroCategoryOptions.map((c) => (
                                 <option key={c.value || 'all'} value={c.value}>
                                   {c.label}
                                 </option>

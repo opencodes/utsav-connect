@@ -1,7 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { AnimatePresence } from 'motion/react';
 import { ArrowLeft } from 'lucide-react';
-import { ALL_MOCK_VENDORS } from './VendorCategoryPage/mockData';
 import { fetchVendor, submitVendorEnquiry } from '../../api/vendors';
 import type { ListingCardItem } from './VendorCategoryPage/VendorGridCard';
 import { InquiryModal, InquiryFormData } from './VendorCategoryPage/InquiryModal';
@@ -47,14 +46,10 @@ export const VendorDetailsPage: React.FC<VendorDetailsPageProps> = ({
     let cancelled = false;
     void fetchVendor(vendorId)
       .then((v) => {
-        if (cancelled) return;
-        if (v) setListing(v);
-        else setListing(ALL_MOCK_VENDORS.find((x) => x.id === vendorId) ?? null);
+        if (!cancelled) setListing(v);
       })
       .catch(() => {
-        if (!cancelled) {
-          setListing(ALL_MOCK_VENDORS.find((x) => x.id === vendorId) ?? null);
-        }
+        if (!cancelled) setListing(null);
       });
     return () => {
       cancelled = true;

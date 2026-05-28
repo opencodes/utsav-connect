@@ -122,3 +122,116 @@ export async function updateCampaign(
   });
   return data.campaign;
 }
+
+export type AdminVendorRow = {
+  id: string;
+  name: string;
+  category: string;
+  location: string;
+  state?: string;
+  district?: string;
+  contactName?: string;
+  contactEmail: string;
+  contactPhone: string;
+  description?: string;
+  status: string;
+  image?: string;
+  price?: string;
+};
+
+export async function fetchAdminVendors(params?: {
+  status?: string;
+  category?: string;
+  q?: string;
+}): Promise<AdminVendorRow[]> {
+  const data = await apiRequest<{ vendors: Record<string, unknown>[] }>('/admin/vendors', {
+    auth: true,
+    query: params,
+  });
+  return (data.vendors ?? []).map((raw) => ({
+    id: String(raw.id ?? raw.listingId ?? ''),
+    name: String(raw.name ?? ''),
+    category: String(raw.category ?? ''),
+    location: String(raw.location ?? ''),
+    state: raw.state ? String(raw.state) : undefined,
+    district: raw.district ? String(raw.district) : undefined,
+    contactName: raw.contactName ? String(raw.contactName) : undefined,
+    contactEmail: String(raw.contactEmail ?? ''),
+    contactPhone: String(raw.contactPhone ?? ''),
+    description: raw.description ? String(raw.description) : undefined,
+    status: String(raw.status ?? 'pending_review'),
+    image: raw.image ? String(raw.image) : undefined,
+    price: raw.price ? String(raw.price) : undefined,
+  }));
+}
+
+export async function updateAdminVendorStatus(
+  vendorId: string,
+  status: 'pending_review' | 'approved' | 'rejected'
+): Promise<AdminVendorRow> {
+  const data = await apiRequest<{ vendor: Record<string, unknown> }>(
+    `/admin/vendors/${vendorId}/status`,
+    {
+      method: 'PATCH',
+      auth: true,
+      body: { status },
+    }
+  );
+  const raw = data.vendor;
+  return {
+    id: String(raw.id ?? raw.listingId ?? vendorId),
+    name: String(raw.name ?? ''),
+    category: String(raw.category ?? ''),
+    location: String(raw.location ?? ''),
+    state: raw.state ? String(raw.state) : undefined,
+    district: raw.district ? String(raw.district) : undefined,
+    contactName: raw.contactName ? String(raw.contactName) : undefined,
+    contactEmail: String(raw.contactEmail ?? ''),
+    contactPhone: String(raw.contactPhone ?? ''),
+    description: raw.description ? String(raw.description) : undefined,
+    status: String(raw.status ?? status),
+  };
+}
+
+export type AdminVendorCategory = { id: string; name: string };
+
+export async function fetchAdminVendorCategories(): Promise<AdminVendorCategory[]> {
+  const data = await apiRequest<{ categories: AdminVendorCategory[] }>('/admin/vendor-categories', {
+    auth: true,
+  });
+  return data.categories ?? [];
+}
+
+export async function createAdminVendorCategory(body: {
+  id: string;
+  name: string;
+}): Promise<AdminVendorCategory> {
+  const data = await apiRequest<{ category: AdminVendorCategory }>('/admin/vendor-categories', {
+    method: 'POST',
+    auth: true,
+    body,
+  });
+  return data.category;
+}
+
+export async function updateAdminVendorCategory(
+  id: string,
+  body: { name: string }
+): Promise<AdminVendorCategory> {
+  const data = await apiRequest<{ category: AdminVendorCategory }>(
+    `/admin/vendor-categories/${id}`,
+    {
+      method: 'PUT',
+      auth: true,
+      body,
+    }
+  );
+  return data.category;
+}
+
+export async function deleteAdminVendorCategory(id: string): Promise<void> {
+  await apiRequest(`/admin/vendor-categories/${id}`, {
+    method: 'DELETE',
+    auth: true,
+  });
+}

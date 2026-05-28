@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { ShoppingBag, ArrowLeft, Trash2, MapPin, Gift, Plus, Minus, CreditCard, ChevronRight, CalendarCheck, ShieldAlert } from 'lucide-react';
 import { CartItem, SavedAddress, UserProfile } from '../../types';
-import { FESTIVE_COUPONS } from '../../data';
 import { fetchCoupons, type CatalogCoupon } from '../../api/catalog';
 import { AnimatedDiya } from './GoldenDeco';
 
@@ -38,17 +37,15 @@ export const CartPage: React.FC<CartPageProps> = ({
   isLoggedIn,
   onRequireSignIn,
 }) => {
-  const [coupons, setCoupons] = useState<CatalogCoupon[]>(
-    FESTIVE_COUPONS.map((c) => ({ code: c.code, discount: c.discount, desc: c.description }))
-  );
+  const [coupons, setCoupons] = useState<CatalogCoupon[]>([]);
 
   useEffect(() => {
     void fetchCoupons()
       .then((list) => {
-        if (list.length > 0) setCoupons(list);
+        setCoupons(list);
       })
       .catch(() => {
-        // keep FESTIVE_COUPONS fallback
+        setCoupons([]);
       });
   }, []);
 

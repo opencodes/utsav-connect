@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowRight, ShieldCheck, Store, User } from 'lucide-react';
 import { APP_NAME } from '../../brand';
+import { routeHref } from '../../routing';
 
 export type SignInMode = 'customer' | 'vendor';
 
@@ -222,7 +223,7 @@ export const SignInPage: React.FC<SignInPageProps> = ({
 
           <button
             type="button"
-            onClick={() => window.location.assign('/platform/sign-in')}
+            onClick={() => window.location.assign(routeHref('/platform/sign-in'))}
             className="w-full py-2.5 rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-700 dark:text-stone-200 text-sm font-semibold hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
             id="btn-open-admin-workspace"
           >

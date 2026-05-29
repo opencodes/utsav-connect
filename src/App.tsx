@@ -69,6 +69,7 @@ import {
   type AdminRouteAccess,
   adminTabPath,
   COMMERCE_ADMIN_TAB_IDS,
+  currentRoutePath,
   type NavigateData,
   type ParsedRoute,
   pageToPath,
@@ -200,7 +201,7 @@ export default function App() {
       });
       setCurrentAdminTab(normalized);
       const path = adminTabPath(normalized);
-      const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
+      const currentPath = currentRoutePath();
       if (currentPath !== path) {
         pushRoute(path);
       }
@@ -217,7 +218,7 @@ export default function App() {
       });
       setCurrentAdminTab(normalized);
       const path = adminTabPath(normalized);
-      const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
+      const currentPath = currentRoutePath();
       if (currentPath === '/admin' || currentPath !== path) {
         replaceRoute(path);
       }
@@ -372,7 +373,7 @@ export default function App() {
         if (!isRootUser) {
           setIsRootMode(false);
           setCurrentPage('platform-sign-in');
-          if (window.location.pathname === '/root') {
+          if (currentRoutePath() === '/root') {
             replaceRoute('/platform/sign-in');
           }
           return;
@@ -392,7 +393,7 @@ export default function App() {
         if (!allowAdmin) {
           setIsAdminMode(false);
           setCurrentPage('platform-sign-in');
-          if (window.location.pathname.startsWith('/admin')) {
+          if (currentRoutePath().startsWith('/admin')) {
             replaceRoute('/platform/sign-in');
           }
           return;
@@ -551,11 +552,15 @@ export default function App() {
   }, [isDarkMode]);
 
   useEffect(() => {
-    const onPopState = () => {
+    const handleLocationChange = () => {
       applyRoute(parseLocation(), { scroll: true });
     };
-    window.addEventListener('popstate', onPopState);
-    return () => window.removeEventListener('popstate', onPopState);
+    window.addEventListener('popstate', handleLocationChange);
+    window.addEventListener('hashchange', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+      window.removeEventListener('hashchange', handleLocationChange);
+    };
   }, [applyRoute]);
 
   useEffect(() => {
@@ -572,7 +577,7 @@ export default function App() {
         userProfile.customerType
       );
       if (!allowAdmin) {
-        if (window.location.pathname.startsWith('/admin')) {
+        if (currentRoutePath().startsWith('/admin')) {
           replaceRoute('/platform/sign-in');
         }
         setIsAdminMode(false);
@@ -586,7 +591,11 @@ export default function App() {
       replaceRoute('/sign-in');
       setCurrentPage('sign-in');
     }
-    if (window.location.hash && (route.page === 'landing' || currentPage === 'landing')) {
+    if (
+      window.location.hash &&
+      !window.location.hash.startsWith('#/') &&
+      (route.page === 'landing' || currentPage === 'landing')
+    ) {
       const id = window.location.hash.slice(1);
       window.setTimeout(() => {
         document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });

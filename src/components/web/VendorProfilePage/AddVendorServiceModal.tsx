@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { Plus, X } from 'lucide-react';
 import type { VendorServiceItem } from '../VendorDetailPage/vendorServicesData';
 import { ImageUploadField } from './ImageUploadField';
+import vendorPlaceholder from '../../../assets/vendor-placeholder.png';
 
 const INPUT_CLASS =
   'w-full px-4 py-2.5 text-sm bg-white dark:bg-stone-900 rounded-lg border border-stone-200 dark:border-stone-700 text-stone-900 dark:text-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500';
@@ -17,18 +18,17 @@ export interface NewServiceDraft {
   image: string;
 }
 
-const EMPTY_DRAFT = (defaultImage: string): NewServiceDraft => ({
+const EMPTY_DRAFT = (): NewServiceDraft => ({
   name: '',
   description: '',
   price: '',
   category: '',
-  image: defaultImage,
+  image: vendorPlaceholder,
 });
 
 interface AddVendorServiceModalProps {
   open: boolean;
   categoryOptions: string[];
-  defaultImage: string;
   saving?: boolean;
   onClose: () => void;
   onAdd: (service: VendorServiceItem) => void | Promise<void>;
@@ -37,20 +37,19 @@ interface AddVendorServiceModalProps {
 export const AddVendorServiceModal: React.FC<AddVendorServiceModalProps> = ({
   open,
   categoryOptions,
-  defaultImage,
   saving = false,
   onClose,
   onAdd,
 }) => {
-  const [draft, setDraft] = useState<NewServiceDraft>(EMPTY_DRAFT(defaultImage));
+  const [draft, setDraft] = useState<NewServiceDraft>(EMPTY_DRAFT());
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (open) {
-      setDraft(EMPTY_DRAFT(defaultImage));
+      setDraft(EMPTY_DRAFT());
       setError('');
     }
-  }, [open, defaultImage]);
+  }, [open]);
 
   if (!open) return null;
 
@@ -64,7 +63,7 @@ export const AddVendorServiceModal: React.FC<AddVendorServiceModalProps> = ({
 
   const handleClose = () => {
     if (saving) return;
-    setDraft(EMPTY_DRAFT(defaultImage));
+    setDraft(EMPTY_DRAFT());
     setError('');
     onClose();
   };
@@ -80,11 +79,6 @@ export const AddVendorServiceModal: React.FC<AddVendorServiceModalProps> = ({
       setError('Enter a valid price greater than zero.');
       return;
     }
-    if (!draft.image) {
-      setError('Please upload a photo for this service.');
-      return;
-    }
-
     try {
       await onAdd({
         id: `custom-${Date.now()}`,
@@ -94,9 +88,9 @@ export const AddVendorServiceModal: React.FC<AddVendorServiceModalProps> = ({
         category: draft.category,
         rating: 0,
         ratingCount: 0,
-        image: draft.image,
+        image: draft.image || vendorPlaceholder,
       });
-      setDraft(EMPTY_DRAFT(defaultImage));
+      setDraft(EMPTY_DRAFT());
       setError('');
       onClose();
     } catch {
@@ -152,12 +146,12 @@ export const AddVendorServiceModal: React.FC<AddVendorServiceModalProps> = ({
           )}
 
           <ImageUploadField
-            label="Service photo *"
+            label="Service photo"
             value={draft.image}
             onChange={(image) => setDraft((prev) => ({ ...prev, image }))}
             variant="card"
             id="add-service-image"
-            hint="Shown on your listing and in search results"
+            hint="Optional. The placeholder will be used if no photo is uploaded."
           />
 
           <div className="space-y-1.5">

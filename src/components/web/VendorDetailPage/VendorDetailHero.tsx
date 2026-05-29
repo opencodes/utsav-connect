@@ -26,13 +26,20 @@ export const VendorDetailHero: React.FC<VendorDetailHeroProps> = ({
       className="bg-white dark:bg-stone-850 rounded-3xl overflow-hidden shadow-lg border border-orange-100/30 dark:border-stone-800"
       id="detail-vendor-hero"
     >
-      <div className="h-48 relative bg-stone-300">
-        <img
-          src={vendor.image}
-          alt={vendor.name}
-          className="w-full h-full object-cover filter brightness-[0.75]"
-          referrerPolicy="no-referrer"
-        />
+      <div className="h-48 relative bg-gradient-to-br from-orange-500 via-rose-600 to-stone-900">
+        {vendor.image ? (
+          <img
+            src={vendor.image}
+            alt={vendor.name}
+            className="w-full h-full object-cover filter brightness-[0.75]"
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          <div
+            className="w-full h-full bg-gradient-to-br from-orange-500 via-rose-600 to-stone-900"
+            aria-hidden="true"
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
         <button

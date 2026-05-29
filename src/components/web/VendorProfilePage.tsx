@@ -1062,7 +1062,6 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
       <AddVendorServiceModal
         open={showAddService}
         categoryOptions={serviceCategoryOptions}
-        defaultImage={profileImage || vendor.image}
         saving={savingService}
         onClose={() => {
           if (!savingService) setShowAddService(false);

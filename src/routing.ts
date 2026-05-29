@@ -1,4 +1,4 @@
-/** Customer portal URL routing (History API, no extra deps). */
+/** Customer portal URL routing (hash URLs, no extra deps). */
 
 export interface NavigateData {
   restaurantId?: string;
@@ -214,13 +214,57 @@ export function pageToPath(
   }
 }
 
+function normalizePath(path: string): string {
+  return path.replace(/\/+$/, '') || '/';
+}
+
+function splitRoutePath(path: string): { pathname: string; search: string } {
+  const queryStart = path.indexOf('?');
+  const pathname = queryStart >= 0 ? path.slice(0, queryStart) : path;
+  const query = queryStart >= 0 ? path.slice(queryStart + 1) : '';
+  return {
+    pathname: normalizePath(pathname.startsWith('/') ? pathname : `/${pathname}`),
+    search: query ? `?${query}` : '',
+  };
+}
+
+function hashRouteParts(hash = window.location.hash): { pathname: string; search: string } | null {
+  const route = hash.startsWith('#') ? hash.slice(1) : hash;
+  if (!route.startsWith('/')) {
+    return null;
+  }
+  return splitRoutePath(route);
+}
+
+function currentRouteParts(): { pathname: string; search: string } {
+  return hashRouteParts() ?? {
+    pathname: normalizePath(window.location.pathname),
+    search: window.location.search,
+  };
+}
+
+export function currentRoutePath(): string {
+  return currentRouteParts().pathname;
+}
+
+export function routeHref(path: string): string {
+  return `#${path.startsWith('/') ? path : `/${path}`}`;
+}
+
 /** Parse current `window.location` into app route state. */
 export function parseLocation(
-  pathname = window.location.pathname,
-  search = window.location.search
+  pathname?: string,
+  search?: string
 ): ParsedRoute {
-  const params = new URLSearchParams(search);
-  const path = pathname.replace(/\/+$/, '') || '/';
+  const parts =
+    pathname === undefined && search === undefined
+      ? currentRouteParts()
+      : {
+          pathname: normalizePath(pathname ?? window.location.pathname),
+          search: search ?? window.location.search,
+        };
+  const params = new URLSearchParams(parts.search);
+  const path = parts.pathname;
 
   const adminTabMatch = path.match(/^\/admin\/([^/]+)$/);
   if (adminTabMatch) {
@@ -308,9 +352,9 @@ export function parseLocation(
 }
 
 export function pushRoute(path: string) {
-  window.history.pushState({ path }, '', path);
+  window.history.pushState({ path }, '', routeHref(path));
 }
 
 export function replaceRoute(path: string) {
-  window.history.replaceState({ path }, '', path);
+  window.history.replaceState({ path }, '', routeHref(path));
 }

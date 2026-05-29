@@ -1,6 +1,7 @@
 import React from 'react';
 import { Star, Clock } from 'lucide-react';
 import { VendorListingItem } from './vendorListingData';
+import vendorPlaceholder from '../../../assets/vendor-placeholder.png';
 
 interface VendorListItemCardProps {
   vendor: VendorListingItem;
@@ -8,6 +9,8 @@ interface VendorListItemCardProps {
 }
 
 export const VendorListItemCard: React.FC<VendorListItemCardProps> = ({ vendor, onClick }) => {
+  const imageSrc = vendor.image || vendorPlaceholder;
+
   return (
     <div
       role="button"
@@ -20,7 +23,7 @@ export const VendorListItemCard: React.FC<VendorListItemCardProps> = ({ vendor, 
     >
       <div className="relative w-full sm:w-48 h-44 sm:h-auto sm:self-stretch shrink-0 overflow-hidden bg-stone-100">
         <img
-          src={vendor.image}
+          src={imageSrc}
           alt={vendor.name}
           className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           referrerPolicy="no-referrer"

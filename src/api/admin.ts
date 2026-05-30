@@ -193,7 +193,7 @@ export async function updateAdminVendorStatus(
   };
 }
 
-export type AdminVendorCategory = { id: string; name: string };
+export type AdminVendorCategory = { id: string; name: string, category_img: string };
 
 export async function fetchAdminVendorCategories(): Promise<AdminVendorCategory[]> {
   const data = await apiRequest<{ categories: AdminVendorCategory[] }>('/admin/vendor-categories', {
@@ -205,6 +205,7 @@ export async function fetchAdminVendorCategories(): Promise<AdminVendorCategory[
 export async function createAdminVendorCategory(body: {
   id: string;
   name: string;
+  category_img: string;
 }): Promise<AdminVendorCategory> {
   const data = await apiRequest<{ category: AdminVendorCategory }>('/admin/vendor-categories', {
     method: 'POST',
@@ -216,7 +217,7 @@ export async function createAdminVendorCategory(body: {
 
 export async function updateAdminVendorCategory(
   id: string,
-  body: { name: string }
+  body: { name: string, category_img: string }
 ): Promise<AdminVendorCategory> {
   const data = await apiRequest<{ category: AdminVendorCategory }>(
     `/admin/vendor-categories/${id}`,

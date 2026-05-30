@@ -18,6 +18,7 @@ export const AdminVendorCategories: React.FC = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const [saving, setSaving] = useState(false);
+  const [newCategoryImg, setNewCategoryImg] = useState('');
 
   const load = useCallback(() => {
     setLoading(true);
@@ -33,15 +34,18 @@ export const AdminVendorCategories: React.FC = () => {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newId.trim() || !newName.trim()) return;
+    if (!newId.trim() || !newName.trim() || !newCategoryImg.trim()) return;
     setSaving(true);
     try {
+      console.log('Creating category with id:', newId, 'name:', newName, 'category_img:', newCategoryImg);
       await createAdminVendorCategory({
         id: newId.trim().toLowerCase().replace(/\s+/g, '-'),
         name: newName.trim(),
+        category_img: newCategoryImg.trim(),
       });
       setNewId('');
       setNewName('');
+      setNewCategoryImg('');
       setShowAdd(false);
       load();
     } catch {
@@ -55,7 +59,7 @@ export const AdminVendorCategories: React.FC = () => {
     if (!editName.trim()) return;
     setSaving(true);
     try {
-      await updateAdminVendorCategory(id, { name: editName.trim() });
+      await updateAdminVendorCategory(id, { name: editName.trim(), category_img: newCategoryImg.trim() });
       setEditingId(null);
       load();
     } catch {
@@ -150,6 +154,7 @@ export const AdminVendorCategories: React.FC = () => {
                         onClick={() => {
                           setEditingId(cat.id);
                           setEditName(cat.name);
+                          setNewCategoryImg(cat.category_img);  
                         }}
                         className="inline-flex items-center gap-1 px-2 py-1 text-xs text-stone-600 hover:bg-stone-100 rounded-lg"
                       >
@@ -203,6 +208,18 @@ export const AdminVendorCategories: React.FC = () => {
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 placeholder="e.g. Floral Decor"
+                className="mt-1 w-full px-3 py-2 text-sm border rounded-xl dark:bg-stone-900 dark:border-stone-700"
+                required
+              />
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-stone-600 dark:text-stone-400">
+                Category Image URL
+              </label>
+              <input
+                value={newCategoryImg}
+                onChange={(e) => setNewCategoryImg(e.target.value)}
+                placeholder="e.g. https://example.com/image.jpg"
                 className="mt-1 w-full px-3 py-2 text-sm border rounded-xl dark:bg-stone-900 dark:border-stone-700"
                 required
               />

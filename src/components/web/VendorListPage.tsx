@@ -5,7 +5,7 @@ import { AnimatedDiya } from './GoldenDeco';
 import { fetchVendors } from '../../api/vendors';
 import { useVendorCategories } from '../../hooks/useVendorCategories';
 import type { ListingCardItem } from './VendorCategoryPage/VendorGridCard';
-import { vendorMatchesCity } from './VendorCategoryPage/vendorCityFilter';
+import { isAllCityValue, vendorMatchesCity } from './VendorCategoryPage/vendorCityFilter';
 import { HERO_VENDOR_CITIES } from './LandingPage/heroVendorSearch';
 import { PageBanner } from './PageBanner';
 import { VendorSearchBar, VendorSearchDraft } from './VendorListingPage/VendorSearchBar';
@@ -50,6 +50,8 @@ const EMPTY_DRAFT: VendorSearchDraft = {
   offersFilter: '',
 };
 
+const VENDOR_PAGE_SIZE = 10;
+
 export const VendorListPage: React.FC<VendorListPageProps> = ({
   onNavigate,
   initialSearchQuery = '',
@@ -58,25 +60,6 @@ export const VendorListPage: React.FC<VendorListPageProps> = ({
 }) => {
   const { categories, getLabel } = useVendorCategories();
   const [allVendors, setAllVendors] = useState<ListingCardItem[]>([]);
-
-  useEffect(() => {
-    let cancelled = false;
-    void fetchVendors({
-      category: initialCategoryId || undefined,
-      city: initialCity || undefined,
-      q: initialSearchQuery || undefined,
-    })
-      .then((list) => {
-        if (!cancelled) setAllVendors(list);
-      })
-      .catch(() => {
-        if (!cancelled) setAllVendors([]);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [initialCategoryId, initialCity, initialSearchQuery]);
-
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery);
   const [selectedCategoryId, setSelectedCategoryId] = useState(initialCategoryId);
   const [selectedCity, setSelectedCity] = useState(initialCity);
@@ -89,14 +72,33 @@ export const VendorListPage: React.FC<VendorListPageProps> = ({
   );
 
   const [isInfiniteScrolling, setIsInfiniteScrolling] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(4);
+  const [visibleCount, setVisibleCount] = useState(VENDOR_PAGE_SIZE);
+  const apiCity = selectedCity && !isAllCityValue(selectedCity) ? selectedCity : '';
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetchVendors({
+      category: selectedCategoryId || undefined,
+      city: apiCity || undefined,
+      q: searchQuery.trim() || undefined,
+    })
+      .then((list) => {
+        if (!cancelled) setAllVendors(list);
+      })
+      .catch(() => {
+        if (!cancelled) setAllVendors([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [apiCity, selectedCategoryId, searchQuery]);
 
   useEffect(() => {
     setSearchQuery(initialSearchQuery);
     setSelectedCategoryId(initialCategoryId);
     setSelectedCity(initialCity);
     setDraft(draftFromApplied(initialSearchQuery, initialCategoryId, initialCity, '', '', ''));
-    setVisibleCount(4);
+    setVisibleCount(VENDOR_PAGE_SIZE);
   }, [initialSearchQuery, initialCategoryId, initialCity]);
 
   const applySearch = () => {
@@ -106,7 +108,7 @@ export const VendorListPage: React.FC<VendorListPageProps> = ({
     setSortBy(draft.sortBy);
     setRatingFilter(draft.ratingFilter);
     setOffersFilter(draft.offersFilter);
-    setVisibleCount(4);
+    setVisibleCount(VENDOR_PAGE_SIZE);
   };
 
   const clearAll = () => {
@@ -117,7 +119,7 @@ export const VendorListPage: React.FC<VendorListPageProps> = ({
     setSortBy('');
     setRatingFilter('');
     setOffersFilter('');
-    setVisibleCount(4);
+    setVisibleCount(VENDOR_PAGE_SIZE);
   };
 
   const filteredVendors = useMemo(() => {
@@ -138,7 +140,7 @@ export const VendorListPage: React.FC<VendorListPageProps> = ({
       list = list.filter((v) => v.category === selectedCategoryId);
     }
 
-    if (selectedCity.trim()) {
+    if (selectedCity.trim() && !isAllCityValue(selectedCity)) {
       list = list.filter((v) => vendorMatchesCity(v.location, selectedCity));
     }
 
@@ -168,7 +170,7 @@ export const VendorListPage: React.FC<VendorListPageProps> = ({
   const handleSimulateInfiniteScroll = () => {
     setIsInfiniteScrolling(true);
     setTimeout(() => {
-      setVisibleCount((prev) => prev + 2);
+      setVisibleCount((prev) => prev + VENDOR_PAGE_SIZE);
       setIsInfiniteScrolling(false);
     }, 1200);
   };
@@ -178,7 +180,7 @@ export const VendorListPage: React.FC<VendorListPageProps> = ({
   const hasActiveFilters = Boolean(
     searchQuery.trim() ||
       selectedCategoryId ||
-      selectedCity ||
+      (selectedCity && !isAllCityValue(selectedCity)) ||
       sortBy ||
       ratingFilter ||
       offersFilter
@@ -186,7 +188,7 @@ export const VendorListPage: React.FC<VendorListPageProps> = ({
 
   const activeCategoryLabel = selectedCategoryId ? getLabel(selectedCategoryId) : null;
 
-  const activeCityLabel = selectedCity
+  const activeCityLabel = selectedCity && !isAllCityValue(selectedCity)
     ? HERO_VENDOR_CITIES.find((c) => c.value === selectedCity)?.label
     : null;
 

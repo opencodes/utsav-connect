@@ -146,204 +146,218 @@ export const PlannerChuman: React.FC = () => {
 
       </div>
 
-      {/* Adding Panel vs Table list layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      {/* Unified Blessing Registry & Shagun Logs Hub Card */}
+      <div className="bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm overflow-hidden text-left" id="unified-shagun-logs-hub">
         
-        {/* LHS addition form */}
-        <div className="lg:col-span-1 bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 p-5 shadow-sm text-left">
-          <h3 className="text-sm font-semibold text-stone-900 dark:text-white pb-3 border-b border-light-100 flex items-center gap-2 mb-4">
-            <Plus className="w-4 h-4 text-orange-600" />
-            <span>Record Gift blessing</span>
-          </h3>
-
-          <form onSubmit={handleAddChumanSubmit} className="space-y-4">
-            <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Auspicious Giver (Guest Name)</label>
-              <input
-                type="text"
-                placeholder="Name"
-                value={cName}
-                onChange={e => setCName(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-orange-600"
-                required
-              />
+        {/* Card Header (Shared & Integrated) */}
+        <div className="p-6 border-b border-stone-100 dark:border-stone-700 bg-stone-50/50 dark:bg-stone-900/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <Gift className="w-5 h-5 text-orange-600" />
+              <b className="text-base font-semibold text-stone-900 dark:text-white">Utsav Shagun & Chuman Blessing Registry</b>
             </div>
-
-            <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Gift Format Type</label>
-              <select
-                value={cType}
-                onChange={e => setCType(e.target.value as any)}
-                className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 text-stone-900 dark:text-white font-bold"
-              >
-                <option value="Cash">Cash Envelope (Envelope Shagun)</option>
-                <option value="Physical Item">Physical Asset / Ornament / Saree</option>
-              </select>
-            </div>
-
-            {cType === 'Physical Item' && (
-              <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Gift Item Name / Descriptors</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Gold Plated Silver Coin"
-                  value={cItemName}
-                  onChange={e => setCItemName(e.target.value)}
-                  className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-white focus:ring-1"
-                  required
-                />
-              </div>
-            )}
-
-            <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">
-                {cType === 'Cash' ? 'Auspicious Sum (₹ Cash Amount)' : 'Estimated Market Value (₹ Equivalent)'}
-              </label>
-              <input
-                type="number"
-                placeholder="₹ Value"
-                value={cValue}
-                onChange={e => setCValue(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-white font-mono font-bold"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Presented Date</label>
-              <input
-                type="date"
-                value={cDate}
-                onChange={e => setCDate(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-400"
-              />
-            </div>
-
-            <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Additional blessing / Custom Notes</label>
-              <textarea
-                placeholder="Details of families background or other descriptions..."
-                value={cNotes}
-                onChange={e => setCNotes(e.target.value)}
-                rows={3}
-                className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Record Blessing</span>
-            </button>
-          </form>
+            <p className="text-xs text-stone-400 dark:text-stone-400 mt-1">
+              Record auspicious cash envelopes (चुमन राशि) or physical assets received from guests, and track historic blessing logs.
+            </p>
+          </div>
         </div>
 
-        {/* RHS searchable listing and tracking table */}
-        <div className="lg:col-span-3 bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 p-5 shadow-sm space-y-4 text-left flex flex-col justify-between">
-          <div>
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b">
-              <div>
-                <h3 className="text-sm font-semibold text-stone-900 dark:text-white">Chuman & Shagun Logs</h3>
-                <p className="text-[11px] text-stone-400 mt-0.5">Categorized list index of all recorded auspicious gifts for ceremony record audit checks.</p>
+        {/* Card Body - Dual Section Layout inside the same card */}
+        <div className="p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            
+            {/* LHS Custom Input Form */}
+            <div className="lg:col-span-1 lg:border-r border-stone-100 dark:border-stone-700 lg:pr-6 space-y-4">
+              <div className="flex items-center gap-1.5 pb-2 border-b border-stone-100 dark:border-stone-700">
+                <Plus className="w-4 h-4 text-orange-600" />
+                <h4 className="text-xs font-bold uppercase tracking-wider text-stone-400">Record Gift Blessing</h4>
+              </div>
+
+              <form onSubmit={handleAddChumanSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Auspicious Giver (Guest Name)</label>
+                  <input
+                    type="text"
+                    placeholder="Name"
+                    value={cName}
+                    onChange={e => setCName(e.target.value)}
+                    className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-orange-600"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Gift Format Type</label>
+                  <select
+                    value={cType}
+                    onChange={e => setCType(e.target.value as any)}
+                    className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 text-stone-900 dark:text-white font-bold"
+                  >
+                    <option value="Cash">Cash Envelope (Envelope Shagun)</option>
+                    <option value="Physical Item">Physical Asset / Ornament / Saree</option>
+                  </select>
+                </div>
+
+                {cType === 'Physical Item' && (
+                  <div>
+                    <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Gift Item Name / Descriptors</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Gold Plated Silver Coin"
+                      value={cItemName}
+                      onChange={e => setCItemName(e.target.value)}
+                      className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-white focus:ring-1"
+                      required
+                    />
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">
+                    {cType === 'Cash' ? 'Auspicious Sum (₹ Cash Amount)' : 'Estimated Market Value (₹ Equivalent)'}
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="₹ Value"
+                    value={cValue}
+                    onChange={e => setCValue(e.target.value)}
+                    className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-white font-mono font-bold"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Presented Date</label>
+                  <input
+                    type="date"
+                    value={cDate}
+                    onChange={e => setCDate(e.target.value)}
+                    className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Additional blessing / Custom Notes</label>
+                  <textarea
+                    placeholder="Details of families background or other descriptions..."
+                    value={cNotes}
+                    onChange={e => setCNotes(e.target.value)}
+                    rows={3}
+                    className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Record Blessing</span>
+                </button>
+              </form>
+            </div>
+
+            {/* RHS Reactive Shagun Ledger & Logs */}
+            <div className="lg:col-span-3 space-y-4">
+              
+              {/* Filter section inside directory container */}
+              <div className="p-3 bg-stone-50 dark:bg-stone-900/40 rounded-xl border border-stone-100 dark:border-stone-700 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div className="flex gap-2 flex-wrap items-center">
+                  <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mr-1">Blessing Envelopes:</span>
+                  {(['All', 'Cash', 'Physical Item'] as const).map((fil) => (
+                    <button
+                      key={fil}
+                      onClick={() => setActiveFilter(fil)}
+                      className={`px-3 py-1 rounded-full text-[9px] font-bold transition-colors border ${
+                        activeFilter === fil
+                          ? 'bg-orange-600 text-white border-orange-600'
+                          : 'bg-white dark:bg-stone-800 text-stone-500 dark:text-stone-300 hover:bg-stone-105 dark:border-stone-700'
+                      }`}
+                    >
+                      {fil === 'All' ? 'Complete Envelopes' : fil} ({fil === 'All' ? chumanList.length : chumanList.filter(c => c.type === fil).length})
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Table registry list */}
+              <div className="overflow-x-auto rounded-xl">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] font-bold text-stone-500 border-b border-stone-200 dark:border-stone-700 font-mono">
+                      <th className="p-3 text-left">Blessing Giver Name</th>
+                      <th className="p-3 text-left">Gift Format Type</th>
+                      <th className="p-3 text-left">Physical Descriptors description</th>
+                      <th className="p-3 text-left">Recorded Date</th>
+                      <th className="p-3 text-right">Envelope Valuation (₹)</th>
+                      <th className="p-3 text-center">Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-xs divide-y divide-stone-150">
+                    {filteredChuman.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="p-8 text-center text-stone-400 font-bold">
+                          No recorded blessings found under this list filter.
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredChuman.map((item) => (
+                        <tr key={item.id} className="hover:bg-orange-500/5 transition-colors">
+                          
+                          {/* Name and notes */}
+                          <td className="p-3 text-left">
+                            <b className="text-stone-950 dark:text-white block font-extrabold">{item.guestName}</b>
+                            {item.notes && <p className="text-[10px] text-stone-400 italic mt-0.5 font-mono">Note: {item.notes}</p>}
+                          </td>
+
+                          {/* Format */}
+                          <td className="p-3 text-left">
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
+                              item.type === 'Cash'
+                                ? 'bg-emerald-500/10 text-emerald-600'
+                                : 'bg-orange-500/10 text-orange-600'
+                            }`}>
+                              {item.type}
+                            </span>
+                          </td>
+
+                          {/* Description */}
+                          <td className="p-3 text-left text-stone-500">
+                            {item.itemName || '— Enveloped Cash Shagun —'}
+                          </td>
+
+                          {/* Date */}
+                          <td className="p-3 text-stone-400 font-mono text-[11px]">
+                            {item.date}
+                          </td>
+
+                          {/* Cost/Value */}
+                          <td className="p-3 text-right font-bold text-stone-900 dark:text-white font-mono">
+                            ₹ {item.amountOrValue.toLocaleString('en-IN')}
+                          </td>
+
+                          {/* Action erase */}
+                          <td className="p-3 text-center">
+                            <button
+                              onClick={() => handleDeleteChuman(item.id)}
+                              className="p-1 hover:bg-stone-100 text-stone-400 hover:text-red-500 rounded"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </td>
+
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="mt-4 pt-4 border-t border-stone-200 dark:border-stone-700 text-[10px] text-stone-400 italic">
+                <span>ℹ️ These listings represent traditional village wedding record booklets to assist reciprocal family gifting audits in future invitations.</span>
               </div>
             </div>
 
-            {/* Filter buttons */}
-            <div className="flex gap-2.5 pt-3">
-              {(['All', 'Cash', 'Physical Item'] as const).map((fil) => (
-                <button
-                  key={fil}
-                  onClick={() => setActiveFilter(fil)}
-                  className={`px-3 py-1 rounded-full text-[9px] font-semibold transition-all border ${
-                    activeFilter === fil
-                      ? 'bg-orange-600 text-white border-orange-600'
-                      : 'bg-stone-50 dark:bg-stone-900 text-stone-500 dark:text-stone-300 hover:bg-stone-105'
-                  }`}
-                >
-                  {fil === 'All' ? 'Complete Envelopes' : fil} ({fil === 'All' ? chumanList.length : chumanList.filter(c => c.type === fil).length})
-                </button>
-              ))}
-            </div>
-
-            {/* Table registry list */}
-            <div className="overflow-x-auto rounded-xl mt-4">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] font-bold text-stone-500 border-b border-stone-200 dark:border-stone-700 font-mono">
-                    <th className="p-3 text-left">Blessing Giver Name</th>
-                    <th className="p-3 text-left">Gift Format Type</th>
-                    <th className="p-3 text-left">Physical Descriptors description</th>
-                    <th className="p-3 text-left">Recorded Date</th>
-                    <th className="p-3 text-right">Envelope Valuation (₹)</th>
-                    <th className="p-3 text-center">Delete</th>
-                  </tr>
-                </thead>
-                <tbody className="text-xs divide-y divide-stone-150">
-                  {filteredChuman.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="p-8 text-center text-stone-400 font-bold">
-                        No recorded blessings found under this list filter.
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredChuman.map((item) => (
-                      <tr key={item.id} className="hover:bg-orange-500/5 transition-colors">
-                        
-                        {/* Name and notes */}
-                        <td className="p-3 text-left">
-                          <b className="text-stone-950 dark:text-white block font-extrabold">{item.guestName}</b>
-                          {item.notes && <p className="text-[10px] text-stone-400 italic mt-0.5 font-mono">Note: {item.notes}</p>}
-                        </td>
-
-                        {/* Format */}
-                        <td className="p-3 text-left">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
-                            item.type === 'Cash'
-                              ? 'bg-emerald-500/10 text-emerald-600'
-                              : 'bg-orange-500/10 text-orange-600'
-                          }`}>
-                            {item.type}
-                          </span>
-                        </td>
-
-                        {/* Description */}
-                        <td className="p-3 text-left text-stone-500">
-                          {item.itemName || '— Enveloped Cash Shagun —'}
-                        </td>
-
-                        {/* Date */}
-                        <td className="p-3 text-stone-400 font-mono text-[11px]">
-                          {item.date}
-                        </td>
-
-                        {/* Cost/Value */}
-                        <td className="p-3 text-right font-bold text-stone-900 dark:text-white font-mono">
-                          ₹ {item.amountOrValue.toLocaleString('en-IN')}
-                        </td>
-
-                        {/* Action erase */}
-                        <td className="p-3 text-center">
-                          <button
-                            onClick={() => handleDeleteChuman(item.id)}
-                            className="p-1 hover:bg-stone-100 text-stone-400 hover:text-red-500 rounded"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </td>
-
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-          </div>
-
-          <div className="mt-4 pt-4 border-t border-stone-200 dark:border-stone-700 text-[10px] text-stone-400 italic">
-            <span>ℹ️ These listings represent traditional village wedding record booklets to assist reciprocal family gifting audits in future invitations.</span>
           </div>
         </div>
 

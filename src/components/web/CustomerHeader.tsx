@@ -190,7 +190,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
       id="ceremony-main-header"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between gap-3 h-16 sm:h-[4.25rem]">
+        <div className="flex items-center justify-between gap-3 h-18 sm:h-[5rem]">
           {/* Logo + city (Housing.com left cluster) */}
           <div className="flex items-center gap-2 sm:gap-4 min-w-0 shrink-0">
             <button
@@ -203,7 +203,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
               <img
                 src={logoSrc}
                 alt={APP_NAME}
-                className="h-8 sm:h-9 w-auto select-none transition-transform duration-200 group-hover:scale-[1.02]"
+                className=" sm:h-12 w-auto select-none transition-transform duration-200 group-hover:scale-[1.02]"
                 referrerPolicy="no-referrer"
               />
             </button>

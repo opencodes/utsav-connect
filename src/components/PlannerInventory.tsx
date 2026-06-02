@@ -219,140 +219,163 @@ export const PlannerInventory: React.FC = () => {
 
       {/* RENDER VIEW 1: UTENSILS / BARTAN */}
       {activeTab === 'bartan' && (
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 text-left" id="bartan-inventory-tracker">
+        <div className="bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm overflow-hidden text-left" id="bartan-inventory-tracker">
           
-          {/* Form */}
-          <div className="bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 p-5 shadow-sm space-y-4 font-sans h-max">
-            <h3 className="text-sm font-semibold text-stone-900 dark:text-white pb-3 border-b flex items-center gap-2">
-              <ClipboardList className="w-4 h-4 text-orange-600" />
-              <span>Record Rent Bartan</span>
-            </h3>
-
-            <form onSubmit={handleAddBartan} className="space-y-4">
-              <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Utensil / Plate Item Name</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Copper Patila 50KG capacity"
-                  value={bName}
-                  onChange={e => setBName(e.target.value)}
-                  className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-white"
-                  required
-                />
+          {/* Card Header (Shared & Integrated) */}
+          <div className="p-6 border-b border-stone-100 dark:border-stone-700 bg-stone-50/50 dark:bg-stone-900/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <ClipboardList className="w-5 h-5 text-orange-600" />
+                <b className="text-base font-semibold text-stone-900 dark:text-white">Utsav Utensil & Rent Bartan Registry Hub</b>
               </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Quantity</label>
-                  <input
-                    type="number"
-                    value={bQty}
-                    onChange={e => setBQty(e.target.value)}
-                    className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Date taken</label>
-                  <input
-                    type="date"
-                    value={bDate}
-                    onChange={e => setBDate(e.target.value)}
-                    className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-400"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Source / Outfitter (From Whom)</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Saffron Tents & Supples Ltd"
-                  value={bSource}
-                  onChange={e => setBSource(e.target.value)}
-                  className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Operational Status</label>
-                <select
-                  value={bStatus}
-                  onChange={e => setBStatus(e.target.value as any)}
-                  className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50"
-                >
-                  <option value="Received">Received & Active In Kitchen</option>
-                  <option value="Returned">Cleaned & Returned in Full</option>
-                </select>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Record Rent Entry</span>
-              </button>
-            </form>
+              <p className="text-xs text-stone-400 dark:text-stone-400 mt-1">
+                Record borrowed cooking utensils (बरतन पंजी) and manage returning states on a single directory ledger.
+              </p>
+            </div>
+            
+            <span className="text-[10px] font-mono font-bold bg-orange-600/10 text-orange-600 px-2 py-1 rounded">Total Items: {bartans.length}</span>
           </div>
 
-          {/* Directory */}
-          <div className="lg:col-span-3 bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 p-5 shadow-sm space-y-4">
-            <h3 className="text-sm font-semibold text-stone-900 dark:text-white pb-3 border-b flex justify-between items-center">
-              <span>Utensils & Rent Bartan Ledger Directory</span>
-              <span className="text-[10px] font-mono text-orange-600">Total Lines: {bartans.length}</span>
-            </h3>
+          {/* Card Body - Dual Section Layout inside the same card */}
+          <div className="p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              
+              {/* Left section: Compact Form Input */}
+              <div className="lg:col-span-1 lg:border-r border-stone-100 dark:border-stone-700 lg:pr-6 space-y-4">
+                <div className="flex items-center gap-1.5 pb-2 border-b border-stone-100 dark:border-stone-700">
+                  <Plus className="w-4 h-4 text-orange-600" />
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-stone-400">Record Rent Bartan</h4>
+                </div>
 
-            {/* Table */}
-            <div className="overflow-x-auto rounded-xl">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] font-bold text-stone-500 border-b font-mono">
-                    <th className="p-3">Utensil Particulars</th>
-                    <th className="p-3 text-center">Rental Volume</th>
-                    <th className="p-3">Sourced Rent Supplier</th>
-                    <th className="p-3">Date Borrowed</th>
-                    <th className="p-3 text-center">Status state</th>
-                    <th className="p-3 text-center">Erase</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-stone-150 text-xs text-stone-900 dark:text-stone-100">
-                  {bartans.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="p-8 text-center text-stone-400 font-bold">No utensil registries active.</td>
-                    </tr>
-                  ) : (
-                    bartans.map(b => (
-                      <tr key={b.id} className="hover:bg-orange-500/5 transition-colors">
-                        <td className="p-3">
-                          <b className="text-stone-950 dark:text-white font-extrabold">{b.utensilName}</b>
-                        </td>
-                        <td className="p-3 text-center font-mono font-bold text-orange-600">{b.quantity} pieces</td>
-                        <td className="p-3 font-semibold">{b.source}</td>
-                        <td className="p-3 font-mono text-stone-450">{b.dateTaken}</td>
-                        <td className="p-3 text-center">
-                          <button
-                            onClick={() => handleToggleBartanStatus(b.id)}
-                            className={`px-3 py-1 font-semibold text-[9px] rounded-xl border ${
-                              b.status === 'Returned'
-                                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600'
-                                : 'bg-orange-500/10 border-orange-500/30 text-orange-600 animate-pulse'
-                            }`}
-                          >
-                            {b.status === 'Returned' ? '🟢 Returned' : '🟠 Borrowed'}
-                          </button>
-                        </td>
-                        <td className="p-3 text-center">
-                          <button onClick={() => setBartans(bartans.filter(it => it.id !== b.id))} className="text-stone-400 hover:text-red-500 p-1">
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </td>
+                <form onSubmit={handleAddBartan} className="space-y-4">
+                  <div>
+                    <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Utensil / Plate Item Name</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Copper Patila 50KG capacity"
+                      value={bName}
+                      onChange={e => setBName(e.target.value)}
+                      className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-orange-600"
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Quantity</label>
+                      <input
+                        type="number"
+                        value={bQty}
+                        onChange={e => setBQty(e.target.value)}
+                        className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 focus:outline-none focus:ring-1 focus:ring-orange-600"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Date taken</label>
+                      <input
+                        type="date"
+                        value={bDate}
+                        onChange={e => setBDate(e.target.value)}
+                        className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-400"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Source / Outfitter (From Whom)</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Saffron Tents & Supples Ltd"
+                      value={bSource}
+                      onChange={e => setBSource(e.target.value)}
+                      className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-orange-600"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Operational Status</label>
+                    <select
+                      value={bStatus}
+                      onChange={e => setBStatus(e.target.value as any)}
+                      className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-white focus:outline-none"
+                    >
+                      <option value="Received">Received & Active In Kitchen</option>
+                      <option value="Returned">Cleaned & Returned in Full</option>
+                    </select>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Record Rent Entry</span>
+                  </button>
+                </form>
+              </div>
+
+              {/* Right section: Responsive Utensils Directory & Ledger */}
+              <div className="lg:col-span-3 space-y-4">
+                
+                {/* Table Header indicator */}
+                <div className="flex items-center justify-between pb-2 border-b border-stone-100 dark:border-stone-700">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-stone-400">Rent Bartan Ledger Directory</h4>
+                </div>
+
+                <div className="overflow-x-auto rounded-xl">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] font-bold text-stone-500 border-b font-mono">
+                        <th className="p-3">Utensil Particulars</th>
+                        <th className="p-3 text-center">Rental Volume</th>
+                        <th className="p-3">Sourced Rent Supplier</th>
+                        <th className="p-3">Date Borrowed</th>
+                        <th className="p-3 text-center">Status State</th>
+                        <th className="p-3 text-center">Erase</th>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+                    </thead>
+                    <tbody className="divide-y divide-stone-150 dark:divide-stone-700 text-xs text-stone-900 dark:text-stone-100">
+                      {bartans.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="p-8 text-center text-stone-400 font-bold">No utensil registries active.</td>
+                        </tr>
+                      ) : (
+                        bartans.map(b => (
+                          <tr key={b.id} className="hover:bg-orange-500/5 transition-colors">
+                            <td className="p-3">
+                              <b className="text-stone-950 dark:text-white font-extrabold">{b.utensilName}</b>
+                            </td>
+                            <td className="p-3 text-center font-mono font-bold text-orange-600">{b.quantity} pieces</td>
+                            <td className="p-3 font-semibold">{b.source}</td>
+                            <td className="p-3 font-mono text-stone-450">{b.dateTaken}</td>
+                            <td className="p-3 text-center">
+                              <button
+                                onClick={() => handleToggleBartanStatus(b.id)}
+                                className={`px-3 py-1 font-semibold text-[9px] rounded-xl border ${
+                                  b.status === 'Returned'
+                                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600'
+                                    : 'bg-orange-500/10 border-orange-500/30 text-orange-600 animate-pulse'
+                                }`}
+                              >
+                                {b.status === 'Returned' ? '🟢 Returned' : '🟠 Borrowed'}
+                              </button>
+                            </td>
+                            <td className="p-3 text-center">
+                              <button onClick={() => setBartans(bartans.filter(it => it.id !== b.id))} className="text-stone-400 hover:text-red-500 p-1">
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+
             </div>
           </div>
 

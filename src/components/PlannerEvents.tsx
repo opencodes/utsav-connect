@@ -419,24 +419,7 @@ export const PlannerEvents: React.FC = () => {
               </p>
             ) : null}
           </div>
-          <div className="planner-event-hero-members">
-            <span
-              className="planner-event-hero-avatar"
-              title="Event planner"
-              aria-hidden
-            >
-              {heroInitials}
-            </span>
-            <button
-              type="button"
-              className="planner-event-hero-add-member"
-              title="Invite collaborator (preview)"
-              aria-label="Add member"
-              onClick={() => alert('Collaborators coming soon.')}
-            >
-              <UserPlus className="w-4 h-4" aria-hidden />
-            </button>
-          </div>
+          
         </div>
       </header>
 
@@ -460,17 +443,7 @@ export const PlannerEvents: React.FC = () => {
       ) : null}
 
       <div className="flex flex-wrap gap-3 mb-6">
-        <button
-          type="button"
-          className="text-sm font-medium text-sky-700 dark:text-sky-400 inline-flex items-center gap-1.5 hover:underline cursor-pointer"
-          onClick={() => alert('Route optimization is a preview feature.')}
-        >
-          <Route className="w-4 h-4" aria-hidden />
-          Optimize route
-          <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300">
-            Pro
-          </span>
-        </button>
+        
         <button
           type="button"
           className="text-sm font-medium text-sky-700 dark:text-sky-400 inline-flex items-center gap-1.5 hover:underline cursor-pointer"

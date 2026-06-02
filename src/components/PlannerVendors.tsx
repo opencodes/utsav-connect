@@ -163,230 +163,248 @@ export const PlannerVendors: React.FC = () => {
 
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        {/* Left add supplier form */}
-        <div className="bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 p-5 shadow-sm text-left">
-          <h3 className="text-sm font-semibold text-stone-900 dark:text-white pb-3 border-b border-light-100 flex items-center gap-2 mb-4">
-            <Plus className="w-4 h-4 text-orange-600" />
-            <span>Select & Add Vendor</span>
-          </h3>
-
-          <form onSubmit={handleAddVendorSubmit} className="space-y-4">
-            <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Supplier Category</label>
-              <select
-                value={vCategory}
-                onChange={e => setVCategory(e.target.value as any)}
-                className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-white"
-              >
-                <option value="Kirana / Grocery">Kirana / Grocery Store</option>
-                <option value="Milk Supplier">Milk Supplier / Dairy</option>
-                <option value="Curd Supplier">Curd Supplier / Halwai</option>
-                <option value="Sweet Shop / Halwai">Sweet Shop / Central Halwai</option>
-                <option value="Tent / Catering Support">Tent & Catering Support</option>
-                <option value="Other vendors">Other Special Vendor</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Vendor/Merchant Name</label>
-              <input
-                type="text"
-                placeholder="e.g. Sudha milk distributors Co-op"
-                value={vName}
-                onChange={e => setVName(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-white focus:ring-1 focus:ring-orange-600"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Contact Phone</label>
-              <input
-                type="text"
-                placeholder="+91 xxxxx xxxxx"
-                value={vContact}
-                onChange={e => setVContact(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-white focus:ring-1"
-                required
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Contract Price</label>
-                <input
-                  type="number"
-                  placeholder="Total ₹"
-                  value={vPricing}
-                  onChange={e => setVPric(e.target.value)}
-                  className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Paid Deposit</label>
-                <input
-                  type="number"
-                  placeholder="Paid ₹"
-                  value={vAdvance}
-                  onChange={e => setVAdv(e.target.value)}
-                  className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Service particulars / Items list</label>
-              <textarea
-                placeholder="List specific ingredients weights or material counts..."
-                value={vService}
-                onChange={e => setVService(e.target.value)}
-                rows={3}
-                className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Record Vendor Link</span>
-            </button>
-          </form>
-        </div>
-
-        {/* Right Directory listing with filter tabs */}
-        <div className="lg:col-span-3 bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 p-5 shadow-sm space-y-4 text-left flex flex-col justify-between">
+      {/* Unified Vendor Management & Service Logistics Hub */}
+      <div className="bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm overflow-hidden text-left" id="unified-vendor-management-hub">
+        
+        {/* Card Header (Shared & Integrated) */}
+        <div className="p-6 border-b border-stone-100 dark:border-stone-700 bg-stone-50/50 dark:bg-stone-900/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b">
-              <div>
-                <h3 className="text-sm font-semibold text-stone-900 dark:text-white">Active Service Logistics</h3>
-                <p className="text-[11px] text-stone-400 mt-0.5">Maintain supplier pricing, verify advance deposits status, and settle pending payments.</p>
-              </div>
+            <div className="flex items-center gap-2">
+              <Truck className="w-5 h-5 text-orange-600" />
+              <b className="text-base font-semibold text-stone-900 dark:text-white">Utsav Service Logistics & Vendor Directory Hub</b>
             </div>
-
-            {/* Filter tags */}
-            <div className="flex gap-2.5 flex-wrap pt-3">
-              {['All', 'Kirana / Grocery', 'Milk Supplier', 'Curd Supplier', 'Sweet Shop / Halwai', 'Tent / Catering Support', 'Other vendors'].map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setActiveCategory(cat)}
-                  className={`px-3 py-0.8 rounded-full text-[10px] font-bold transition-all border ${
-                    activeCategory === cat
-                      ? 'bg-orange-600 text-white border-orange-600 font-extrabold'
-                      : 'bg-stone-50 dark:bg-stone-900 text-stone-500 dark:text-stone-300 hover:bg-stone-100 dark:border-stone-700'
-                  }`}
-                >
-                  {cat === 'All' ? 'All Vendors' : cat} ({cat === 'All' ? vendors.length : vendors.filter(v => v.category === cat).length})
-                </button>
-              ))}
-            </div>
-
-            {/* Table layout */}
-            <div className="overflow-x-auto rounded-xl mt-4">
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] font-bold text-stone-500 border-b border-stone-200 dark:border-stone-700 font-mono">
-                    <th className="p-3 text-left">Vendor particulars</th>
-                    <th className="p-3 text-left">Service details</th>
-                    <th className="p-3 text-right">Contract Dues</th>
-                    <th className="p-3 text-right">Outstanding Balance</th>
-                    <th className="p-3 text-center">Quick Record Settlement</th>
-                    <th className="p-3 text-center">Delete</th>
-                  </tr>
-                </thead>
-                <tbody className="text-xs divide-y divide-stone-150 dark:divide-stone-700">
-                  {filteredVendors.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="p-8 text-center text-stone-400 font-semibold">
-                        No active vendors match this logistics node category.
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredVendors.map((v) => {
-                      const balance = v.pricing - v.advancePaid;
-                      return (
-                        <tr key={v.id} className="hover:bg-orange-500/5 transition-colors">
-                          
-                          {/* Vendor and Phone */}
-                          <td className="p-3 text-left">
-                            <b className="text-stone-900 dark:text-white font-extrabold block">{v.name}</b>
-                            <span className="text-[9px] font-mono select-all bg-stone-100 dark:bg-stone-900 text-stone-500 px-1 py-0.2 rounded w-max block mt-1">{v.contact}</span>
-                            <span className="text-[10px] font-bold text-orange-605 block mt-0.5">{v.category}</span>
-                          </td>
-
-                          {/* Detail summary */}
-                          <td className="p-3 text-left">
-                            <p className="text-[11px] text-stone-605 leading-relaxed truncate max-w-[200px]" title={v.serviceDetails}>
-                              {v.serviceDetails || 'General logistics and deliveries support.'}
-                            </p>
-                          </td>
-
-                          {/* Pricing total and advance */}
-                          <td className="p-3 text-right">
-                            <span className="block font-bold">₹ {v.pricing.toLocaleString('en-IN')}</span>
-                            <span className="text-[10px] text-emerald-600 block font-mono">Adv: ₹{v.advancePaid.toLocaleString('en-IN')}</span>
-                          </td>
-
-                          {/* Outstanding Balance */}
-                          <td className="p-3 text-right">
-                            <span className={`font-mono font-bold ${balance > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
-                              ₹ {balance.toLocaleString('en-IN')}
-                            </span>
-                            <span className={`text-[8px] font-semibold block ${balance > 0 ? 'text-rose-500' : 'text-emerald-500 font-mono'}`}>
-                              {balance === 0 ? 'Fully Settled' : 'Dues Pending'}
-                            </span>
-                          </td>
-
-                          {/* Quick Payment action buttons */}
-                          <td className="p-3 text-center">
-                            {balance === 0 ? (
-                              <span className="text-[10px] font-bold text-emerald-600">💰 Closed Contract</span>
-                            ) : (
-                              <div className="flex gap-1 justify-center">
-                                <button
-                                  onClick={() => handleQuickAdvanceSettle(v.id, Math.min(balance, 5000))}
-                                  className="px-2 py-1 bg-stone-100 dark:bg-stone-900 text-[10px] font-bold rounded border dark:border-stone-700 hover:bg-orange-600 hover:text-white text-stone-850 transition-all font-mono"
-                                  title="Pay ₹5000 Advance"
-                                >
-                                  +₹5K Adv
-                                </button>
-                                <button
-                                  onClick={() => handleQuickAdvanceSettle(v.id, balance)}
-                                  className="px-2 py-1 bg-emerald-600 text-white text-[10px] font-bold rounded hover:bg-emerald-700 transition-all tracking-tight"
-                                  title="Settle all contract dues"
-                                >
-                                  Settle All
-                                </button>
-                              </div>
-                            )}
-                          </td>
-
-                          {/* Cancel button */}
-                          <td className="p-3 text-center">
-                            <button
-                              onClick={() => handleDeleteVendor(v.id)}
-                              className="p-1 hover:bg-stone-105 rounded text-stone-400 hover:text-red-500"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </td>
-
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <p className="text-xs text-stone-400 dark:text-stone-400 mt-1">
+              Maintain supplier contracting pools, track advance deposits, and settle outstanding balances on a unified ledger register.
+            </p>
           </div>
           
-          <div className="mt-4 pt-4 border-t border-stone-100 dark:border-stone-700 text-[11px] text-stone-400 flex items-center gap-2">
-            <span>ℹ️ Advance status categories are calculated automatedly based on paid vs invoice balance ratio.</span>
-          </div>
+          <span className="text-[10px] font-mono font-bold bg-orange-600/10 text-orange-600 px-2 py-1 rounded">Total Vendors: {vendors.length}</span>
+        </div>
 
+        {/* Card Body - Dual Section Layout inside the same card */}
+        <div className="p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            
+            {/* LHS Compact Entry Form */}
+            <div className="lg:col-span-1 lg:border-r border-stone-100 dark:border-stone-700 lg:pr-6 space-y-4">
+              <div className="flex items-center gap-1.5 pb-2 border-b border-stone-100 dark:border-stone-700">
+                <Plus className="w-4 h-4 text-orange-600" />
+                <h4 className="text-xs font-bold uppercase tracking-wider text-stone-400 font-sans">Select & Add Vendor</h4>
+              </div>
+
+              <form onSubmit={handleAddVendorSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Supplier Category</label>
+                  <select
+                    value={vCategory}
+                    onChange={e => setVCategory(e.target.value as any)}
+                    className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-white focus:outline-none"
+                  >
+                    <option value="Kirana / Grocery">Kirana / Grocery Store</option>
+                    <option value="Milk Supplier">Milk Supplier / Dairy</option>
+                    <option value="Curd Supplier">Curd Supplier / Halwai</option>
+                    <option value="Sweet Shop / Halwai">Sweet Shop / Central Halwai</option>
+                    <option value="Tent / Catering Support">Tent & Catering Support</option>
+                    <option value="Other vendors">Other Special Vendor</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Vendor/Merchant Name</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Sudha milk distributors Co-op"
+                    value={vName}
+                    onChange={e => setVName(e.target.value)}
+                    className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-orange-600"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Contact Phone</label>
+                  <input
+                    type="text"
+                    placeholder="+91 xxxxx xxxxx"
+                    value={vContact}
+                    onChange={e => setVContact(e.target.value)}
+                    className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-white focus:outline-none focus:ring-1"
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Contract Price</label>
+                    <input
+                      type="number"
+                      placeholder="Total ₹"
+                      value={vPricing}
+                      onChange={e => setVPric(e.target.value)}
+                      className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 focus:outline-none focus:ring-1 focus:ring-orange-600 dark:text-white"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Paid Deposit</label>
+                    <input
+                      type="number"
+                      placeholder="Paid ₹"
+                      value={vAdvance}
+                      onChange={e => setVAdv(e.target.value)}
+                      className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 focus:outline-none focus:ring-1 focus:ring-orange-600 dark:text-white"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Service particulars / Items list</label>
+                  <textarea
+                    placeholder="List specific ingredients weights or material counts..."
+                    value={vService}
+                    onChange={e => setVService(e.target.value)}
+                    rows={3}
+                    className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-white focus:outline-none"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Record Vendor Link</span>
+                </button>
+              </form>
+            </div>
+
+            {/* RHS Reactive Vendors Directory and Ledger */}
+            <div className="lg:col-span-3 space-y-4">
+              
+              {/* Category selector inside directory container */}
+              <div className="p-3 bg-stone-50 dark:bg-stone-900/40 rounded-xl border border-stone-100 dark:border-stone-700 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div className="flex gap-2 flex-wrap items-center">
+                  <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mr-1">Categories:</span>
+                  {['All', 'Kirana / Grocery', 'Milk Supplier', 'Curd Supplier', 'Sweet Shop / Halwai', 'Tent / Catering Support', 'Other vendors'].map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setActiveCategory(cat)}
+                      className={`px-3 py-1 rounded-full text-[9px] font-bold transition-all border ${
+                        activeCategory === cat
+                          ? 'bg-orange-600 text-white border-orange-600 font-extrabold'
+                          : 'bg-white dark:bg-stone-800 text-stone-500 dark:text-stone-300 hover:bg-stone-105 dark:border-stone-700'
+                      }`}
+                    >
+                      {cat === 'All' ? 'All Vendors' : cat} ({cat === 'All' ? vendors.length : vendors.filter(v => v.category === cat).length})
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Table Layout */}
+              <div className="overflow-x-auto rounded-xl">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] font-bold text-stone-500 border-b border-stone-200 dark:border-stone-700 font-mono">
+                      <th className="p-3 text-left">Vendor particulars</th>
+                      <th className="p-3 text-left">Service details</th>
+                      <th className="p-3 text-right">Contract Dues</th>
+                      <th className="p-3 text-right">Outstanding Balance</th>
+                      <th className="p-3 text-center">Quick Record Settlement</th>
+                      <th className="p-3 text-center">Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-xs divide-y divide-stone-150 dark:divide-stone-700 text-stone-900 dark:text-stone-105">
+                    {filteredVendors.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="p-8 text-center text-stone-400 font-semibold">
+                          No active vendors match this logistics node category.
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredVendors.map((v) => {
+                        const balance = v.pricing - v.advancePaid;
+                        return (
+                          <tr key={v.id} className="hover:bg-orange-500/5 transition-colors">
+                            
+                            {/* Vendor and Phone */}
+                            <td className="p-3 text-left">
+                              <b className="text-stone-900 dark:text-white font-extrabold block">{v.name}</b>
+                              <span className="text-[9px] font-mono select-all bg-stone-100 dark:bg-stone-900 text-stone-500 px-1 py-0.2 rounded w-max block mt-1">{v.contact}</span>
+                              <span className="text-[10px] font-bold text-orange-605 block mt-0.5">{v.category}</span>
+                            </td>
+
+                            {/* Detail summary */}
+                            <td className="p-3 text-left">
+                              <p className="text-[11px] text-stone-605 leading-relaxed truncate max-w-[200px]" title={v.serviceDetails}>
+                                {v.serviceDetails || 'General logistics and deliveries support.'}
+                              </p>
+                            </td>
+
+                            {/* Pricing total and advance */}
+                            <td className="p-3 text-right">
+                              <span className="block font-bold">₹ {v.pricing.toLocaleString('en-IN')}</span>
+                              <span className="text-[10px] text-emerald-600 block font-mono">Adv: ₹{v.advancePaid.toLocaleString('en-IN')}</span>
+                            </td>
+
+                            {/* Outstanding Balance */}
+                            <td className="p-3 text-right">
+                              <span className={`font-mono font-bold ${balance > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
+                                ₹ {balance.toLocaleString('en-IN')}
+                              </span>
+                              <span className={`text-[8px] font-semibold block ${balance > 0 ? 'text-rose-500' : 'text-emerald-500 font-mono'}`}>
+                                {balance === 0 ? 'Fully Settled' : 'Dues Pending'}
+                              </span>
+                            </td>
+
+                            {/* Quick Payment action buttons */}
+                            <td className="p-3 text-center">
+                              {balance === 0 ? (
+                                <span className="text-[10px] font-bold text-emerald-600">💰 Closed Contract</span>
+                              ) : (
+                                <div className="flex gap-1 justify-center">
+                                  <button
+                                    onClick={() => handleQuickAdvanceSettle(v.id, Math.min(balance, 5000))}
+                                    className="px-2 py-1 bg-stone-100 dark:bg-stone-900 text-[10px] font-bold rounded border dark:border-stone-700 hover:bg-orange-600 hover:text-white text-stone-850 dark:text-stone-200 transition-all font-mono cursor-pointer"
+                                    title="Pay ₹5000 Advance"
+                                  >
+                                    +₹5K Adv
+                                  </button>
+                                  <button
+                                    onClick={() => handleQuickAdvanceSettle(v.id, balance)}
+                                    className="px-2 py-1 bg-emerald-600 text-white text-[10px] font-bold rounded hover:bg-emerald-700 transition-all tracking-tight cursor-pointer"
+                                    title="Settle all contract dues"
+                                  >
+                                    Settle All
+                                  </button>
+                                </div>
+                              )}
+                            </td>
+
+                            {/* Cancel button */}
+                            <td className="p-3 text-center">
+                              <button
+                                onClick={() => handleDeleteVendor(v.id)}
+                                className="p-1 hover:bg-stone-105 rounded text-stone-400 hover:text-red-500 cursor-pointer"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </td>
+
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="mt-4 pt-4 border-t border-stone-100 dark:border-stone-700 text-[11px] text-stone-400 flex items-center gap-2">
+                <span>ℹ️ Advance status categories are calculated automatedly based on paid vs invoice balance ratio.</span>
+              </div>
+            </div>
+
+          </div>
         </div>
 
       </div>

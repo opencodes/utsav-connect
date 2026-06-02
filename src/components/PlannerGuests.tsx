@@ -250,354 +250,369 @@ export const PlannerGuests: React.FC = () => {
         </div>
       </div>
 
-      {/* Main interface: Add Guest Form vs Searchable Directory */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      {/* Unified Guest Registry & Directory Hub Card */}
+      <div className="bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 shadow-sm overflow-hidden text-left" id="unified-guest-directory-hub">
         
-        {/* Guest Addition panel on left */}
-        <div className="lg:col-span-1 bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 p-5 shadow-sm text-left">
-          <h3 className="text-sm font-semibold text-stone-900 dark:text-white pb-3 border-b border-stone-100 dark:border-stone-700 flex items-center gap-2 mb-4">
-            <Users className="w-4 h-4 text-orange-600" />
-            <span>Add Guest Details</span>
-          </h3>
-
-          <form onSubmit={handleAddGuestSubmit} className="space-y-4">
-            <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Primary Guest Name</label>
-              <input
-                type="text"
-                placeholder="Name"
-                value={gName}
-                onChange={e => setGName(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-orange-600"
-                required
-              />
+        {/* Card Header (Shared & Integrated) */}
+        <div className="p-6 border-b border-stone-100 dark:border-stone-700 bg-stone-50/50 dark:bg-stone-900/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-orange-600" />
+              <b className="text-base font-semibold text-stone-900 dark:text-white">Utsav Guest Registry & Directory Hub</b>
             </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Gender</label>
-                <select
-                  value={gGender}
-                  onChange={e => setGGender(e.target.value as any)}
-                  className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 dark:text-white"
-                >
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Age</label>
-                <input
-                  type="number"
-                  placeholder="e.g. 30"
-                  value={gAge}
-                  onChange={e => setGAge(e.target.value)}
-                  className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Accompanying Fam</label>
-                <input
-                  type="number"
-                  placeholder="Accompanying"
-                  value={gFamily}
-                  onChange={e => setGFamily(e.target.value)}
-                  className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900"
-                />
-              </div>
-              <div>
-                <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Affiliation Group</label>
-                <select
-                  value={gGroup}
-                  onChange={e => setGGroup(e.target.value as any)}
-                  className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900"
-                >
-                  <option value="Bride Family">Bride Side</option>
-                  <option value="Groom Family">Groom Side</option>
-                  <option value="Local Villagers">Villagers</option>
-                  <option value="VIP Relatives">VIP Relatives</option>
-                  <option value="Mutual Friends">Friends</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Contact Details</label>
-              <input
-                type="text"
-                placeholder="Phone No"
-                value={gContact}
-                onChange={e => setGContact(e.target.value)}
-                className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Status on RSVP</label>
-              <select
-                value={gRsvp}
-                onChange={e => setGRsvp(e.target.value as any)}
-                className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50"
-              >
-                <option value="Confirmed">Confirmed</option>
-                <option value="Pending">Pending followup</option>
-                <option value="Declined">Declined / Out-of-Country</option>
-              </select>
-            </div>
-
-            {/* Accommodation fields integrated right here! */}
-            <div className="p-3 bg-amber-500/5 rounded-xl border border-amber-500/10 space-y-2">
-              <span className="text-[9px] font-mono font-bold text-amber-700 block">Accommodation Assignment</span>
-              <div>
-                <b className="block text-[9px] text-stone-500 font-bold mb-0.5">Room Allocation</b>
-                <input
-                  type="text"
-                  placeholder="e.g. Suite 204, Family Dorm A"
-                  value={gRoom}
-                  onChange={e => setGRoom(e.target.value)}
-                  className="w-full px-2 py-1 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-[11px] rounded"
-                />
-              </div>
-            </div>
-
-            {/* Gift Assignment fields integrated */}
-            <div className="p-3 bg-rose-500/5 rounded-xl border border-rose-500/10 space-y-2">
-              <span className="text-[9px] font-mono font-bold text-rose-700 block">Return Gift Planner</span>
-              <div className="grid grid-cols-1 gap-2">
-                <div>
-                  <b className="block text-[9px] text-stone-500 font-bold mb-0.5">Gift Item Assigned</b>
-                  <input
-                    type="text"
-                    value={gGift}
-                    onChange={e => setGGift(e.target.value)}
-                    className="w-full px-2 py-1 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-[11px] rounded"
-                  />
-                </div>
-                <div>
-                  <b className="block text-[9px] text-stone-500 font-bold mb-0.5">Status of Gift</b>
-                  <select
-                    value={gGiftStatus}
-                    onChange={e => setGGiftStatus(e.target.value as any)}
-                    className="w-full px-2 py-1 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-[11px] rounded"
-                  >
-                    <option value="Pending">Pending Assigning</option>
-                    <option value="Assigned">Procured & Assigned</option>
-                    <option value="Gifted">Handed Over 🎉</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Host Special Instructions</label>
-              <textarea
-                placeholder="Dietary rules or VIP greeting notes..."
-                value={gNotes}
-                onChange={e => setGNotes(e.target.value)}
-                rows={2}
-                className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Record & Map Guest</span>
-            </button>
-          </form>
+            <p className="text-xs text-stone-400 dark:text-stone-400 mt-1">
+              Add new guest entries, manage RSVP responses, allocate hotel suites, and coordinate traditional gifts in a single workspace.
+            </p>
+          </div>
+          
+          {/* Unified Search Control */}
+          <div className="relative w-full md:w-72">
+            <input
+              type="text"
+              placeholder="Search by name, room or contact..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border border-stone-200 dark:border-stone-700 focus:ring-1 focus:ring-orange-600 focus:outline-none bg-stone-50 dark:bg-stone-900 dark:text-white"
+            />
+            <Search className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-stone-455" />
+          </div>
         </div>
 
-        {/* Guest Directory table list on right */}
-        <div className="lg:col-span-3 bg-white dark:bg-stone-800 rounded-2xl border border-stone-200/60 dark:border-stone-700/60 p-5 shadow-sm space-y-4 text-left">
-          
-          {/* Header Controls */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-light-100 pb-4">
-            <div>
-              <h3 className="text-sm font-semibold text-stone-900 dark:text-white">Utsav Guest Registry Directory</h3>
-              <p className="text-[11px] text-stone-400 mt-0.5">Filter, track RSVP responses, allocate rooms, and check off return gifts in real-time.</p>
-            </div>
+        {/* Card Body - Dual Section Layout inside the same card */}
+        <div className="p-6">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             
-            {/* Search Box */}
-            <div className="relative w-full md:w-64">
-              <input
-                type="text"
-                placeholder="Search by name, room or contact..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl border dark:border-stone-700 focus:ring-1 focus:ring-orange-600 focus:outline-none bg-stone-50 dark:bg-stone-900 dark:text-white"
-              />
-              <Search className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-stone-455" />
+            {/* Left section: Compact Input Form */}
+            <div className="lg:col-span-1 lg:border-r border-stone-100 dark:border-stone-700 lg:pr-6 space-y-4">
+              <div className="flex items-center gap-1.5 pb-2 border-b border-stone-100 dark:border-stone-700">
+                <Plus className="w-4 h-4 text-orange-600" />
+                <h4 className="text-xs font-bold uppercase tracking-wider text-stone-400">Add Guest Details</h4>
+              </div>
+
+              <form onSubmit={handleAddGuestSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Primary Guest Name</label>
+                  <input
+                    type="text"
+                    placeholder="Name"
+                    value={gName}
+                    onChange={e => setGName(e.target.value)}
+                    className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-orange-600"
+                    required
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Gender</label>
+                    <select
+                      value={gGender}
+                      onChange={e => setGGender(e.target.value as any)}
+                      className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900 dark:text-white"
+                    >
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Age</label>
+                    <input
+                      type="number"
+                      placeholder="e.g. 30"
+                      value={gAge}
+                      onChange={e => setGAge(e.target.value)}
+                      className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Accompanying Fam</label>
+                    <input
+                      type="number"
+                      placeholder="Accompanying"
+                      value={gFamily}
+                      onChange={e => setGFamily(e.target.value)}
+                      className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Affiliation Group</label>
+                    <select
+                      value={gGroup}
+                      onChange={e => setGGroup(e.target.value as any)}
+                      className="w-full px-2 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900"
+                    >
+                      <option value="Bride Family">Bride Side</option>
+                      <option value="Groom Family">Groom Side</option>
+                      <option value="Local Villagers">Villagers</option>
+                      <option value="VIP Relatives">VIP Relatives</option>
+                      <option value="Mutual Friends">Friends</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Contact Details</label>
+                  <input
+                    type="text"
+                    placeholder="Phone No"
+                    value={gContact}
+                    onChange={e => setGContact(e.target.value)}
+                    className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50 dark:bg-stone-900"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Status on RSVP</label>
+                  <select
+                    value={gRsvp}
+                    onChange={e => setGRsvp(e.target.value as any)}
+                    className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50"
+                  >
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Pending">Pending followup</option>
+                    <option value="Declined">Declined / Out-of-Country</option>
+                  </select>
+                </div>
+
+                {/* Accommodation fields integrated right here! */}
+                <div className="p-3 bg-amber-500/5 rounded-xl border border-amber-500/10 space-y-2">
+                  <span className="text-[9px] font-mono font-bold text-amber-700 block">Accommodation Assignment</span>
+                  <div>
+                    <b className="block text-[9px] text-stone-500 font-bold mb-0.5">Room Allocation</b>
+                    <input
+                      type="text"
+                      placeholder="e.g. Suite 204, Family Dorm A"
+                      value={gRoom}
+                      onChange={e => setGRoom(e.target.value)}
+                      className="w-full px-2 py-1 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-[11px] rounded"
+                    />
+                  </div>
+                </div>
+
+                {/* Gift Assignment fields integrated */}
+                <div className="p-3 bg-rose-500/5 rounded-xl border border-rose-500/10 space-y-2">
+                  <span className="text-[9px] font-mono font-bold text-rose-700 block">Return Gift Planner</span>
+                  <div className="grid grid-cols-1 gap-2">
+                    <div>
+                      <b className="block text-[9px] text-stone-500 font-bold mb-0.5">Gift Item Assigned</b>
+                      <input
+                        type="text"
+                        value={gGift}
+                        onChange={e => setGGift(e.target.value)}
+                        className="w-full px-2 py-1 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-[11px] rounded"
+                      />
+                    </div>
+                    <div>
+                      <b className="block text-[9px] text-stone-500 font-bold mb-0.5">Status of Gift</b>
+                      <select
+                        value={gGiftStatus}
+                        onChange={e => setGGiftStatus(e.target.value as any)}
+                        className="w-full px-2 py-1 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-[11px] rounded"
+                      >
+                        <option value="Pending">Pending Assigning</option>
+                        <option value="Assigned">Procured & Assigned</option>
+                        <option value="Gifted">Handed Over 🎉</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-extrabold text-stone-400 mb-1">Host Special Instructions</label>
+                  <textarea
+                    placeholder="Dietary rules or VIP greeting notes..."
+                    value={gNotes}
+                    onChange={e => setGNotes(e.target.value)}
+                    rows={2}
+                    className="w-full px-3 py-1.5 text-xs rounded-lg border dark:border-stone-700 bg-stone-50"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Record & Map Guest</span>
+                </button>
+              </form>
             </div>
-          </div>
 
-          {/* Filtering Dropdowns */}
-          <div className="flex gap-2.5 flex-wrap">
-            <button
-              onClick={() => setFilterGroup('All')}
-              className={`px-3 py-1 rounded-full text-[10px] font-bold transition-colors border ${
-                filterGroup === 'All'
-                  ? 'bg-orange-600 text-white border-orange-600'
-                  : 'bg-stone-5 dark:bg-stone-900 text-stone-500 dark:text-stone-300 hover:bg-stone-100 dark:border-stone-700'
-              }`}
-            >
-              All Groups ({guests.length})
-            </button>
-            {['Bride Family', 'Groom Family', 'Local Villagers', 'VIP Relatives', 'Mutual Friends'].map((grp) => (
-              <button
-                key={grp}
-                onClick={() => setFilterGroup(grp)}
-                className={`px-3 py-1 rounded-full text-[10px] font-bold transition-colors border ${
-                  filterGroup === grp
-                    ? 'bg-orange-600 text-white border-orange-600'
-                    : 'bg-stone-5 dark:bg-stone-900 text-stone-500 dark:text-stone-300 hover:bg-stone-100 dark:border-stone-700'
-                }`}
-              >
-                {grp === 'Bride Family' ? 'Bride Side' : grp === 'Groom Family' ? 'Groom Side' : grp} ({guests.filter(g => g.group === grp).length})
-              </button>
-            ))}
-          </div>
+            {/* Right section: Reactive Directory & Filtering Tables */}
+            <div className="lg:col-span-3 space-y-4">
+              
+              {/* Quick Filter Section inside directory container */}
+              <div className="p-3 bg-stone-50 dark:bg-stone-900/40 rounded-xl border border-stone-100 dark:border-stone-700 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div className="flex gap-1.5 flex-wrap items-center">
+                  <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider mr-1">Groups:</span>
+                  <button
+                    onClick={() => setFilterGroup('All')}
+                    className={`px-3 py-1 rounded-full text-[10px] font-bold transition-colors border ${
+                      filterGroup === 'All'
+                        ? 'bg-orange-600 text-white border-orange-600'
+                        : 'bg-white dark:bg-stone-800 text-stone-500 dark:text-stone-300 hover:bg-stone-105 dark:border-stone-700'
+                    }`}
+                  >
+                    All ({guests.length})
+                  </button>
+                  {['Bride Family', 'Groom Family', 'Local Villagers', 'VIP Relatives', 'Mutual Friends'].map((grp) => (
+                    <button
+                      key={grp}
+                      onClick={() => setFilterGroup(grp)}
+                      className={`px-3 py-1 rounded-full text-[10px] font-bold transition-colors border ${
+                        filterGroup === grp
+                          ? 'bg-orange-600 text-white border-orange-600'
+                          : 'bg-white dark:bg-stone-800 text-stone-500 dark:text-stone-300 hover:bg-stone-105 dark:border-stone-700'
+                      }`}
+                    >
+                      {grp === 'Bride Family' ? 'Bride Side' : grp === 'Groom Family' ? 'Groom Side' : grp} ({guests.filter(g => g.group === grp).length})
+                    </button>
+                  ))}
+                </div>
 
-          <div className="flex gap-2">
-            <span className="text-[10px] font-bold text-stone-450 self-center">RSVP:</span>
-            {['All', 'Confirmed', 'Pending', 'Declined'].map((rsvp) => (
-              <button
-                key={rsvp}
-                onClick={() => setFilterRsvp(rsvp)}
-                className={`px-2 py-0.5 rounded text-[9px] font-semibold ${
-                  filterRsvp === rsvp
-                    ? 'bg-orange-600 text-white'
-                    : 'bg-stone-100 dark:bg-stone-900 text-stone-400 hover:text-stone-600'
-                }`}
-              >
-                {rsvp} ({rsvp === 'All' ? guests.length : guests.filter(g => g.rsvpStatus === rsvp).length})
-              </button>
-            ))}
-          </div>
+                <div className="flex gap-1.5 items-center shrink-0">
+                  <span className="text-[10px] font-bold text-stone-450 self-center">RSVP:</span>
+                  {['All', 'Confirmed', 'Pending', 'Declined'].map((rsvp) => (
+                    <button
+                      key={rsvp}
+                      onClick={() => setFilterRsvp(rsvp)}
+                      className={`px-2 py-0.5 rounded text-[9px] font-semibold ${
+                        filterRsvp === rsvp
+                          ? 'bg-orange-600 text-white'
+                          : 'bg-stone-100 dark:bg-stone-900 text-stone-400 hover:text-stone-605'
+                      }`}
+                    >
+                      {rsvp} ({rsvp === 'All' ? guests.length : guests.filter(g => g.rsvpStatus === rsvp).length})
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-          {/* Table list */}
-          <div className="overflow-x-auto rounded-xl">
-            <table className="w-full text-left border-collapse text-stone-900 dark:text-stone-100">
-              <thead>
-                <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] font-bold text-stone-500 border-b border-stone-200 dark:border-stone-700">
-                  <th className="p-3">Guest / Group</th>
-                  <th className="p-3">Contact Detail</th>
-                  <th className="p-3">Family Size</th>
-                  <th className="p-3">RSVP Status</th>
-                  <th className="p-3 font-mono">Room Allocation</th>
-                  <th className="p-3 font-mono">Return Gift Assignment</th>
-                  <th className="p-3 text-center">Delete</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-stone-150 dark:divide-stone-700 text-xs">
-                {filteredGuestsList.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="p-8 text-center text-stone-400 font-bold">
-                      No guests match filters in root index.
-                    </td>
-                  </tr>
-                ) : (
-                  filteredGuestsList.map((g) => (
-                    <tr key={g.id} className="hover:bg-orange-500/5 transition-colors">
-                      {/* Guest and Group detail */}
-                      <td className="p-3">
-                        <div>
-                          <b className="text-stone-950 dark:text-white block font-extrabold">{g.name}</b>
-                          <span className="text-[9px] font-mono bg-orange-655/10 text-orange-655 font-bold px-1 rounded block w-max mt-0.5">
-                            {g.group === 'Bride Family' ? 'Bride Side' : g.group === 'Groom Family' ? 'Groom Side' : g.group}
-                          </span>
-                        </div>
-                      </td>
-
-                      {/* Contact & Gender */}
-                      <td className="p-3">
-                        <span className="block font-mono text-[11px]">{g.contact}</span>
-                        <span className="text-[10px] text-stone-400 font-bold">{g.age} yrs / {g.gender}</span>
-                      </td>
-
-                      {/* Family size */}
-                      <td className="p-3 font-mono text-center">
-                        <span className="px-2 py-0.5 font-semibold text-xs rounded bg-stone-100 border border-stone-200 font-bold dark:bg-stone-900 dark:border-stone-700">
-                          +{g.familyCount}
-                        </span>
-                      </td>
-
-                      {/* RSVP Status dropdown directly editable */}
-                      <td className="p-3">
-                        <select
-                          value={g.rsvpStatus}
-                          onChange={(e) => handleToggleRsvp(g.id, e.target.value as any)}
-                          className={`text-[10px] font-semibold rounded px-2 py-0.5 border ${
-                            g.rsvpStatus === 'Confirmed'
-                              ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600'
-                              : g.rsvpStatus === 'Pending'
-                              ? 'bg-amber-500/10 border-amber-500/30 text-amber-600'
-                              : 'bg-red-500/10 border-red-500/30 text-red-600'
-                          }`}
-                        >
-                          <option value="Confirmed">Confirmed</option>
-                          <option value="Pending">Pending</option>
-                          <option value="Declined">Declined</option>
-                        </select>
-                      </td>
-
-                      {/* Room Allocated dynamically typed */}
-                      <td className="p-3">
-                        <div className="flex gap-1 items-center">
-                          <Home className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                          <input
-                            type="text"
-                            value={g.roomAllocated}
-                            onChange={(e) => handleUpdateRoom(g.id, e.target.value)}
-                            className="bg-transparent text-[11px] border-b border-transparent hover:border-stone-200 focus:border-orange-500 focus:outline-none w-full font-mono text-stone-700 dark:text-stone-300"
-                            placeholder="Set suite room"
-                          />
-                        </div>
-                      </td>
-
-                      {/* Return Gift Item and status */}
-                      <td className="p-3">
-                        <div className="space-y-1">
-                          <span className="text-[11px] font-bold block truncate max-w-[150px]">{g.returnGiftItem}</span>
-                          <select
-                            value={g.returnGiftStatus}
-                            onChange={(e) => handleUpdateGiftStatus(g.id, e.target.value as any)}
-                            className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
-                              g.returnGiftStatus === 'Gifted'
-                                ? 'bg-emerald-500 text-white'
-                                : g.returnGiftStatus === 'Assigned'
-                                ? 'bg-amber-500 text-stone-950'
-                                : 'bg-stone-200 text-stone-500 dark:bg-stone-900'
-                            }`}
-                          >
-                            <option value="Pending">Pending</option>
-                            <option value="Assigned">Assigned</option>
-                            <option value="Gifted">Gifted</option>
-                          </select>
-                        </div>
-                      </td>
-
-                      {/* Delete button */}
-                      <td className="p-3 text-center">
-                        <button
-                          onClick={() => handleDeleteGuest(g.id)}
-                          className="p-1 hover:bg-stone-100 dark:hover:bg-stone-905 text-stone-400 hover:text-red-500 rounded"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </td>
+              {/* Table list */}
+              <div className="overflow-x-auto rounded-xl">
+                <table className="w-full text-left border-collapse text-stone-900 dark:text-stone-100">
+                  <thead>
+                    <tr className="bg-stone-50 dark:bg-stone-900 text-[10px] font-bold text-stone-500 border-b border-stone-200 dark:border-stone-700">
+                      <th className="p-3">Guest / Group</th>
+                      <th className="p-3">Contact Detail</th>
+                      <th className="p-3">Family Size</th>
+                      <th className="p-3">RSVP Status</th>
+                      <th className="p-3 font-mono">Room Allocation</th>
+                      <th className="p-3 font-mono">Return Gift Assignment</th>
+                      <th className="p-3 text-center">Delete</th>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  </thead>
+                  <tbody className="divide-y divide-stone-150 dark:divide-stone-700 text-xs">
+                    {filteredGuestsList.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="p-8 text-center text-stone-400 font-bold">
+                          No guests match filters in root index.
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredGuestsList.map((g) => (
+                        <tr key={g.id} className="hover:bg-orange-500/5 transition-colors">
+                          {/* Guest and Group detail */}
+                          <td className="p-3">
+                            <div>
+                              <b className="text-stone-950 dark:text-white block font-extrabold">{g.name}</b>
+                              <span className="text-[9px] font-mono bg-orange-655/10 text-orange-655 font-bold px-1 rounded block w-max mt-0.5">
+                                {g.group === 'Bride Family' ? 'Bride Side' : g.group === 'Groom Family' ? 'Groom Side' : g.group}
+                              </span>
+                            </div>
+                          </td>
+
+                          {/* Contact & Gender */}
+                          <td className="p-3">
+                            <span className="block font-mono text-[11px]">{g.contact}</span>
+                            <span className="text-[10px] text-stone-400 font-bold">{g.age} yrs / {g.gender}</span>
+                          </td>
+
+                          {/* Family size */}
+                          <td className="p-3 font-mono text-center">
+                            <span className="px-2 py-0.5 font-semibold text-xs rounded bg-stone-100 border border-stone-200 font-bold dark:bg-stone-900 dark:border-stone-700">
+                              +{g.familyCount}
+                            </span>
+                          </td>
+
+                          {/* RSVP Status dropdown directly editable */}
+                          <td className="p-3">
+                            <select
+                              value={g.rsvpStatus}
+                              onChange={(e) => handleToggleRsvp(g.id, e.target.value as any)}
+                              className={`text-[10px] font-semibold rounded px-2 py-0.5 border ${
+                                g.rsvpStatus === 'Confirmed'
+                                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600'
+                                  : g.rsvpStatus === 'Pending'
+                                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-600'
+                                  : 'bg-red-500/10 border-red-500/30 text-red-600'
+                              }`}
+                            >
+                              <option value="Confirmed">Confirmed</option>
+                              <option value="Pending">Pending</option>
+                              <option value="Declined">Declined</option>
+                            </select>
+                          </td>
+
+                          {/* Room Allocated dynamically typed */}
+                          <td className="p-3">
+                            <div className="flex gap-1 items-center">
+                              <Home className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                              <input
+                                type="text"
+                                value={g.roomAllocated}
+                                onChange={(e) => handleUpdateRoom(g.id, e.target.value)}
+                                className="bg-transparent text-[11px] border-b border-transparent hover:border-stone-200 focus:border-orange-500 focus:outline-none w-full font-mono text-stone-700 dark:text-stone-300"
+                                placeholder="Set suite room"
+                              />
+                            </div>
+                          </td>
+
+                          {/* Return Gift Item and status */}
+                          <td className="p-3">
+                            <div className="space-y-1">
+                              <span className="text-[11px] font-bold block truncate max-w-[150px]">{g.returnGiftItem}</span>
+                              <select
+                                value={g.returnGiftStatus}
+                                onChange={(e) => handleUpdateGiftStatus(g.id, e.target.value as any)}
+                                className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
+                                  g.returnGiftStatus === 'Gifted'
+                                    ? 'bg-emerald-500 text-white'
+                                    : g.returnGiftStatus === 'Assigned'
+                                    ? 'bg-amber-500 text-stone-950'
+                                    : 'bg-stone-200 text-stone-500 dark:bg-stone-900'
+                                }`}
+                              >
+                                <option value="Pending">Pending</option>
+                                <option value="Assigned">Assigned</option>
+                                <option value="Gifted">Gifted</option>
+                              </select>
+                            </div>
+                          </td>
+
+                          {/* Delete button */}
+                          <td className="p-3 text-center">
+                            <button
+                              onClick={() => handleDeleteGuest(g.id)}
+                              className="p-1 hover:bg-stone-100 dark:hover:bg-stone-905 text-stone-400 hover:text-red-500 rounded"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
           </div>
         </div>
 

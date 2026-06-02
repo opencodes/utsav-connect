@@ -67,13 +67,13 @@ export const CategoriesGrid: React.FC<CategoriesGridProps> = ({
             aria-pressed={selectedCategoryId === cat.id}
             className={`group relative flex h-[6.25rem] sm:h-[6.75rem] w-full min-w-0 overflow-hidden rounded-2xl border-0 text-left shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 cursor-pointer select-none ${cat.bgColorLight} ${cat.bgColorDark} ${
               selectedCategoryId === cat.id
-                ? 'ring-2 ring-[#C51C13] ring-offset-2 ring-offset-stone-50 dark:ring-offset-stone-900'
+                ? 'ring-2 ring-primary ring-offset-2 ring-offset-stone-50 dark:ring-offset-stone-900'
                 : ''
             }`}
             id={`box-category-${cat.id}`}
           >
             <div className="relative z-10 flex flex-1 flex-col justify-center gap-0.5 pl-3 sm:pl-4 pr-2 min-w-0">
-              <h4 className="font-bold text-[13px] sm:text-sm text-stone-900 dark:text-white leading-tight truncate group-hover:text-[#C51C13] dark:group-hover:text-orange-400 transition-colors">
+              <h4 className="font-bold text-[13px] sm:text-sm text-stone-900 dark:text-white leading-tight truncate group-hover:text-primary dark:group-hover:text-orange-400 transition-colors">
                 {cat.name}
               </h4>
               <p className="text-[10px] sm:text-[11px] text-stone-600/90 dark:text-stone-400 line-clamp-2 leading-snug pr-1">

@@ -15,7 +15,7 @@ export const MarketingStats: React.FC<MarketingStatsProps> = ({ campaigns }) => 
       label: 'Total campaigns',
       value: String(campaigns.length),
       icon: Percent,
-      iconClass: 'bg-[#C51C13]',
+      iconClass: 'bg-primary',
       iconWrap: true,
     },
     {

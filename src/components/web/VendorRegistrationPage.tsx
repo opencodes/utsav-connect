@@ -188,15 +188,15 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
       >
         <div className="flex flex-wrap gap-2 sm:gap-3">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white">
-            <Store className="w-3.5 h-3.5 text-[#FFCB44] shrink-0" aria-hidden />
+            <Store className="w-3.5 h-3.5 text-[secondary] shrink-0" aria-hidden />
             Free vendor listing
           </span>
           <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white">
-            <Building2 className="w-3.5 h-3.5 text-[#FFCB44] shrink-0" aria-hidden />
+            <Building2 className="w-3.5 h-3.5 text-[secondary] shrink-0" aria-hidden />
             {STEPS.length}-step application
           </span>
           <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white">
-            <Clock className="w-3.5 h-3.5 text-[#FFCB44] shrink-0" aria-hidden />
+            <Clock className="w-3.5 h-3.5 text-[secondary] shrink-0" aria-hidden />
             Review in 2–3 business days
           </span>
         </div>

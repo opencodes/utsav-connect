@@ -29,12 +29,12 @@ export const TopSellingCategories: React.FC<TopSellingCategoriesProps> = ({ cate
           <div key={idx} className="space-y-1.5 text-left">
             <div className="flex justify-between items-center text-xs">
               <span className="font-bold text-stone-800 dark:text-stone-200">{cat.category}</span>
-              <span className="font-mono font-bold text-[#C51C13] dark:text-[#C51C13]/90">{cat.value}%</span>
+              <span className="font-mono font-bold text-primary dark:text-primary/90">{cat.value}%</span>
             </div>
             {/* ProgressBar background */}
             <div className="w-full bg-stone-100 dark:bg-stone-805 h-2 rounded-full overflow-hidden">
               <div
-                className="bg-[#C51C13] h-full rounded-full"
+                className="bg-primary h-full rounded-full"
                 style={{ width: `${cat.value}%` }}
               />
             </div>

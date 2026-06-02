@@ -392,7 +392,7 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
                     />
                     
                     {/* Floating badge for category */}
-                    <span className="absolute top-3 left-3 bg-stone-900/80 backdrop-blur-md text-[#FFCB44] text-[9px] font-black px-2.5 py-1 rounded-lg">
+                    <span className="absolute top-3 left-3 bg-stone-900/80 backdrop-blur-md text-[secondary] text-[9px] font-black px-2.5 py-1 rounded-lg">
                       {item.category}
                     </span>
 

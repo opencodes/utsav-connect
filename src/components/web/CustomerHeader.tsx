@@ -268,7 +268,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
                             onClick={() => handleCitySelect(c.value)}
                             className={`w-full text-left px-3 py-2 text-sm font-medium cursor-pointer ${
                               selectedCity === c.value
-                                ? 'text-[#C51C13] bg-orange-50 dark:bg-stone-800'
+                                ? 'text-primary bg-orange-50 dark:bg-stone-800'
                                 : 'text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-800'
                             }`}
                           >
@@ -435,7 +435,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
       {mobileMenuOpen && (
         <div className="lg:hidden border-t border-stone-100 dark:border-stone-800 bg-white dark:bg-stone-900 px-4 py-4 space-y-4 shadow-lg">
           <div className="flex items-center gap-2 sm:hidden">
-            <MapPin className="w-4 h-4 text-[#C51C13]" />
+            <MapPin className="w-4 h-4 text-primary" />
             <label htmlFor="header-mobile-city" className="sr-only">
               City
             </label>
@@ -457,7 +457,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
             <button
               type="button"
               onClick={goToEventPlanning}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#C51C13] text-white text-sm font-semibold"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary text-white text-sm font-semibold"
             >
               <CalendarPlus className="w-4 h-4" />
               Event planning
@@ -473,7 +473,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
             <button
               type="button"
               onClick={listYourService}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-dashed border-orange-300 text-sm font-semibold text-[#C51C13]"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-dashed border-orange-300 text-sm font-semibold text-primary"
             >
               <Store className="w-4 h-4" />
               {isVendorLoggedIn ? 'Vendor dashboard' : 'List your service — Free'}
@@ -488,7 +488,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
                 onClick={() => goTo(link.value)}
                 className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold ${
                   isNavActive(link.value, link.alsoActive ?? [])
-                    ? 'text-[#C51C13] bg-orange-50 dark:bg-stone-800'
+                    ? 'text-primary bg-orange-50 dark:bg-stone-800'
                     : 'text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-stone-800'
                 }`}
               >
@@ -499,7 +499,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
               <button
                 type="button"
                 onClick={() => goTo('sign-in')}
-                className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-[#C51C13] bg-orange-50 dark:bg-stone-800"
+                className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-primary bg-orange-50 dark:bg-stone-800"
               >
                 Sign in
               </button>
@@ -511,7 +511,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
                   onSwitchToAdmin();
                   setMobileMenuOpen(false);
                 }}
-                className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-[#C51C13] bg-orange-50 dark:bg-stone-800"
+                className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-primary bg-orange-50 dark:bg-stone-800"
               >
                 Planner workspace
               </button>
@@ -520,7 +520,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
               <button
                 type="button"
                 onClick={() => goTo('profile')}
-                className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-[#C51C13] bg-orange-50 dark:bg-stone-800"
+                className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-semibold text-primary bg-orange-50 dark:bg-stone-800"
               >
                 Vendor dashboard
               </button>

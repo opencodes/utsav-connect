@@ -122,7 +122,7 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
         <button
           type="button"
           onClick={openPicker}
-          className="text-xs font-semibold text-[#C51C13] dark:text-orange-400 hover:underline cursor-pointer"
+          className="text-xs font-semibold text-primary dark:text-orange-400 hover:underline cursor-pointer"
         >
           Choose file
         </button>

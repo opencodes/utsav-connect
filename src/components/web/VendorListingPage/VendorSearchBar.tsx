@@ -67,7 +67,7 @@ export const VendorSearchBar: React.FC<VendorSearchBarProps> = ({
           Search vendors
         </label>
         <Search
-          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#C51C13] dark:text-orange-400 pointer-events-none"
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary dark:text-orange-400 pointer-events-none"
           aria-hidden
         />
         <input

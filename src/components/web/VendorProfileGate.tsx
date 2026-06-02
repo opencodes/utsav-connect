@@ -11,10 +11,10 @@ export const VendorProfileGate: React.FC<VendorProfileGateProps> = ({ onNavigate
   <div className="min-h-screen bg-white dark:bg-stone-900" id="vendor-profile-gate">
     <div className="max-w-lg mx-auto px-4 pt-32 pb-16 text-center space-y-6">
       <div className="w-14 h-14 mx-auto rounded-2xl bg-orange-100 dark:bg-orange-950/50 flex items-center justify-center">
-        <Store className="w-7 h-7 text-[#C51C13] dark:text-orange-400" aria-hidden />
+        <Store className="w-7 h-7 text-primary dark:text-orange-400" aria-hidden />
       </div>
       <div className="space-y-2">
-        <h1 className="heading-page text-2xl sm:text-3xl text-[#C51C13] dark:text-white">
+        <h1 className="heading-page text-2xl sm:text-3xl text-primary dark:text-white">
           Vendor dashboard
         </h1>
         <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
@@ -25,7 +25,7 @@ export const VendorProfileGate: React.FC<VendorProfileGateProps> = ({ onNavigate
         <button
           type="button"
           onClick={() => onNavigate('sign-in')}
-          className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer"
         >
           Sign in as vendor
           <ArrowRight className="w-4 h-4" aria-hidden />
@@ -43,7 +43,7 @@ export const VendorProfileGate: React.FC<VendorProfileGateProps> = ({ onNavigate
         <button
           type="button"
           onClick={() => onNavigate('sign-in')}
-          className="text-[#C51C13] dark:text-orange-400 font-semibold hover:underline cursor-pointer"
+          className="text-primary dark:text-orange-400 font-semibold hover:underline cursor-pointer"
         >
           Customer sign in
         </button>

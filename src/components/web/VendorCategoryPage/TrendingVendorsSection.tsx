@@ -42,7 +42,7 @@ const TrendingVendorCard: React.FC<TrendingVendorCardProps> = ({ vendor, rank, o
         </span>
       </div>
       <div className="flex flex-1 flex-col gap-1 p-2.5 sm:p-3 min-w-0">
-        <h4 className="font-bold text-[11px] sm:text-xs text-stone-900 dark:text-white line-clamp-2 leading-snug group-hover:text-[#C51C13] dark:group-hover:text-orange-400 transition-colors min-h-[2.5rem]">
+        <h4 className="font-bold text-[11px] sm:text-xs text-stone-900 dark:text-white line-clamp-2 leading-snug group-hover:text-primary dark:group-hover:text-orange-400 transition-colors min-h-[2.5rem]">
           {vendor.name}
         </h4>
         <p className="flex items-center gap-0.5 text-[9px] sm:text-[10px] text-stone-500 dark:text-stone-400 line-clamp-1">

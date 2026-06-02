@@ -41,7 +41,7 @@ export const CaseStudyDetails: React.FC<CaseStudyDetailsProps> = ({ selectedItem
       <div className="border-b pb-5 dark:border-stone-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <span className="text-[10px] font-bold text-orange-600 dark:text-orange-400 font-mono flex items-center gap-1.5">
-            <Award className="w-3.5 h-3.5 fill-[#C51C13] text-transparent" />
+            <Award className="w-3.5 h-3.5 fill-primary text-transparent" />
             <span>Case Summary Highlight</span>
           </span>
           <h2 className="text-xl sm:text-2xl font-black text-stone-900 dark:text-white tracking-tight mt-1">
@@ -52,7 +52,7 @@ export const CaseStudyDetails: React.FC<CaseStudyDetailsProps> = ({ selectedItem
           </p>
         </div>
 
-        <span className="px-3 py-1 bg-rose-50 dark:bg-stone-900 border border-rose-100 dark:border-stone-800 text-[#C51C13] dark:text-orange-400 font-black text-[10px] rounded-lg font-mono shrink-0">
+        <span className="px-3 py-1 bg-rose-50 dark:bg-stone-900 border border-rose-100 dark:border-stone-800 text-primary dark:text-orange-400 font-black text-[10px] rounded-lg font-mono shrink-0">
           {selectedItem.category}
         </span>
       </div>
@@ -70,8 +70,8 @@ export const CaseStudyDetails: React.FC<CaseStudyDetailsProps> = ({ selectedItem
 
       {/* Decor secret specs */}
       <div className="bg-orange-600/5 dark:bg-orange-950/10 p-5 rounded-2xl border border-orange-200/50 space-y-3">
-        <h4 className="text-xs font-black text-[#C51C13] dark:text-orange-400 font-mono flex items-center gap-1.5">
-          <Sparkles className="w-4 h-4 text-[#C51C13]" />
+        <h4 className="text-xs font-black text-primary dark:text-orange-400 font-mono flex items-center gap-1.5">
+          <Sparkles className="w-4 h-4 text-primary" />
           <span>Traditional Décor Specifications</span>
         </h4>
         <p className="text-xs text-stone-550 dark:text-stone-350">
@@ -94,7 +94,7 @@ export const CaseStudyDetails: React.FC<CaseStudyDetailsProps> = ({ selectedItem
             <Utensils className="w-4 h-4" />
             <span>Shahi Traditional Feast Banquet Spotlight</span>
           </h4>
-          <span className="text-[9px] bg-[#C51C13] text-white px-2 py-0.5 rounded font-black font-mono">
+          <span className="text-[9px] bg-primary text-white px-2 py-0.5 rounded font-black font-mono">
             Veg Excellence
           </span>
         </div>
@@ -118,7 +118,7 @@ export const CaseStudyDetails: React.FC<CaseStudyDetailsProps> = ({ selectedItem
 
       {/* Timeline execution milestones */}
       <div className="space-y-4">
-        <h4 className="text-xs font-black text-[#C51C13] border-b pb-2 dark:border-stone-800 font-mono flex items-center gap-1.5">
+        <h4 className="text-xs font-black text-primary border-b pb-2 dark:border-stone-800 font-mono flex items-center gap-1.5">
           <Clock className="w-4 h-4" />
           <span>Fine-Tuned Execution Checklist & Timeline</span>
         </h4>
@@ -127,10 +127,10 @@ export const CaseStudyDetails: React.FC<CaseStudyDetailsProps> = ({ selectedItem
           {selectedItem.detailedCaseStudy.timeline.map((mile, idx) => (
             <div key={idx} className="relative">
               {/* Dot Bullet */}
-              <div className="absolute -left-[2px] -translate-x-[20px] top-1.5 w-2 h-2 rounded-full bg-[#C51C13]" />
+              <div className="absolute -left-[2px] -translate-x-[20px] top-1.5 w-2 h-2 rounded-full bg-primary" />
               
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center-inner">
-                <span className="text-[10px] font-bold font-mono text-[#C51C13] dark:text-orange-400">{mile.time}</span>
+                <span className="text-[10px] font-bold font-mono text-primary dark:text-orange-400">{mile.time}</span>
                 <span className="text-stone-900 dark:text-white font-black ml-1">{mile.ritual}</span>
               </div>
             </div>
@@ -178,7 +178,7 @@ export const CaseStudyDetails: React.FC<CaseStudyDetailsProps> = ({ selectedItem
           </button>
           <button
             onClick={() => onNavigate('restaurants')}
-            className="flex-grow sm:flex-grow-0 px-4 py-2 bg-[#C51C13] hover:bg-red-700 text-white font-bold rounded-xl transition shadow-sm hover:scale-[1.01] cursor-pointer"
+            className="flex-grow sm:flex-grow-0 px-4 py-2 bg-primary hover:bg-red-700 text-white font-bold rounded-xl transition shadow-sm hover:scale-[1.01] cursor-pointer"
           >
             Explore Shahi Catering
           </button>

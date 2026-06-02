@@ -919,7 +919,6 @@ html.dark #admin-portal-view .planner-event-hero-banner {
   height: 2.25rem;
   border-radius: 999px;
   border: 2px solid var(--admin-surface);
-  background: linear-gradient(145deg, #fb923c, #c51c13);
   color: #fff;
   font-size: 0.6875rem;
   font-weight: 700;

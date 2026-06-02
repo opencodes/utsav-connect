@@ -68,7 +68,7 @@ export const AdminCustomers: React.FC = () => {
             placeholder="Search by name or email…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2 text-sm border bg-stone-50 dark:bg-stone-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#C51C13] dark:border-stone-700 text-stone-900 dark:text-white"
+            className="w-full pl-9 pr-3 py-2 text-sm border bg-stone-50 dark:bg-stone-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary dark:border-stone-700 text-stone-900 dark:text-white"
           />
           <Search className="absolute left-3 top-3 w-4 h-4 text-stone-400" aria-hidden />
         </div>

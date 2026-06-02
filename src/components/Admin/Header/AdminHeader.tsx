@@ -130,7 +130,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
                 <button
                   type="button"
                   onClick={() => alert('All notifications marked as read (demo).')}
-                  className="text-xs font-medium text-[#C51C13] hover:underline cursor-pointer"
+                  className="text-xs font-medium text-primary hover:underline cursor-pointer"
                 >
                   Clear all
                 </button>

@@ -33,21 +33,21 @@ export const VendorFiltersRibbon: React.FC<VendorFiltersRibbonProps> = ({
       <div className="flex flex-col gap-3 max-w-7xl mx-auto">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-2">
-            <SlidersHorizontal className="w-4 h-4 text-[#C51C13] shrink-0" aria-hidden />
+            <SlidersHorizontal className="w-4 h-4 text-primary shrink-0" aria-hidden />
 
             <label htmlFor="vendor-city-filter" className="sr-only">
               Filter by city
             </label>
             <div className="relative">
               <MapPin
-                className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#C51C13] pointer-events-none"
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-primary pointer-events-none"
                 aria-hidden
               />
               <select
                 id="vendor-city-filter"
                 value={selectedCity}
                 onChange={(e) => onCityChange(e.target.value)}
-                className="pl-8 pr-3 py-1.5 text-xs font-semibold bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-full text-stone-800 dark:text-stone-100 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#C51C13]"
+                className="pl-8 pr-3 py-1.5 text-xs font-semibold bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-full text-stone-800 dark:text-stone-100 cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary"
               >
                 <option value="">All cities</option>
                 {VENDOR_FILTER_CITIES.map((city) => (
@@ -63,7 +63,7 @@ export const VendorFiltersRibbon: React.FC<VendorFiltersRibbonProps> = ({
               onClick={onToggleRating48}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all border cursor-pointer flex items-center gap-1.5 ${
                 filterRating48
-                  ? 'bg-[#C51C13] text-white border-[#C51C13]'
+                  ? 'bg-primary text-white border-primary'
                   : 'bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-300 border-stone-200 dark:border-stone-700 hover:border-orange-300'
               }`}
             >
@@ -75,7 +75,7 @@ export const VendorFiltersRibbon: React.FC<VendorFiltersRibbonProps> = ({
               <button
                 type="button"
                 onClick={onClearFilters}
-                className="px-2.5 py-1.5 rounded-full text-xs font-semibold text-stone-500 hover:text-[#C51C13] flex items-center gap-1 cursor-pointer"
+                className="px-2.5 py-1.5 rounded-full text-xs font-semibold text-stone-500 hover:text-primary flex items-center gap-1 cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" aria-hidden />
                 Clear filters
@@ -84,7 +84,7 @@ export const VendorFiltersRibbon: React.FC<VendorFiltersRibbonProps> = ({
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <ArrowUpDown className="w-4 h-4 text-[#C51C13] shrink-0" aria-hidden />
+            <ArrowUpDown className="w-4 h-4 text-primary shrink-0" aria-hidden />
             <label htmlFor="vendor-sort" className="text-xs font-semibold text-stone-500 sr-only sm:not-sr-only">
               Sort
             </label>
@@ -94,7 +94,7 @@ export const VendorFiltersRibbon: React.FC<VendorFiltersRibbonProps> = ({
               onChange={(e) =>
                 onSortChange((e.target.value as 'rating' | 'costAsc' | 'costDesc') || null)
               }
-              className="py-1.5 px-3 text-xs font-semibold bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-800 dark:text-stone-100 cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#C51C13]"
+              className="py-1.5 px-3 text-xs font-semibold bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-800 dark:text-stone-100 cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary"
             >
               <option value="">Recommended</option>
               <option value="rating">Highest rated</option>

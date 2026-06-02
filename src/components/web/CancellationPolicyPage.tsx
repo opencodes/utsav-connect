@@ -94,10 +94,10 @@ export const CancellationPolicyPage: React.FC = () => {
 
                 <div className="p-3 bg-stone-50 dark:bg-stone-900 rounded-xl border border-stone-100 dark:border-stone-800 flex justify-between items-center gap-2">
                   <div>
-                    <span className="font-bold text-[#C51C13] block">Tier C: Less than 14 Days</span>
+                    <span className="font-bold text-primary block">Tier C: Less than 14 Days</span>
                     <span className="text-[10px] text-stone-450 text-stone-400 block font-sans">No refund; flowers gathered and chefs booked.</span>
                   </div>
-                  <span className="bg-red-100 dark:bg-red-950/25 text-[#C51C13] dark:text-red-400 font-black px-2.5 py-1 rounded-lg text-xs">
+                  <span className="bg-red-100 dark:bg-red-950/25 text-primary dark:text-red-400 font-black px-2.5 py-1 rounded-lg text-xs">
                     0% Refund
                   </span>
                 </div>

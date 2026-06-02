@@ -38,7 +38,7 @@ export const VendorRegisterSection: React.FC<VendorRegisterSectionProps> = ({ on
             <button
               type="button"
               onClick={() => onNavigate('list-your-service')}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white font-semibold text-sm transition-colors cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-primary hover:bg-[#A2110A] text-white font-semibold text-sm transition-colors cursor-pointer"
             >
               Apply to list your business
               <ArrowRight className="w-4 h-4" />

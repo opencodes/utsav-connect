@@ -32,7 +32,7 @@ export const PopularRestaurantsGrid: React.FC<PopularRestaurantsGridProps> = ({ 
               Lustrous Culinary Havens
             </span>
           </div>
-          <h3 className="serif text-2xl md:text-3xl font-black italic text-stone-900 dark:text-white tracking-tight text-[#C51C13]">
+          <h3 className="serif text-2xl md:text-3xl font-black italic text-stone-900 dark:text-white tracking-tight text-primary">
             Trending Vendors in {TRENDING_AREA_LABEL}
           </h3>
         </div>
@@ -63,7 +63,7 @@ export const PopularRestaurantsGrid: React.FC<PopularRestaurantsGridProps> = ({ 
               
               {/* Diwali ribbon / offer overlay */}
               {rest.offerText && (
-                <div className="absolute bottom-3 left-3 bg-[#C51C13] text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow-lg">
+                <div className="absolute bottom-3 left-3 bg-primary text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow-lg">
                   🔥 {rest.offerText}
                 </div>
               )}

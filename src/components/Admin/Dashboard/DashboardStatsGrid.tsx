@@ -18,13 +18,13 @@ const STAT_CARDS = [
     label: 'Gross revenue today',
     value: (s: Stats) => `₹${s.totalRevenue.toLocaleString('en-IN')}`,
     icon: IndianRupee,
-    iconClass: 'bg-[#C51C13]',
+    iconClass: 'bg-primary',
   },
   {
     label: 'Orders',
     value: (s: Stats) => String(s.totalOrders),
     icon: ShoppingCart,
-    iconClass: 'bg-[#C51C13]',
+    iconClass: 'bg-primary',
   },
   {
     label: 'Active customers',
@@ -42,7 +42,7 @@ const STAT_CARDS = [
     label: 'Vendors pending review',
     value: (s: Stats) => String(s.pendingVendors ?? 0),
     icon: UserCheck,
-    iconClass: 'bg-[#C51C13]',
+    iconClass: 'bg-primary',
   },
 ] as const;
 

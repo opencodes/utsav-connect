@@ -6,7 +6,7 @@ interface PlatformHowItWorksSectionProps {
   onNavigate: (page: string, data?: unknown) => void;
 }
 
-const iconClass = 'w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0';
+const iconClass = 'w-5 h-5 text-primary dark:text-orange-400 shrink-0';
 
 export const PlatformHowItWorksSection: React.FC<PlatformHowItWorksSectionProps> = ({ onNavigate }) => {
   const hostSteps = [
@@ -55,7 +55,7 @@ export const PlatformHowItWorksSection: React.FC<PlatformHowItWorksSectionProps>
 
       <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
         <div>
-          <h3 className="font-display text-xl text-[#C51C13] dark:text-white mb-1">For event hosts</h3>
+          <h3 className="font-display text-xl text-primary dark:text-white mb-1">For event hosts</h3>
           <p className="text-sm text-stone-600 dark:text-stone-400 mb-6">
             Plan shaadi, sangeet, griha pravesh, or community feasts with structured tools.
           </p>
@@ -76,14 +76,14 @@ export const PlatformHowItWorksSection: React.FC<PlatformHowItWorksSectionProps>
           <button
             type="button"
             onClick={() => onNavigate('celebrations')}
-            className="mt-6 w-full sm:w-auto px-5 py-2.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer"
+            className="mt-6 w-full sm:w-auto px-5 py-2.5 rounded-lg bg-primary hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer"
           >
             Start planning an event
           </button>
         </div>
 
         <div className="lg:border-l lg:border-stone-200/80 lg:dark:border-stone-800 lg:pl-16">
-          <h3 className="font-display text-xl text-[#C51C13] dark:text-white mb-1">For service vendors</h3>
+          <h3 className="font-display text-xl text-primary dark:text-white mb-1">For service vendors</h3>
           <p className="text-sm text-stone-600 dark:text-stone-400 mb-6">
             Caterers, decorators, photographers, pandits, and more — list once, get found by hosts.
           </p>
@@ -104,7 +104,7 @@ export const PlatformHowItWorksSection: React.FC<PlatformHowItWorksSectionProps>
           <button
             type="button"
             onClick={() => onNavigate('contact')}
-            className="mt-6 w-full sm:w-auto px-5 py-2.5 rounded-lg border border-[#C51C13] text-[#C51C13] dark:text-orange-400 dark:border-orange-500 hover:bg-[#C51C13] hover:text-white dark:hover:text-white text-sm font-semibold transition-colors cursor-pointer"
+            className="mt-6 w-full sm:w-auto px-5 py-2.5 rounded-lg border border-primary text-primary dark:text-orange-400 dark:border-orange-500 hover:bg-primary hover:text-white dark:hover:text-white text-sm font-semibold transition-colors cursor-pointer"
           >
             Register as a vendor
           </button>

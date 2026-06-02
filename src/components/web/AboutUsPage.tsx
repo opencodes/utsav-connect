@@ -51,7 +51,7 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({ onNavigate }) => {
           <button
             type="button"
             onClick={() => onNavigate('vendor-categories')}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#FFCB44] hover:bg-amber-300 text-stone-900 text-sm font-semibold transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[secondary] hover:bg-amber-300 text-stone-900 text-sm font-semibold transition-colors cursor-pointer"
           >
             Browse categories
             <ArrowRight className="w-4 h-4" aria-hidden />
@@ -70,7 +70,7 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({ onNavigate }) => {
               key={stat.label}
               className="rounded-xl bg-white/95 backdrop-blur-sm px-3 py-2 border border-white/40 shadow-sm min-w-[7rem]"
             >
-              <p className="text-lg font-bold text-[#C51C13] leading-none">{stat.value}</p>
+              <p className="text-lg font-bold text-primary leading-none">{stat.value}</p>
               <p className="text-[10px] font-medium text-stone-600 mt-0.5">{stat.label}</p>
             </div>
           ))}
@@ -92,7 +92,7 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({ onNavigate }) => {
               className="rounded-2xl border border-stone-200/80 dark:border-stone-700 bg-stone-50/50 dark:bg-stone-800/40 p-6 space-y-4"
             >
               <div className="w-11 h-11 rounded-xl bg-orange-100 dark:bg-orange-950/50 flex items-center justify-center">
-                <Icon className="w-5 h-5 text-[#C51C13] dark:text-orange-400" aria-hidden />
+                <Icon className="w-5 h-5 text-primary dark:text-orange-400" aria-hidden />
               </div>
               <div className="space-y-2">
                 <h3 className="heading-card text-lg text-stone-900 dark:text-white">{title}</h3>

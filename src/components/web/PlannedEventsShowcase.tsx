@@ -311,7 +311,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
           
           <div className="relative z-10 space-y-3 max-w-3xl">
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 text-[10px] font-black bg-[#C51C13] text-white rounded-full">
+              <span className="px-3 py-1 text-[10px] font-black bg-primary text-white rounded-full">
                 UTSAV GUEST DIARY
               </span>
               <span className="text-xs text-stone-300 font-mono flex items-center gap-1">
@@ -353,19 +353,19 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                 
                 {/* Visual clock timers */}
                 <div className="grid grid-cols-4 gap-2 mt-4 font-mono font-bold text-center">
-                  <div className="bg-[#C51C13] text-white p-2 rounded-xl">
+                  <div className="bg-primary text-white p-2 rounded-xl">
                     <span className="block text-lg font-black">{countdown.days}</span>
                     <span className="text-[9px] text-orange-100 font-semibold font-sans">Days</span>
                   </div>
-                  <div className="bg-[#C51C13] text-white p-2 rounded-xl">
+                  <div className="bg-primary text-white p-2 rounded-xl">
                     <span className="block text-lg font-black">{countdown.hours}</span>
                     <span className="text-[9px] text-orange-100 font-semibold font-sans">Hrs</span>
                   </div>
-                  <div className="bg-[#C51C13] text-white p-2 rounded-xl">
+                  <div className="bg-primary text-white p-2 rounded-xl">
                     <span className="block text-lg font-black">{countdown.minutes}</span>
                     <span className="text-[9px] text-orange-100 font-semibold font-sans">Mins</span>
                   </div>
-                  <div className="bg-[#C51C13] text-white p-2 rounded-xl">
+                  <div className="bg-primary text-white p-2 rounded-xl">
                     <span className="block text-lg font-black">{countdown.seconds}</span>
                     <span className="text-[9px] text-orange-100 font-semibold font-sans">Secs</span>
                   </div>
@@ -377,14 +377,14 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
           {/* B. LIST FINDER & FILTERS */}
           <div className="bg-white dark:bg-stone-850 p-5 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-sm space-y-4">
             <h3 className="text-sm font-black text-stone-950 dark:text-white flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-[#C51C13]" />
+              <Calendar className="w-4 h-4 text-primary" />
               <span>Registered Celebrations ({filteredEvents.length})</span>
             </h3>
 
             {heroPlannerFilters && (
               <div className="flex flex-wrap items-start justify-between gap-2 rounded-xl border border-orange-200 bg-orange-50/80 dark:bg-orange-950/20 dark:border-orange-900/40 px-3 py-2.5 text-xs text-stone-700 dark:text-stone-200">
                 <p className="leading-relaxed">
-                  <span className="font-bold text-[#C51C13] dark:text-orange-400">From hero search:</span>{' '}
+                  <span className="font-bold text-primary dark:text-orange-400">From hero search:</span>{' '}
                   {[
                     heroPlannerFilters.eventName && `"${heroPlannerFilters.eventName}"`,
                     heroPlannerFilters.location && `in ${heroPlannerFilters.location}`,
@@ -400,7 +400,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                     setHeroPlannerFilters(null);
                     setSearchQuery('');
                   }}
-                  className="shrink-0 font-bold text-[#C51C13] dark:text-orange-400 hover:underline cursor-pointer"
+                  className="shrink-0 font-bold text-primary dark:text-orange-400 hover:underline cursor-pointer"
                 >
                   Clear
                 </button>
@@ -415,7 +415,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                   onClick={() => setActiveTabFilter(tab)}
                   className={`flex-1 py-1.5 rounded-lg font-bold text-center transition-colors cursor-pointer ${
                     activeTabFilter === tab 
-                      ? 'bg-white dark:bg-stone-900 text-[#C51C13] dark:text-orange-400 shadow-sm scale-[1.01]' 
+                      ? 'bg-white dark:bg-stone-900 text-primary dark:text-orange-400 shadow-sm scale-[1.01]' 
                       : 'text-stone-500 hover:text-stone-900'
                   }`}
                 >
@@ -447,7 +447,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                     onClick={() => setSelectedEvent(evt)}
                     className={`p-4 rounded-2xl border text-left cursor-pointer transition-all ${
                       isSelected
-                        ? 'border-[#C51C13] bg-orange-50/30 dark:bg-orange-950/15'
+                        ? 'border-primary bg-orange-50/30 dark:bg-orange-950/15'
                         : 'border-stone-150 dark:border-stone-800 hover:bg-stone-50/50 dark:hover:bg-stone-800/40'
                     }`}
                   >
@@ -460,7 +460,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                       <b className="text-[10px] text-stone-400 font-mono">{evt.date}</b>
                     </div>
                     
-                    <h4 className="font-extrabold text-[#C51C13] dark:text-orange-400 text-xs sm:text-sm mt-1">
+                    <h4 className="font-extrabold text-primary dark:text-orange-400 text-xs sm:text-sm mt-1">
                       {evt.name}
                     </h4>
                     
@@ -481,7 +481,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
 
           {/* C. INTERACTIVE RSVP INTEGRATED SERVICE */}
           <div className="bg-white dark:bg-stone-850 p-5 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-md space-y-4 text-neutral-800 dark:text-stone-100 block">
-            <h3 className="text-sm font-black text-[#C51C13] dark:text-orange-400 flex items-center gap-2">
+            <h3 className="text-sm font-black text-primary dark:text-orange-400 flex items-center gap-2">
               <Users className="w-4 h-4 text-orange-600" />
               <span>RSVP & Seating Suite</span>
             </h3>
@@ -499,7 +499,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
               />
               <button
                 type="submit"
-                className="px-3.5 py-2 bg-[#C51C13] hover:bg-orange-700 text-white font-bold text-xs rounded-xl whitespace-nowrap cursor-pointer transition-colors"
+                className="px-3.5 py-2 bg-primary hover:bg-orange-700 text-white font-bold text-xs rounded-xl whitespace-nowrap cursor-pointer transition-colors"
               >
                 Find Invitation
               </button>
@@ -535,7 +535,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                   <div className="grid grid-cols-2 gap-3 text-xs border-y py-2.5 my-2 border-orange-100/50 dark:border-stone-800">
                     <div>
                       <span className="text-[9px] text-stone-400 block font-mono">Allocated Lodging</span>
-                      <b className="text-[#C51C13] dark:text-orange-400">{foundGuest.roomAllocated || 'Standard Transit Complex'}</b>
+                      <b className="text-primary dark:text-orange-400">{foundGuest.roomAllocated || 'Standard Transit Complex'}</b>
                     </div>
                     <div>
                       <span className="text-[9px] text-stone-400 block font-mono">Mithila Return Token</span>
@@ -571,7 +571,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                     <p className="text-stone-400">Search your name above to see your details. Not in the pre-invited guest listings?</p>
                     <button
                       onClick={() => setShowSelfRegForm(true)}
-                      className="text-xs text-[#C51C13] hover:underline font-extrabold cursor-pointer"
+                      className="text-xs text-primary hover:underline font-extrabold cursor-pointer"
                     >
                       Self Register as Wedding Welcomer &rarr;
                     </button>
@@ -584,7 +584,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
             {showSelfRegForm && (
               <form onSubmit={handleSelfRegisterGuest} className="p-4 bg-stone-50 dark:bg-stone-900 hover:bg-stone-100 dark:hover:bg-stone-850/50 border border-stone-200 dark:border-stone-800 rounded-2xl space-y-3">
                 <div className="flex justify-between items-center-inner">
-                  <h4 className="text-xs font-black text-[#C51C13]">Self-registration Ledger</h4>
+                  <h4 className="text-xs font-black text-primary">Self-registration Ledger</h4>
                   <button type="button" onClick={() => setShowSelfRegForm(false)} className="text-stone-400 text-xs">✕</button>
                 </div>
                 
@@ -661,7 +661,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                 {/* Visual Header */}
                 <div className="border-b pb-4 dark:border-stone-800/80 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                   <div>
-                    <div className="flex items-center gap-1.5 text-[#C51C13] dark:text-orange-400">
+                    <div className="flex items-center gap-1.5 text-primary dark:text-orange-400">
                       <Heart className="w-4 h-4 fill-current text-red-500 shrink-0" />
                       <span className="text-xs font-black font-mono">Aura Traditional Blueprint</span>
                     </div>
@@ -674,7 +674,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                   </div>
 
                   <div className="flex items-center gap-1 p-2 bg-rose-50 dark:bg-stone-900 rounded-xl border border-rose-100 dark:border-stone-850 leading-none shrink-0 text-left">
-                    <span className="w-3 h-3 rounded-full bg-[#C51C13] block shrink-0 animate-ping" />
+                    <span className="w-3 h-3 rounded-full bg-primary block shrink-0 animate-ping" />
                     <div>
                       <b className="text-stone-900 dark:text-white block text-[10px] font-black font-mono">Live Broadcast</b>
                       <span className="text-[9px] text-stone-400">Synchronized (UTC)</span>
@@ -713,7 +713,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                             <span className="text-stone-300 font-bold">🏵️</span>
                           </div>
                           
-                          <h4 className="text-[#C51C13] dark:text-orange-400 font-black text-sm mt-1">
+                          <h4 className="text-primary dark:text-orange-400 font-black text-sm mt-1">
                             {rit.name}
                           </h4>
                           
@@ -739,7 +739,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
 
                 {/* Timelines subsection */}
                 <div className="space-y-4">
-                  <h3 className="text-xs font-black font-mono text-[#C51C13] border-b pb-2 dark:border-stone-800">
+                  <h3 className="text-xs font-black font-mono text-primary border-b pb-2 dark:border-stone-800">
                     II. Swagat Entry & Timeline Milestones
                   </h3>
 
@@ -751,7 +751,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                           : rituals.filter((r) => r.subEventId === sub.id);
                       return (
                       <div key={sub.id} className="relative group text-left">
-                        <div className="absolute -left-[30px] top-1.5 w-4 h-4 bg-[#C51C13] dark:bg-orange-500 rounded-full border-2 border-white dark:border-stone-850 flex items-center justify-center text-white text-[8px] font-bold">
+                        <div className="absolute -left-[30px] top-1.5 w-4 h-4 bg-primary dark:bg-orange-500 rounded-full border-2 border-white dark:border-stone-850 flex items-center justify-center text-white text-[8px] font-bold">
                           {sidx + 1}
                         </div>
 
@@ -761,7 +761,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                               {formatSubEventDisplayName(sub.name, sub.date ?? '')}
                             </h4>
                             <div className="flex flex-wrap items-center gap-2 shrink-0">
-                              <span className="text-xs font-black font-mono text-[#C51C13] dark:text-orange-400 flex items-center gap-1">
+                              <span className="text-xs font-black font-mono text-primary dark:text-orange-400 flex items-center gap-1">
                                 <Clock className="w-3.5 h-3.5" />
                                 <span>{sub.time} IST</span>
                               </span>
@@ -787,7 +787,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                                   className="text-[11px] text-stone-600 dark:text-stone-400 flex items-center gap-1.5"
                                 >
                                   <span className="text-orange-600 font-bold">🏵</span>
-                                  <span className="font-semibold text-[#C51C13] dark:text-orange-400">
+                                  <span className="font-semibold text-primary dark:text-orange-400">
                                     {rit.name}
                                   </span>
                                   <span className="text-stone-400">· {rit.duration}</span>
@@ -810,7 +810,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                 {/* III. INTEGRATED CATERING CORER */}
                 <div className="space-y-3 p-5 rounded-3xl bg-neutral-50 dark:bg-stone-900 border dark:border-orange-950 border-orange-100">
                   <div className="flex justify-between items-center border-b pb-2.5 mb-2.5 dark:border-stone-800">
-                    <span className="text-xs font-black text-[#C51C13] dark:text-orange-400 flex items-center gap-1 font-mono">
+                    <span className="text-xs font-black text-primary dark:text-orange-400 flex items-center gap-1 font-mono">
                       <Utensils className="w-4 h-4" />
                       <span>Shahi Satvik Feast Catering</span>
                     </span>
@@ -825,7 +825,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                     <span className="text-[10px] text-stone-400 font-bold">Interested in traditional food catering for your guests?</span>
                     <button
                       onClick={() => onNavigate('restaurants')}
-                      className="px-3.5 py-1.5 bg-[#C51C13] hover:bg-orange-700 text-white font-heavy text-[10px] rounded-lg transition-transform hover:scale-[1.02] active:scale-95 cursor-pointer"
+                      className="px-3.5 py-1.5 bg-primary hover:bg-orange-700 text-white font-heavy text-[10px] rounded-lg transition-transform hover:scale-[1.02] active:scale-95 cursor-pointer"
                     >
                       Browse Festive Menus
                     </button>
@@ -843,7 +843,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                     onClick={() => {
                       alert('Traditional Chuman wishes dispatched securely to Noida Utsav Registry ledger!');
                     }}
-                    className="flex items-center gap-1 font-extrabold text-xs text-[#C51C13] hover:underline cursor-pointer"
+                    className="flex items-center gap-1 font-extrabold text-xs text-primary hover:underline cursor-pointer"
                   >
                     <span>Send Traditional Wishes Token</span>
                     <ChevronRight className="w-4 h-4" />
@@ -863,7 +863,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
           {/* QUICK PROSPECTUS INFO */}
           <div className="bg-stone-50 dark:bg-stone-900/40 p-5 rounded-3xl border border-stone-200 dark:border-stone-800/80 text-left space-y-3">
             <h4 className="text-xs font-black text-stone-950 dark:text-white flex items-center gap-1.5">
-              <Gift className="w-4 h-4 text-[#C51C13]" />
+              <Gift className="w-4 h-4 text-primary" />
               <span>Planning your own traditional ceremony?</span>
             </h4>
             <p className="text-[11px] text-stone-500 leading-relaxed font-medium">
@@ -874,7 +874,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
                 onClick={() => {
                   alert('Opening Utsav Mithila planner setup. Switch to "Admin Center" using the navbar button to manage, add, or alter events live!');
                 }}
-                className="text-xs text-[#C51C13] dark:text-orange-400 font-black hover:underline flex items-center gap-1 cursor-pointer"
+                className="text-xs text-primary dark:text-orange-400 font-black hover:underline flex items-center gap-1 cursor-pointer"
               >
                 <span>Outline event in Admin Suite</span>
                 <ChevronRight className="w-3.5 h-3.5" />

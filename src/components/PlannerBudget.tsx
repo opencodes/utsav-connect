@@ -174,7 +174,7 @@ export const PlannerBudget: React.FC = () => {
             <div
               className={`h-full transition-all duration-500 font-mono text-[9px] text-white flex items-center justify-end pr-2.5 font-bold ${
                 allocationPercentage > 90 
-                  ? 'bg-[#C51C13]' 
+                  ? 'bg-primary' 
                   : 'bg-stone-600'
               }`}
               style={{ width: `${allocationPercentage}%` }}

@@ -35,10 +35,10 @@ export const FeaturedOffersSection: React.FC<FeaturedOffersSectionProps> = ({ on
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="flex h-2.5 w-2.5 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#C51C13] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#C51C13]"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
               </span>
-              <span className="text-[11px] font-extrabold text-[#C51C13] font-mono">
+              <span className="text-[11px] font-extrabold text-primary font-mono">
                 Interactive Guest & RSVP Suite
               </span>
             </div>
@@ -52,7 +52,7 @@ export const FeaturedOffersSection: React.FC<FeaturedOffersSectionProps> = ({ on
           <div className="mt-4 md:mt-0">
             <button
               onClick={() => onNavigate('celebrations')}
-              className="px-5 py-2.5 bg-[#C51C13] hover:opacity-90 font-bold text-sm text-white rounded-xl shadow transition-transform hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer"
+              className="px-5 py-2.5 bg-primary hover:opacity-90 font-bold text-sm text-white rounded-xl shadow transition-transform hover:-translate-y-0.5 flex items-center gap-2 cursor-pointer"
             >
               <Calendar className="w-4 h-4" />
               <span>Launch RSVP Registry Portal</span>
@@ -106,7 +106,7 @@ export const FeaturedOffersSection: React.FC<FeaturedOffersSectionProps> = ({ on
                     <button
                       type="button"
                       onClick={() => onNavigate('celebrations')}
-                      className="text-[11px] font-bold text-[#C51C13] dark:text-orange-400 hover:underline block mx-auto cursor-pointer"
+                      className="text-[11px] font-bold text-primary dark:text-orange-400 hover:underline block mx-auto cursor-pointer"
                     >
                       Open RSVP registry &rarr;
                     </button>
@@ -119,7 +119,7 @@ export const FeaturedOffersSection: React.FC<FeaturedOffersSectionProps> = ({ on
             <div className={`mt-6 p-4 rounded-xl bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 flex items-start gap-3 transition-opacity ${searched ? 'hidden md:flex' : 'flex'}`}>
               <Sparkles className="w-5 h-5 text-stone-400 shrink-0 mt-0.5" />
               <div className="text-xs text-stone-600 dark:text-stone-400 space-y-1">
-                <span className="font-extrabold text-[#C51C13] dark:text-orange-400 block pb-0.5">Ghar ka bada function?</span>
+                <span className="font-extrabold text-primary dark:text-orange-400 block pb-0.5">Ghar ka bada function?</span>
                 <span>Skip registers & messy notebooks. Register guests, update food preferences, map out seating, and view digital cards directly in our planner widget!</span>
               </div>
             </div>
@@ -138,12 +138,12 @@ export const FeaturedOffersSection: React.FC<FeaturedOffersSectionProps> = ({ on
               <div className="bg-stone-50 dark:bg-stone-950 p-4 rounded-2xl border border-stone-200 dark:border-stone-850 hover:border-stone-300 dark:hover:border-stone-700 shadow-sm transition-all duration-300 flex flex-col justify-between group">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-extrabold text-[#C51C13] bg-red-100 dark:bg-red-950/20 px-2.5 py-0.5 rounded-full font-mono">
+                    <span className="text-[10px] font-extrabold text-primary bg-red-100 dark:bg-red-950/20 px-2.5 py-0.5 rounded-full font-mono">
                       Day 1 Ritual
                     </span>
                     <AnimatedDiya className="w-5 h-5 filter drop-shadow animate-pulse" />
                   </div>
-                  <h5 className="font-extrabold text-stone-900 dark:text-white text-sm group-hover:text-[#C51C13] dark:group-hover:text-orange-400 transition-colors">
+                  <h5 className="font-extrabold text-stone-900 dark:text-white text-sm group-hover:text-primary dark:group-hover:text-orange-400 transition-colors">
                     Sangeet & Shubh Mehndi
                   </h5>
                   <p className="text-[11px] text-stone-500 dark:text-stone-400 leading-relaxed">
@@ -155,7 +155,7 @@ export const FeaturedOffersSection: React.FC<FeaturedOffersSectionProps> = ({ on
                     <MapPin className="w-3 h-3 text-stone-400 shrink-0" />
                     <span>Rooftop Palace Hall</span>
                   </div>
-                  <div className="text-[#C51C13] dark:text-orange-400 font-medium">✨ Catering: Fresh Halwai Delights</div>
+                  <div className="text-primary dark:text-orange-400 font-medium">✨ Catering: Fresh Halwai Delights</div>
                 </div>
               </div>
 
@@ -163,12 +163,12 @@ export const FeaturedOffersSection: React.FC<FeaturedOffersSectionProps> = ({ on
               <div className="bg-stone-50 dark:bg-stone-950 p-4 rounded-2xl border border-stone-200 dark:border-stone-850 hover:border-stone-300 dark:hover:border-stone-700 shadow-sm transition-all duration-300 flex flex-col justify-between group">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-extrabold text-[#C51C13] bg-red-105 px-2.5 py-0.5 bg-red-100 dark:bg-red-950/20 rounded-full font-mono">
+                    <span className="text-[10px] font-extrabold text-primary bg-red-105 px-2.5 py-0.5 bg-red-100 dark:bg-red-950/20 rounded-full font-mono">
                       Day 2 Main
                     </span>
                     <AnimatedDiya className="w-5 h-5 filter drop-shadow animate-pulse" style={{ animationDelay: '0.5s' }} />
                   </div>
-                  <h5 className="font-extrabold text-stone-900 dark:text-white text-sm group-hover:text-[#C51C13] dark:group-hover:text-orange-400 transition-colors">
+                  <h5 className="font-extrabold text-stone-900 dark:text-white text-sm group-hover:text-primary dark:group-hover:text-orange-400 transition-colors">
                     Grand Shadi / Vivah
                   </h5>
                   <p className="text-[11px] text-stone-500 dark:text-stone-400 leading-relaxed">
@@ -180,7 +180,7 @@ export const FeaturedOffersSection: React.FC<FeaturedOffersSectionProps> = ({ on
                     <MapPin className="w-3 h-3 text-stone-400 shrink-0" />
                     <span>Sacred Temple Mandap</span>
                   </div>
-                  <div className="text-[#C51C13] dark:text-orange-400 font-medium">✨ Catering: Royal Banaras Feast</div>
+                  <div className="text-primary dark:text-orange-400 font-medium">✨ Catering: Royal Banaras Feast</div>
                 </div>
               </div>
 
@@ -193,7 +193,7 @@ export const FeaturedOffersSection: React.FC<FeaturedOffersSectionProps> = ({ on
                     </span>
                     <AnimatedDiya className="w-5 h-5 filter drop-shadow animate-pulse" style={{ animationDelay: '1s' }} />
                   </div>
-                  <h5 className="font-extrabold text-stone-900 dark:text-white text-sm group-hover:text-[#C51C13] dark:group-hover:text-orange-400 transition-colors">
+                  <h5 className="font-extrabold text-stone-900 dark:text-white text-sm group-hover:text-primary dark:group-hover:text-orange-400 transition-colors">
                     Ceremonial Maithili Bhoj
                   </h5>
                   <p className="text-[11px] text-stone-500 dark:text-stone-400 leading-relaxed">
@@ -205,7 +205,7 @@ export const FeaturedOffersSection: React.FC<FeaturedOffersSectionProps> = ({ on
                     <MapPin className="w-3 h-3 text-stone-400 shrink-0" />
                     <span>Grand Banqueting Lawn</span>
                   </div>
-                  <div className="text-[#C51C13] dark:text-orange-400 font-medium">✨ Catering: Mithila Special Curry</div>
+                  <div className="text-primary dark:text-orange-400 font-medium">✨ Catering: Mithila Special Curry</div>
                 </div>
               </div>
 
@@ -220,7 +220,7 @@ export const FeaturedOffersSection: React.FC<FeaturedOffersSectionProps> = ({ on
               <button
                 type="button"
                 onClick={() => onNavigate('portfolio')}
-                className="text-[#C51C13] dark:text-orange-400 hover:underline select-none cursor-pointer text-xs shrink-0 font-bold"
+                className="text-primary dark:text-orange-400 hover:underline select-none cursor-pointer text-xs shrink-0 font-bold"
               >
                 View Culinary Portfolio &rarr;
               </button>

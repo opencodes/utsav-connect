@@ -24,7 +24,7 @@ export const RecentOrdersTable: React.FC<RecentOrdersTableProps> = ({ recentOrde
         <button
           type="button"
           onClick={() => onNavigateTab('orders')}
-          className="text-xs font-medium text-[#C51C13] hover:underline cursor-pointer"
+          className="text-xs font-medium text-primary hover:underline cursor-pointer"
         >
           View all orders →
         </button>

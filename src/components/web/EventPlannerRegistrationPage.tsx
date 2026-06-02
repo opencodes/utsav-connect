@@ -264,15 +264,15 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
       >
         <div className="flex flex-wrap gap-2 sm:gap-3">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white">
-            <CalendarPlus className="w-3.5 h-3.5 text-[#FFCB44] shrink-0" aria-hidden />
+            <CalendarPlus className="w-3.5 h-3.5 text-[secondary] shrink-0" aria-hidden />
             {STEPS[0]} → {STEPS[1]}
           </span>
           <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white">
-            <LayoutDashboard className="w-3.5 h-3.5 text-[#FFCB44] shrink-0" aria-hidden />
+            <LayoutDashboard className="w-3.5 h-3.5 text-[secondary] shrink-0" aria-hidden />
             Free planning workspace
           </span>
           <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white">
-            <User className="w-3.5 h-3.5 text-[#FFCB44] shrink-0" aria-hidden />
+            <User className="w-3.5 h-3.5 text-[secondary] shrink-0" aria-hidden />
             For hosts &amp; planners
           </span>
         </div>

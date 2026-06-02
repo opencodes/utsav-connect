@@ -39,7 +39,7 @@ export const VendorCategoriesSection: React.FC<VendorCategoriesSectionProps> = (
               type="button"
               onClick={() => onNavigate('vendor-list', { categoryId: cat.id })}
               aria-label={cat.name}
-              className="flex flex-col items-center p-2 sm:p-3 text-stone-800 dark:text-stone-100 hover:text-[#C51C13] dark:hover:text-orange-400 transition-colors cursor-pointer"
+              className="flex flex-col items-center p-2 sm:p-3 text-stone-800 dark:text-stone-100 hover:text-primary dark:hover:text-orange-400 transition-colors cursor-pointer"
               id={`vendor-cat-${cat.id}`}
             >
               <span className="text-3xl sm:text-4xl mb-2 sm:mb-3" aria-hidden>
@@ -53,7 +53,7 @@ export const VendorCategoriesSection: React.FC<VendorCategoriesSectionProps> = (
             type="button"
             onClick={() => onNavigate('vendor-categories')}
             id="vendor-cat-view-all"
-            className="flex flex-col items-center justify-center gap-2 p-2 sm:p-3 min-h-[120px] text-[#C51C13] dark:text-orange-400 hover:underline cursor-pointer"
+            className="flex flex-col items-center justify-center gap-2 p-2 sm:p-3 min-h-[120px] text-primary dark:text-orange-400 hover:underline cursor-pointer"
           >
             <ArrowRight className="w-8 h-8" />
             <span className="text-xs sm:text-sm font-semibold text-center">View all categories</span>

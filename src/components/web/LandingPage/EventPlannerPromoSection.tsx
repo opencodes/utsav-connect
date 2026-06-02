@@ -30,7 +30,7 @@ const PLANNING_STEPS = [
   },
 ];
 
-const iconClass = 'w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0';
+const iconClass = 'w-5 h-5 text-primary dark:text-orange-400 shrink-0';
 
 export const EventPlannerPromoSection: React.FC<EventPlannerPromoSectionProps> = ({ onNavigate }) => {
   return (
@@ -49,7 +49,7 @@ export const EventPlannerPromoSection: React.FC<EventPlannerPromoSectionProps> =
             <li key={item.title} className="flex flex-col items-center text-center min-w-0">
               <Icon className={`${iconClass} mb-3`} aria-hidden />
 
-              <h3 className="font-display text-lg sm:text-xl text-[#C51C13] dark:text-white leading-snug min-h-[3.25rem]">
+              <h3 className="font-display text-lg sm:text-xl text-primary dark:text-white leading-snug min-h-[3.25rem]">
                 {item.title}
               </h3>
 
@@ -69,7 +69,7 @@ export const EventPlannerPromoSection: React.FC<EventPlannerPromoSectionProps> =
             <button
               type="button"
               onClick={() => document.getElementById('platform-overview')?.scrollIntoView({ behavior: 'smooth' })}
-              className="text-[#C51C13] dark:text-orange-400 font-semibold underline-offset-2 hover:underline cursor-pointer"
+              className="text-primary dark:text-orange-400 font-semibold underline-offset-2 hover:underline cursor-pointer"
             >
               How our app works
             </button>
@@ -80,7 +80,7 @@ export const EventPlannerPromoSection: React.FC<EventPlannerPromoSectionProps> =
               type="button"
               onClick={() => onNavigate('event-planner-register')}
               id="btn-landing-open-planner"
-              className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white font-semibold text-sm transition-colors cursor-pointer"
+              className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-lg bg-primary hover:bg-[#A2110A] text-white font-semibold text-sm transition-colors cursor-pointer"
             >
               <CalendarPlus className="w-5 h-5" />
               Register as event planner

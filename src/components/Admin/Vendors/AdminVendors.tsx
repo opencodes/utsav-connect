@@ -84,7 +84,7 @@ export const AdminVendors: React.FC = () => {
             onKeyDown={(e) => {
               if (e.key === 'Enter') setAppliedQuery(searchQuery);
             }}
-            className="w-full pl-9 pr-3 py-2 text-sm border bg-stone-50 dark:bg-stone-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#C51C13] dark:border-stone-700 text-stone-900 dark:text-white"
+            className="w-full pl-9 pr-3 py-2 text-sm border bg-stone-50 dark:bg-stone-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-primary dark:border-stone-700 text-stone-900 dark:text-white"
           />
         </div>
         <div className="flex flex-wrap gap-2">

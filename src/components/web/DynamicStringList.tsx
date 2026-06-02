@@ -77,7 +77,7 @@ export const DynamicStringList: React.FC<DynamicStringListProps> = ({
       <button
         type="button"
         onClick={addRow}
-        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#C51C13] dark:text-orange-400 hover:underline cursor-pointer"
+        className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary dark:text-orange-400 hover:underline cursor-pointer"
       >
         <Plus className="w-3.5 h-3.5" aria-hidden />
         {addButtonLabel}

@@ -121,7 +121,7 @@ export const AddVendorServiceModal: React.FC<AddVendorServiceModalProps> = ({
             id="add-service-title"
             className="heading-card text-lg text-stone-900 dark:text-white flex items-center gap-2"
           >
-            <Plus className="w-5 h-5 text-[#C51C13] dark:text-orange-400" aria-hidden />
+            <Plus className="w-5 h-5 text-primary dark:text-orange-400" aria-hidden />
             Add a service
           </h2>
           <button
@@ -239,7 +239,7 @@ export const AddVendorServiceModal: React.FC<AddVendorServiceModalProps> = ({
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer sm:ml-auto disabled:opacity-60"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer sm:ml-auto disabled:opacity-60"
             >
               <Plus className="w-4 h-4" aria-hidden />
               {saving ? 'Saving…' : 'Add service'}

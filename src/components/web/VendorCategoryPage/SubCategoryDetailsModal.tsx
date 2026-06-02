@@ -50,7 +50,7 @@ export const SubCategoryDetailsModal: React.FC<SubCategoryDetailsModalProps> = (
           </p>
 
           <div className="border border-amber-100 dark:border-stone-800 bg-amber-50/40 dark:bg-stone-900/30 p-3.5 rounded-xl space-y-1 text-xs">
-            <span className="font-extrabold text-orange-700 dark:text-[#FFCB44] flex items-center gap-1">
+            <span className="font-extrabold text-orange-700 dark:text-[secondary] flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5" /> Special Benefit Offer Active
             </span>
             <p className="text-stone-600 dark:text-stone-400">

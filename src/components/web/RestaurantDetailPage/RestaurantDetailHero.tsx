@@ -40,7 +40,7 @@ export const RestaurantDetailHero: React.FC<RestaurantDetailHeroProps> = ({
             <span className="inline-block text-[10px] font-bold text-amber-600 dark:text-amber-400 font-mono bg-amber-50 dark:bg-amber-950/20 px-2 py-0.5 rounded-full">
               👑 GOURMET CLASS 👑
             </span>
-            <h2 className="serif text-2xl sm:text-3xl font-black italic text-[#C51C13] dark:text-white">
+            <h2 className="serif text-2xl sm:text-3xl font-black italic text-primary dark:text-white">
               {restaurant.name}
             </h2>
             <p className="text-sm text-stone-500 dark:text-stone-400">

@@ -93,7 +93,7 @@ export const SignInPage: React.FC<SignInPageProps> = ({
     <div className="min-h-[calc(100vh-4rem)] bg-stone-50 dark:bg-stone-900 px-4 py-12 sm:py-16">
       <div className="mx-auto max-w-md">
         <div className="text-center mb-8">
-          <span className="inline-block text-[10px] font-bold text-[#C51C13] bg-orange-50 dark:bg-stone-800 px-3 py-1 rounded-full">
+          <span className="inline-block text-[10px] font-bold text-primary bg-orange-50 dark:bg-stone-800 px-3 py-1 rounded-full">
             Account
           </span>
           <h1 className="font-display text-3xl text-stone-900 dark:text-white mt-3">
@@ -120,7 +120,7 @@ export const SignInPage: React.FC<SignInPageProps> = ({
             }}
             className={`flex items-center justify-center gap-1.5 py-2.5 rounded-md text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
               mode === 'customer'
-                ? 'bg-[#C51C13] text-white'
+                ? 'bg-primary text-white'
                 : 'text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800'
             }`}
           >
@@ -135,7 +135,7 @@ export const SignInPage: React.FC<SignInPageProps> = ({
             }}
             className={`flex items-center justify-center gap-1.5 py-2.5 rounded-md text-xs sm:text-sm font-semibold transition-colors cursor-pointer ${
               mode === 'vendor'
-                ? 'bg-[#C51C13] text-white'
+                ? 'bg-primary text-white'
                 : 'text-stone-600 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-800'
             }`}
           >
@@ -215,7 +215,7 @@ export const SignInPage: React.FC<SignInPageProps> = ({
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] disabled:opacity-60 text-white font-semibold text-sm transition-colors cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-primary hover:bg-[#A2110A] disabled:opacity-60 text-white font-semibold text-sm transition-colors cursor-pointer"
           >
             {isLoading ? 'Signing in…' : submitLabel}
             <ArrowRight className="w-4 h-4" />
@@ -244,7 +244,7 @@ export const SignInPage: React.FC<SignInPageProps> = ({
               <button
                 type="button"
                 onClick={() => onNavigate('list-your-service')}
-                className="font-semibold text-[#C51C13] hover:underline cursor-pointer"
+                className="font-semibold text-primary hover:underline cursor-pointer"
               >
                 Register your business
               </button>
@@ -255,7 +255,7 @@ export const SignInPage: React.FC<SignInPageProps> = ({
               <button
                 type="button"
                 onClick={() => onNavigate('event-planner-register')}
-                className="font-semibold text-[#C51C13] hover:underline cursor-pointer"
+                className="font-semibold text-primary hover:underline cursor-pointer"
               >
                 Register to plan events
               </button>

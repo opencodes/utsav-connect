@@ -97,7 +97,7 @@ export const InquiryModal: React.FC<InquiryModalProps> = ({
               <MapPin className="w-3 h-3 text-orange-500 shrink-0" />
               <span className="truncate">{inquiryTarget.location}</span>
             </p>
-            <p className="text-[10px] font-bold text-orange-600 dark:text-[#FFCB44]">{inquiryTarget.price}</p>
+            <p className="text-[10px] font-bold text-orange-600 dark:text-[secondary]">{inquiryTarget.price}</p>
           </div>
         </div>
 

@@ -142,7 +142,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   ? 'Vendors & services'
                   : 'Plan your ceremony'}
               </span>
-              <span className="hero-headline-line hero-headline-accent line-clamp-1 mt-1 text-[#C51C13] dark:text-orange-400">
+              <span className="hero-headline-line hero-headline-accent line-clamp-1 mt-1 text-secondary dark:text-orange-400">
                 {activeTab === 'vendors' ? `in ${cityHeadline}` : `with ${APP_NAME}`}
               </span>
             </h1>
@@ -389,7 +389,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       <button
                         type="button"
                         onClick={() => onNavigate('sign-in')}
-                        className="text-[#C51C13] font-semibold hover:underline cursor-pointer"
+                        className="text-primary font-semibold hover:underline cursor-pointer"
                       >
                         Sign in to continue planning
                       </button>
@@ -397,7 +397,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       <button
                         type="button"
                         onClick={() => onNavigate('celebrations')}
-                        className="text-[#C51C13] font-semibold hover:underline cursor-pointer"
+                        className="text-primary font-semibold hover:underline cursor-pointer"
                       >
                         Browse public events
                       </button>
@@ -428,7 +428,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           <button
             type="button"
             onClick={goToVendorRegistration}
-            className="font-bold text-[#C51C13] dark:text-orange-400 hover:underline cursor-pointer"
+            className="font-bold text-primary dark:text-orange-400 hover:underline cursor-pointer"
           >
             List your service on {APP_NAME}
           </button>

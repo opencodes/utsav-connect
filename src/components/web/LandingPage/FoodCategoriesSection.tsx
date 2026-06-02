@@ -33,7 +33,7 @@ export const FoodCategoriesSection: React.FC<FoodCategoriesSectionProps> = ({ on
               Traditional Wedding Services
             </span>
           </div>
-          <h3 className="serif text-2xl md:text-3xl font-black italic text-stone-955 dark:text-white tracking-tight text-[#C51C13]">
+          <h3 className="serif text-2xl md:text-3xl font-black italic text-stone-955 dark:text-white tracking-tight text-primary">
             Wedding Specialties
           </h3>
         </div>

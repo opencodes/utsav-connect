@@ -63,7 +63,7 @@ export const AnimatedDiya: React.FC<{ className?: string }> = ({ className = 'w-
 // Rangoli Mandala Graphic
 export const RangoliMandala: React.FC<{ className?: string }> = ({ className = 'w-48 h-48 opacity-10' }) => {
   return (
-    <svg viewBox="0 0 200 200" className={`${className} transform animate-[spin_80s_linear_infinite]`} style={{ color: '#FFCB44' }}>
+    <svg viewBox="0 0 200 200" className={`${className} transform animate-[spin_80s_linear_infinite]`} style={{ color: 'secondary' }}>
       {/* Outer Circle */}
       <circle cx="100" cy="100" r="95" stroke="currentColor" strokeWidth="1.5" strokeDasharray="5, 5" fill="none" />
       <circle cx="100" cy="100" r="85" stroke="currentColor" strokeWidth="1" fill="none" />

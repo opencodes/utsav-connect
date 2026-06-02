@@ -86,12 +86,12 @@ export const VendorGridCard: React.FC<VendorGridCardProps> = ({
         <div className="pt-2 border-t border-stone-100 dark:border-stone-800/80 flex items-center justify-between">
           <div className="flex flex-col text-left truncate pr-2">
             <span className="text-[9px] text-stone-400 font-mono leading-none">{priceLabel}</span>
-            <span className="font-black text-xs text-[#C51C13] dark:text-[#FFCB44] mt-0.5 truncate leading-none">{item.price}</span>
+            <span className="font-black text-xs text-primary dark:text-[secondary] mt-0.5 truncate leading-none">{item.price}</span>
           </div>
           <button
             type="button"
             onClick={(e) => onOpenInquiry(item, e)}
-            className="p-1.5 px-3 bg-[#C51C13] hover:bg-[#A2110A] text-white text-[10px] font-semibold rounded-lg cursor-pointer shrink-0 transition"
+            className="p-1.5 px-3 bg-primary hover:bg-[#A2110A] text-white text-[10px] font-semibold rounded-lg cursor-pointer shrink-0 transition"
           >
             Get quote
           </button>

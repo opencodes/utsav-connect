@@ -456,7 +456,7 @@ html.dark .landing-section-tone--parchment::before {
 .footer-download-banner {
   position: relative;
   isolation: isolate;
-  background: linear-gradient(128deg, #ffcb44 0%, #e52a20 42%, #a2110a 78%, #550200 100%);
+  background: linear-gradient(128deg, secondary 0%, #e52a20 42%, #a2110a 78%, #550200 100%);
 }
 
 .footer-download-banner::before {
@@ -585,7 +585,6 @@ html.dark .landing-section-tone--parchment::before {
 
 #hero-search-form .hero-search-tab-active {
   background: #ffffff;
-  color: #c51c13;
   box-shadow: 0 1px 3px rgba(28, 25, 23, 0.1);
 }
 
@@ -660,7 +659,6 @@ html.dark .landing-section-tone--parchment::before {
 #hero-search-form .hero-popular-pill-in-card:hover {
   border-color: #fdba74;
   background: #fff7ed;
-  color: #c51c13;
 }
 
 #hero-search-form .hero-popular-pill-in-card-muted {
@@ -751,7 +749,6 @@ html.dark .landing-section-tone--parchment::before {
   transform: translateY(-50%);
   width: 1rem;
   height: 1rem;
-  color: #c51c13;
   z-index: 1;
 }
 
@@ -790,7 +787,7 @@ html.dark .landing-section-tone--parchment::before {
   padding: 0.625rem 1.25rem !important;
   border: none !important;
   border-radius: 0.625rem !important;
-  background: linear-gradient(135deg, #c51c13 0%, #a2110a 100%) !important;
+  background: linear-gradient(135deg, #fff 0%, #000 100%) !important;
   color: #ffffff !important;
   font-size: 0.9375rem !important;
   font-weight: 700 !important;
@@ -919,7 +916,7 @@ html.dark .landing-section-tone--parchment::before {
   padding: 0 1.75rem !important;
   border: none !important;
   border-radius: 0 !important;
-  background: linear-gradient(135deg, #c51c13 0%, #a2110a 100%) !important;
+  background: linear-gradient(135deg, #fff 0%, #000 100%) !important;
   box-shadow:
     0 4px 14px rgba(197, 28, 19, 0.35),
     inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
@@ -1033,7 +1030,7 @@ html.dark .landing-section-tone--parchment::before {
   transform: translateY(-50%);
   width: 1rem;
   height: 1rem;
-  color: #c51c13;
+  color: primary;
   z-index: 1;
 }
 
@@ -1086,7 +1083,7 @@ html.dark .landing-section-tone--parchment::before {
   padding: 0.75rem 1.5rem !important;
   border: none !important;
   border-radius: 0.625rem !important;
-  background: linear-gradient(135deg, #c51c13 0%, #a2110a 100%) !important;
+  background: linear-gradient(135deg, primary 0%, #a2110a 100%) !important;
   color: #ffffff !important;
   font-size: 0.9375rem !important;
   font-weight: 700 !important;

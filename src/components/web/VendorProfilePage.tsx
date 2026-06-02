@@ -384,7 +384,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
               ·
             </span>
             <span className="inline-flex items-center gap-1">
-              <Star className="w-4 h-4 text-[#FFCB44] fill-[#FFCB44]" aria-hidden />
+              <Star className="w-4 h-4 text-[secondary] fill-[secondary]" aria-hidden />
               {vendor.rating} ({vendor.ratingCount} reviews)
             </span>
             <span className="text-white/40 hidden sm:inline" aria-hidden>
@@ -466,7 +466,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
             <button
               type="button"
               onClick={() => setShowAddService(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FFCB44] hover:bg-amber-300 text-stone-900 text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[secondary] hover:bg-amber-300 text-stone-900 text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
             >
               <Plus className="w-4 h-4" aria-hidden />
               Add service

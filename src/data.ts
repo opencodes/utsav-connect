@@ -1,8 +1,8 @@
 import { UserProfile } from './types';
 
 export const FESTIVE_COLORS = {
-  saffron: '#C51C13',
-  marigold: '#FFCB44',
+  saffron: '#fff',
+  marigold: 'secondary',
   red: '#E53935',
   green: '#2E7D32',
   bg: '#ffffff',

@@ -85,18 +85,18 @@ export const ContactUsPage: React.FC<ContactUsPageProps> = ({ onNavigate }) => {
       >
         <div className="flex flex-wrap gap-2 sm:gap-3">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white">
-            <Clock className="w-3.5 h-3.5 text-[#FFCB44] shrink-0" aria-hidden />
+            <Clock className="w-3.5 h-3.5 text-[secondary] shrink-0" aria-hidden />
             Reply within 1 business day
           </span>
           <a
             href={`mailto:${SUPPORT_EMAIL}`}
             className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white hover:bg-white/20 transition-colors"
           >
-            <Mail className="w-3.5 h-3.5 text-[#FFCB44] shrink-0" aria-hidden />
+            <Mail className="w-3.5 h-3.5 text-[secondary] shrink-0" aria-hidden />
             {SUPPORT_EMAIL}
           </a>
           <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-white">
-            <MapPin className="w-3.5 h-3.5 text-[#FFCB44] shrink-0" aria-hidden />
+            <MapPin className="w-3.5 h-3.5 text-[secondary] shrink-0" aria-hidden />
             NCR &amp; partner cities
           </span>
         </div>
@@ -111,19 +111,19 @@ export const ContactUsPage: React.FC<ContactUsPageProps> = ({ onNavigate }) => {
 
               <ul className="space-y-4 text-sm text-stone-600 dark:text-stone-300">
                 <li className="flex gap-3">
-                  <Mail className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
+                  <Mail className="w-5 h-5 text-primary dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
                   <div>
                     <p className="font-semibold text-stone-900 dark:text-white">Email</p>
                     <a
                       href={`mailto:${SUPPORT_EMAIL}`}
-                      className="text-[#C51C13] dark:text-orange-400 hover:underline"
+                      className="text-primary dark:text-orange-400 hover:underline"
                     >
                       {SUPPORT_EMAIL}
                     </a>
                   </div>
                 </li>
                 <li className="flex gap-3">
-                  <Phone className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
+                  <Phone className="w-5 h-5 text-primary dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
                   <div>
                     <p className="font-semibold text-stone-900 dark:text-white">Phone</p>
                     <p>+91 1800 123 4567 (toll-free)</p>
@@ -131,7 +131,7 @@ export const ContactUsPage: React.FC<ContactUsPageProps> = ({ onNavigate }) => {
                   </div>
                 </li>
                 <li className="flex gap-3">
-                  <MapPin className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
+                  <MapPin className="w-5 h-5 text-primary dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
                   <div>
                     <p className="font-semibold text-stone-900 dark:text-white">Office</p>
                     <p>
@@ -142,7 +142,7 @@ export const ContactUsPage: React.FC<ContactUsPageProps> = ({ onNavigate }) => {
                   </div>
                 </li>
                 <li className="flex gap-3">
-                  <Clock className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
+                  <Clock className="w-5 h-5 text-primary dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
                   <div>
                     <p className="font-semibold text-stone-900 dark:text-white">Support hours</p>
                     <p>Mon – Sat, 9:00 AM – 7:00 PM IST</p>
@@ -153,7 +153,7 @@ export const ContactUsPage: React.FC<ContactUsPageProps> = ({ onNavigate }) => {
 
             <div className="rounded-2xl border border-orange-100 dark:border-stone-700 bg-orange-50/50 dark:bg-stone-800/50 p-5 flex gap-3">
               <MessageSquare
-                className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5"
+                className="w-5 h-5 text-primary dark:text-orange-400 shrink-0 mt-0.5"
                 aria-hidden
               />
               <div className="space-y-1">
@@ -165,7 +165,7 @@ export const ContactUsPage: React.FC<ContactUsPageProps> = ({ onNavigate }) => {
                   <button
                     type="button"
                     onClick={() => onNavigate('list-your-service')}
-                    className="text-[#C51C13] dark:text-orange-400 font-semibold hover:underline cursor-pointer"
+                    className="text-primary dark:text-orange-400 font-semibold hover:underline cursor-pointer"
                   >
                     vendor registration form
                   </button>{' '}
@@ -318,7 +318,7 @@ export const ContactUsPage: React.FC<ContactUsPageProps> = ({ onNavigate }) => {
 
                 <button
                   type="submit"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer"
                 >
                   <Send className="w-4 h-4" aria-hidden />
                   Send message
@@ -373,7 +373,7 @@ export const ContactUsPage: React.FC<ContactUsPageProps> = ({ onNavigate }) => {
                   <button
                     type="button"
                     onClick={() => onNavigate('vendor-categories')}
-                    className="px-5 py-2.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer"
+                    className="px-5 py-2.5 rounded-lg bg-primary hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer"
                   >
                     Browse vendors
                   </button>

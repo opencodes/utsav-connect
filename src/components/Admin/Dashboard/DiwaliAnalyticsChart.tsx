@@ -92,8 +92,8 @@ export const DiwaliAnalyticsChart: React.FC<DiwaliAnalyticsChartProps> = ({
           {/* Gradient def */}
           <defs>
             <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#C51C13" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#C51C13" stopOpacity="0" />
+              <stop offset="0%" stopColor="primary" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="primary" stopOpacity="0" />
             </linearGradient>
           </defs>
 
@@ -101,7 +101,7 @@ export const DiwaliAnalyticsChart: React.FC<DiwaliAnalyticsChartProps> = ({
           {activeSegment === 'revenue' ? (
             <>
               <path d={`M0,${chartHeight} L${pointsString} L${chartWidth},${chartHeight} Z`} fill="url(#chartGrad)" />
-              <polyline fill="none" stroke="#C51C13" strokeWidth="3.5" points={pointsString} className="animate-pulse" />
+              <polyline fill="none" stroke="primary" strokeWidth="3.5" points={pointsString} className="animate-pulse" />
             </>
           ) : (
             <>
@@ -115,7 +115,7 @@ export const DiwaliAnalyticsChart: React.FC<DiwaliAnalyticsChartProps> = ({
             const y = chartHeight - (activeSegment === 'revenue' ? (pt.revenue / 250000) * chartHeight : (pt.orders / 900) * chartHeight);
             return (
               <g key={index} className="group cursor-pointer">
-                <circle cx={x} cy={y} r="5" fill="#FFCB44" stroke="#fff" strokeWidth="2" />
+                <circle cx={x} cy={y} r="5" fill="secondary" stroke="#fff" strokeWidth="2" />
                 <text x={x - 12} y={y - 10} className="text-[9px] font-mono leading-none fill-stone-600 dark:fill-stone-300 font-bold hidden group-hover:block bg-stone-900">
                   {activeSegment === 'revenue' ? `₹${pt.revenue / 1000}k` : `${pt.orders}p`}
                 </text>

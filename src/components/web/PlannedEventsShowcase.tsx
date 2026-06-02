@@ -304,18 +304,18 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
       
       {/* 1. SECTION HEADER: TRADITIONAL BANNER */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8">
-        <div className="bg-gradient-to-r from-red-800 via-[#C51C13] to-orange-700 rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden text-left border-y-4 border-[#FFCB44]">
+        <div className="bg-stone-900 border border-stone-800 rounded-3xl p-6 sm:p-10 text-white shadow-sm relative overflow-hidden text-left">
           <div className="absolute right-0 bottom-0 opacity-15 leading-none pointer-events-none select-none text-9xl">
             🏵️
           </div>
           
           <div className="relative z-10 space-y-3 max-w-3xl">
             <div className="flex items-center gap-2">
-              <span className="px-3 py-1 text-[10px] font-black bg-[#FFCB44] text-red-950 rounded-full">
+              <span className="px-3 py-1 text-[10px] font-black bg-[#C51C13] text-white rounded-full">
                 UTSAV GUEST DIARY
               </span>
-              <span className="text-xs text-orange-200 font-mono flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5 text-[#FFCB44]" />
+              <span className="text-xs text-stone-300 font-mono flex items-center gap-1">
+                <Sparkles className="w-3.5 h-3.5 text-stone-300" />
                 Live Celebration Registry
               </span>
             </div>
@@ -861,7 +861,7 @@ export const PlannedEventsShowcase: React.FC<PlannedEventsShowcaseProps> = ({
           </AnimatePresence>
 
           {/* QUICK PROSPECTUS INFO */}
-          <div className="bg-gradient-to-tr from-[#C51C13]/10 to-transparent p-5 rounded-3xl border border-orange-100 dark:border-stone-800/80 text-left space-y-3">
+          <div className="bg-stone-50 dark:bg-stone-900/40 p-5 rounded-3xl border border-stone-200 dark:border-stone-800/80 text-left space-y-3">
             <h4 className="text-xs font-black text-stone-950 dark:text-white flex items-center gap-1.5">
               <Gift className="w-4 h-4 text-[#C51C13]" />
               <span>Planning your own traditional ceremony?</span>

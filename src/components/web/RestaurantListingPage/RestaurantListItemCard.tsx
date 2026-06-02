@@ -25,7 +25,7 @@ export const RestaurantListItemCard: React.FC<RestaurantListItemCardProps> = ({
           referrerPolicy="no-referrer"
         />
         {restaurant.offerText && (
-          <div className="absolute bottom-2 left-2 bg-gradient-to-r from-red-600 to-orange-500 text-white font-bold text-[10px] px-2 py-1 rounded shadow">
+          <div className="absolute bottom-2 left-2 bg-[#C51C13] text-white font-bold text-[10px] px-2 py-1 rounded shadow">
             {restaurant.offerText}
           </div>
         )}

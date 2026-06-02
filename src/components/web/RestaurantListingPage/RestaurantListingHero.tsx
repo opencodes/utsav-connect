@@ -11,15 +11,15 @@ export const RestaurantListingHero: React.FC<RestaurantListingHeroProps> = ({
   setSearchQuery,
 }) => {
   return (
-    <div className="bg-gradient-to-r from-orange-600 via-amber-600 to-red-600 rounded-2xl p-6 sm:p-10 shadow-lg text-white flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden" id="listing-hero">
+    <div className="bg-stone-900 border border-stone-800 rounded-2xl p-6 sm:p-10 shadow-sm text-white flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden" id="listing-hero">
       <div className="space-y-2 text-center md:text-left z-10">
-        <span className="text-yellow-300 font-extrabold text-xs bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+        <span className="text-stone-300 font-extrabold text-xs bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
           🪔 Dussehra & Diwali Food Bazaar 🪔
         </span>
         <h2 className="serif text-2xl sm:text-3xl font-black italic tracking-normal leading-none">
           Find the Best Festive Flavors Near You
         </h2>
-        <p className="text-orange-50 text-xs sm:text-sm font-semibold max-w-lg">
+        <p className="text-stone-300 text-xs sm:text-sm font-semibold max-w-lg">
           Certified hygienic food, customized sweets boxes, traditional Mughlai thalis, and pure-ghee delicacies.
         </p>
       </div>

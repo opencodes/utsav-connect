@@ -185,7 +185,7 @@ export const VendorDetailsPage: React.FC<VendorDetailsPageProps> = ({
 
       {vendor.offerText && (
         <div
-          className="bg-gradient-to-r from-red-500/10 to-orange-500/10 dark:from-red-950/20 dark:to-orange-950/20 rounded-2xl p-4 border border-orange-200 dark:border-stone-850 flex items-center justify-between gap-4"
+          className="bg-stone-50 dark:bg-stone-900 rounded-2xl p-4 border border-stone-200 dark:border-stone-800 flex items-center justify-between gap-4"
           id="vendor-details-offer-banner"
         >
           <div className="flex items-center gap-2">
@@ -197,7 +197,7 @@ export const VendorDetailsPage: React.FC<VendorDetailsPageProps> = ({
               <p className="text-xs text-stone-500 dark:text-stone-400">{vendor.offerText}</p>
             </div>
           </div>
-          <span className="text-xs font-mono font-bold bg-orange-600 text-white px-3 py-1 rounded">
+          <span className="text-xs font-mono font-bold bg-primary text-white px-3 py-1 rounded-md">
             ACTIVE
           </span>
         </div>

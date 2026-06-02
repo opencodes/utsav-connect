@@ -63,7 +63,7 @@ export const PopularRestaurantsGrid: React.FC<PopularRestaurantsGridProps> = ({ 
               
               {/* Diwali ribbon / offer overlay */}
               {rest.offerText && (
-                <div className="absolute bottom-3 left-3 bg-gradient-to-r from-red-600 to-orange-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow-lg">
+                <div className="absolute bottom-3 left-3 bg-[#C51C13] text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow-lg">
                   🔥 {rest.offerText}
                 </div>
               )}

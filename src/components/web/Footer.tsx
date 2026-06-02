@@ -78,14 +78,14 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavig
       />
       <footer className="relative bg-stone-900 border-t border-stone-800 text-stone-300 overflow-hidden pb-8" id="festival-footer">
         <section
-          className="footer-download-banner w-full border-b border-[#8c0d09]/40"
+          className="w-full bg-stone-950 border-b border-stone-800 relative overflow-hidden"
           id="download-app-banner"
           aria-labelledby="download-app-heading"
         >
-          <div className="footer-download-banner-inner mx-auto max-w-7xl px-4 sm:px-6 lg:px-10 pt-12 md:pt-16 pb-0">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10 pt-12 md:pt-16 pb-0 relative z-10">
             <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-end md:items-stretch">
-              <div className="space-y-4 pb-12 md:pb-16">
-                <span className="inline-block text-xs font-bold text-amber-200 bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+              <div className="space-y-4 pb-12 md:pb-16 text-left">
+                <span className="inline-block text-xs font-bold text-stone-300 bg-white/5 px-3 py-1 rounded-full">
                   Har Traditional Function Ka Smart Planning Partner
                 </span>
                 <h3
@@ -94,46 +94,46 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavig
                 >
                   Get the {APP_NAME} app
                 </h3>
-                <p className="text-sm text-amber-100/95 -mt-2">Launching soon on iOS & Android</p>
-                <div className="text-orange-50 text-base max-w-md space-y-4">
-                  <p className="font-bold text-amber-200">App Features:</p>
+                <p className="text-sm text-stone-400 -mt-2">Launching soon on iOS & Android</p>
+                <div className="text-stone-300 text-base max-w-md space-y-4">
+                  <p className="font-bold text-primary dark:text-orange-400">App Features:</p>
                   <ul className="space-y-1.5 text-sm md:text-base font-medium">
                     <li className="flex items-start gap-2">
-                      <span className="text-amber-300" aria-hidden>
+                      <span className="text-primary dark:text-orange-400" aria-hidden>
                         ✓
                       </span>
                       <span>Trusted local vendors search karo</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-amber-300" aria-hidden>
+                      <span className="text-primary dark:text-orange-400" aria-hidden>
                         ✓
                       </span>
                       <span>Halwai, Tent, Decorator, Milk, Kirana sab ek jagah</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-amber-300" aria-hidden>
+                      <span className="text-primary dark:text-orange-400" aria-hidden>
                         ✓
                       </span>
                       <span>Guest list & RSVP management</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-amber-300" aria-hidden>
+                      <span className="text-primary dark:text-orange-400" aria-hidden>
                         ✓
                       </span>
                       <span>Feast / Bhoj planning</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-amber-300" aria-hidden>
+                      <span className="text-primary dark:text-orange-400" aria-hidden>
                         ✓
                       </span>
                       <span>Budget aur expense tracking</span>
                     </li>
                   </ul>
-                  <p className="text-xs text-amber-100/90">
+                  <p className="text-xs text-stone-400">
                     Full feature list inside the app — launching soon on iOS & Android.
                   </p>
                   <div className="pt-2">
-                    <p className="tagline py-2 bg-white/10 px-4 rounded-xl backdrop-blur-sm border border-white/5 inline-block text-xs md:text-sm">
+                    <p className="py-2 bg-stone-900 border border-stone-820 px-4 rounded-xl inline-block text-xs md:text-sm">
                       <strong>
                         Ghar ka bada function? Ab notebook nahi, {APP_NAME} use karo 😄
                       </strong>
@@ -144,7 +144,7 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavig
                   <button
                     type="button"
                     onClick={handleStoreClick}
-                    className="flex items-center gap-3 px-4 py-2 bg-black/80 border border-stone-700 text-white rounded-xl transition-colors cursor-pointer min-w-[155px] opacity-90 hover:opacity-100"
+                    className="flex items-center gap-3 px-4 py-2 bg-black/80 border border-stone-750 text-white rounded-xl transition-colors cursor-pointer min-w-[155px] opacity-90 hover:opacity-100"
                     aria-describedby={storeNotice ? 'store-coming-soon' : undefined}
                   >
                     <svg viewBox="0 0 24 24" className="w-6 h-6 text-white shrink-0" fill="currentColor" aria-hidden>
@@ -160,7 +160,7 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavig
                   <button
                     type="button"
                     onClick={handleStoreClick}
-                    className="flex items-center gap-3 px-4 py-2.5 bg-black/80 border border-stone-700 text-white rounded-xl transition-colors cursor-pointer min-w-[155px] opacity-90 hover:opacity-100"
+                    className="flex items-center gap-3 px-4 py-2.5 bg-black/80 border border-stone-750 text-white rounded-xl transition-colors cursor-pointer min-w-[155px] opacity-90 hover:opacity-100"
                     aria-describedby={storeNotice ? 'store-coming-soon' : undefined}
                   >
                     <svg viewBox="0 0 384 512" className="w-5 h-5 text-white shrink-0" fill="currentColor" aria-hidden>
@@ -175,12 +175,12 @@ export const Footer: React.FC<FooterProps> = ({ currentPage = 'landing', onNavig
                   </button>
                 </div>
                 {storeNotice && (
-                  <p id="store-coming-soon" className="text-sm text-amber-100" role="status">
+                  <p id="store-coming-soon" className="text-sm text-stone-400" role="status">
                     Mobile apps are launching soon.{' '}
                     <button
                       type="button"
                       onClick={(e) => handlePageLink('contact', e)}
-                      className="font-semibold text-[#FFCB44] underline-offset-2 hover:underline cursor-pointer"
+                      className="font-semibold text-primary underline-offset-2 hover:underline cursor-pointer"
                     >
                       Contact us
                     </button>{' '}

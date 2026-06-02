@@ -126,19 +126,19 @@ export const PlannerChuman: React.FC = () => {
         </div>
 
         {/* Total blessings — accent card (replaces top banner) */}
-        <div className="bg-gradient-to-tr from-[#C51C13] to-orange-600 text-white p-5 rounded-2xl shadow-md text-left flex items-center gap-4 relative overflow-hidden">
+        <div className="bg-stone-900 border border-stone-800 text-white p-5 rounded-2xl shadow-sm text-left flex items-center gap-4 relative overflow-hidden">
           <div className="absolute right-[-10px] bottom-[-10px] text-white/5 font-semibold text-7xl select-none pointer-events-none">
             🌸
           </div>
-          <div className="p-3 bg-white/20 rounded-xl z-10 shrink-0">
-            <Sparkles className="w-6 h-6 text-orange-200" />
+          <div className="p-3 bg-white/10 rounded-xl z-10 shrink-0">
+            <Sparkles className="w-6 h-6 text-white" />
           </div>
           <div className="z-10 min-w-0">
-            <span className="text-[10px] text-orange-200 font-semibold block">Total Auspicious Blessings</span>
+            <span className="text-[10px] text-stone-300 font-semibold block">Total Auspicious Blessings</span>
             <h3 className="text-2xl font-semibold leading-none mt-1">
               ₹ {totalReceivedCombined.toLocaleString('en-IN')}
             </h3>
-            <span className="text-[9px] text-stone-100 font-mono italic mt-1 block truncate">
+            <span className="text-[9px] text-stone-400 font-mono italic mt-1 block truncate">
               Chuman & Shagun — cash + physical valuation
             </span>
           </div>

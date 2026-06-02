@@ -15,7 +15,7 @@ export const MarketingStats: React.FC<MarketingStatsProps> = ({ campaigns }) => 
       label: 'Total campaigns',
       value: String(campaigns.length),
       icon: Percent,
-      iconClass: 'from-orange-600 to-orange-700',
+      iconClass: 'bg-[#C51C13]',
       iconWrap: true,
     },
     {
@@ -55,7 +55,7 @@ export const MarketingStats: React.FC<MarketingStatsProps> = ({ campaigns }) => 
               <b className="text-lg font-semibold text-stone-900 dark:text-white mt-1 block">{stat.value}</b>
             </div>
             {stat.iconWrap ? (
-              <div className={`p-2 bg-gradient-to-tr ${stat.iconClass} rounded-lg text-white shrink-0`}>
+              <div className={`p-2 ${stat.iconClass} rounded-lg text-white shrink-0`}>
                 <Icon className="w-4 h-4" aria-hidden />
               </div>
             ) : (

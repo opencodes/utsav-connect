@@ -71,7 +71,7 @@ export const LandingSection: React.FC<LandingSectionProps> = ({
   >
     {showDivider && (
       <div
-        className="absolute top-0 inset-x-0 h-0.5 bg-[#C51C13]/40 z-10 pointer-events-none"
+        className="absolute top-0 inset-x-0 h-0.5 bg-primary/40 z-10 pointer-events-none"
         aria-hidden
       />
     )}
@@ -114,9 +114,9 @@ export const LandingSectionHeader: React.FC<LandingSectionHeaderProps> = ({
   action,
 }) => {
   const isCenter = align === 'center';
-  const titleColor = light ? 'text-white' : 'text-[#C51C13] dark:text-white';
+  const titleColor = light ? 'text-white' : 'text-primary dark:text-white';
   const descColor = light ? 'text-stone-300' : 'text-stone-600 dark:text-stone-400';
-  const eyebrowColor = light ? 'text-amber-300' : 'text-orange-600 dark:text-amber-400';
+  const eyebrowColor = light ? 'text-amber-300' : 'text-secondary dark:text-amber-400';
 
   return (
     <div
@@ -134,9 +134,9 @@ export const LandingSectionHeader: React.FC<LandingSectionHeaderProps> = ({
             isCenter ? 'justify-center' : ''
           }`}
         >
-          <span className="h-px w-6 bg-gradient-to-r from-orange-500 to-amber-400 shrink-0" aria-hidden />
+          <span className="h-px w-6 bg-stone-300 dark:bg-stone-700 shrink-0" aria-hidden />
           {eyebrow}
-          <span className="h-px w-6 bg-gradient-to-r from-amber-400 to-orange-500 shrink-0" aria-hidden />
+          <span className="h-px w-6 bg-stone-300 dark:bg-stone-700 shrink-0" aria-hidden />
         </span>
         <h2 className={`font-display text-2xl sm:text-3xl lg:text-4xl font-normal leading-tight tracking-tight ${titleColor}`}>
           {title}

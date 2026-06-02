@@ -176,7 +176,7 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
   const locationLabel = primaryLocationFromValues(formData.state, formData.district);
 
   return (
-    <div className="min-h-screen bg-[#FFFDF7] dark:bg-stone-900" id="vendor-registration-page">
+    <div className="min-h-screen bg-white dark:bg-stone-900" id="vendor-registration-page">
       <PageBanner
         id="vendor-registration-banner"
         variant="vendor"
@@ -213,7 +213,7 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
                 {BENEFITS.map((item) => (
                   <li key={item} className="flex items-start gap-2.5">
                     <CheckCircle2
-                      className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5"
+                      className="w-5 h-5 text-primary dark:text-orange-400 shrink-0 mt-0.5"
                       aria-hidden
                     />
                     {item}
@@ -226,19 +226,19 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
               <h3 className="font-semibold text-stone-900 dark:text-white">What happens next?</h3>
               <ol className="space-y-3 text-stone-600 dark:text-stone-400">
                 <li className="flex gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-950/50 text-xs font-bold text-[#C51C13] dark:text-orange-400">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-950/50 text-xs font-bold text-primary dark:text-orange-400">
                     1
                   </span>
                   <span>We review your application within 2–3 business days.</span>
                 </li>
                 <li className="flex gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-950/50 text-xs font-bold text-[#C51C13] dark:text-orange-400">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-950/50 text-xs font-bold text-primary dark:text-orange-400">
                     2
                   </span>
                   <span>Our team may call to verify details and request photos or packages.</span>
                 </li>
                 <li className="flex gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-950/50 text-xs font-bold text-[#C51C13] dark:text-orange-400">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-stone-100 dark:bg-stone-950/50 text-xs font-bold text-primary dark:text-orange-400">
                     3
                   </span>
                   <span>Once approved, your profile appears in search for your city and category.</span>
@@ -248,7 +248,7 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
                 Questions? Email{' '}
                 <a
                   href={`mailto:${SUPPORT_EMAIL}`}
-                  className="text-[#C51C13] dark:text-orange-400 hover:underline"
+                  className="text-primary dark:text-orange-400 hover:underline"
                 >
                   {SUPPORT_EMAIL}
                 </a>
@@ -271,7 +271,7 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
                         key={label}
                         className={`flex items-center gap-2 text-xs sm:text-sm font-semibold ${
                           isActive
-                            ? 'text-[#C51C13] dark:text-orange-400'
+                            ? 'text-primary dark:text-orange-400'
                             : isDone
                               ? 'text-stone-600 dark:text-stone-400'
                               : 'text-stone-400 dark:text-stone-500'
@@ -280,7 +280,7 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
                         <span
                           className={`flex h-7 w-7 items-center justify-center rounded-full text-xs ${
                             isActive
-                              ? 'bg-[#C51C13] text-white'
+                              ? 'bg-primary text-white'
                               : isDone
                                 ? 'bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-400'
                                 : 'bg-stone-100 dark:bg-stone-700 text-stone-500'
@@ -308,7 +308,7 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
                     <div className="space-y-5">
                       <div>
                         <h2 className="heading-card text-xl text-stone-900 dark:text-white flex items-center gap-2">
-                          <Store className="w-5 h-5 text-[#C51C13] dark:text-orange-400" aria-hidden />
+                          <Store className="w-5 h-5 text-primary dark:text-orange-400" aria-hidden />
                           Business details
                         </h2>
                         <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
@@ -379,7 +379,7 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
                     <div className="space-y-5">
                       <div>
                         <h2 className="heading-card text-xl text-stone-900 dark:text-white flex items-center gap-2">
-                          <Users className="w-5 h-5 text-[#C51C13] dark:text-orange-400" aria-hidden />
+                          <Users className="w-5 h-5 text-primary dark:text-orange-400" aria-hidden />
                           Contact &amp; location
                         </h2>
                         <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
@@ -464,7 +464,7 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
                     <div className="space-y-5">
                       <div>
                         <h2 className="heading-card text-xl text-stone-900 dark:text-white flex items-center gap-2">
-                          <Building2 className="w-5 h-5 text-[#C51C13] dark:text-orange-400" aria-hidden />
+                          <Building2 className="w-5 h-5 text-primary dark:text-orange-400" aria-hidden />
                           Your profile
                         </h2>
                         <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
@@ -525,14 +525,14 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
                           name="agreeTerms"
                           checked={formData.agreeTerms}
                           onChange={handleChange}
-                          className="mt-1 rounded border-stone-300 text-[#C51C13] focus:ring-orange-500"
+                          className="mt-1 rounded border-stone-300 text-primary focus:ring-orange-500"
                         />
                         <span>
                           I confirm the information is accurate and agree to {APP_NAME}&apos;s{' '}
                           <button
                             type="button"
                             onClick={() => onNavigate('terms')}
-                            className="text-[#C51C13] dark:text-orange-400 hover:underline cursor-pointer"
+                            className="text-primary dark:text-orange-400 hover:underline cursor-pointer"
                           >
                             Terms &amp; Conditions
                           </button>{' '}
@@ -540,7 +540,7 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
                           <button
                             type="button"
                             onClick={() => onNavigate('privacy')}
-                            className="text-[#C51C13] dark:text-orange-400 hover:underline cursor-pointer"
+                            className="text-primary dark:text-orange-400 hover:underline cursor-pointer"
                           >
                             Privacy Policy
                           </button>
@@ -564,7 +564,7 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
                       <button
                         type="button"
                         onClick={goNext}
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer sm:ml-auto"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-semibold transition-colors cursor-pointer sm:ml-auto"
                       >
                         Continue
                         <ChevronRight className="w-4 h-4" aria-hidden />
@@ -572,7 +572,7 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
                     ) : (
                       <button
                         type="submit"
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer sm:ml-auto"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-semibold transition-colors cursor-pointer sm:ml-auto"
                       >
                         <Send className="w-4 h-4" aria-hidden />
                         Submit application
@@ -616,8 +616,8 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-orange-100 dark:border-stone-700 bg-orange-50/50 dark:bg-stone-800/50 p-4 flex gap-3 text-sm text-stone-600 dark:text-stone-400">
-                  <Clock className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0" aria-hidden />
+                <div className="rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800/50 p-4 flex gap-3 text-sm text-stone-600 dark:text-stone-400">
+                  <Clock className="w-5 h-5 text-primary dark:text-orange-400 shrink-0" aria-hidden />
                   <p>
                     Keep your phone handy — our onboarding team may call{' '}
                     <strong className="text-stone-800 dark:text-stone-200">{formData.phone}</strong>{' '}
@@ -636,7 +636,7 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
                   <button
                     type="button"
                     onClick={() => onNavigate('profile')}
-                    className="px-5 py-2.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer"
+                    className="px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-semibold transition-colors cursor-pointer"
                   >
                     Go to vendor dashboard
                   </button>
@@ -651,22 +651,22 @@ export const VendorRegistrationPage: React.FC<VendorRegistrationPageProps> = ({
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-sm text-stone-600 dark:text-stone-400">
             <span className="inline-flex items-center gap-2">
-              <Mail className="w-4 h-4 text-[#C51C13] dark:text-orange-400" aria-hidden />
+              <Mail className="w-4 h-4 text-primary dark:text-orange-400" aria-hidden />
               {SUPPORT_EMAIL}
             </span>
             <span className="inline-flex items-center gap-2">
-              <Phone className="w-4 h-4 text-[#C51C13] dark:text-orange-400" aria-hidden />
+              <Phone className="w-4 h-4 text-primary dark:text-orange-400" aria-hidden />
               +91 98871 00234
             </span>
             <span className="inline-flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-[#C51C13] dark:text-orange-400" aria-hidden />
+              <MapPin className="w-4 h-4 text-primary dark:text-orange-400" aria-hidden />
               {DEFAULT_COUNTRY_CITY_LABEL}
             </span>
           </div>
           <button
             type="button"
             onClick={() => onNavigate('contact')}
-            className="text-sm font-semibold text-[#C51C13] dark:text-orange-400 hover:underline cursor-pointer"
+            className="text-sm font-semibold text-primary dark:text-orange-400 hover:underline cursor-pointer"
           >
             Prefer to talk first? Contact us
           </button>

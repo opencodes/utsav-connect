@@ -34,7 +34,7 @@ const vendorFieldLabel = plannerFieldLabel;
 function HeroSkyline() {
   return (
     <svg
-      className="absolute bottom-0 left-0 w-full max-w-xl h-32 sm:h-40 text-white/[0.07] pointer-events-none"
+      className="absolute bottom-0 left-0 w-full max-w-xl h-32 sm:h-40 text-stone-900/[0.04] dark:text-white/[0.05] pointer-events-none"
       viewBox="0 0 400 120"
       preserveAspectRatio="xMinYMax meet"
       aria-hidden
@@ -124,46 +124,30 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
   return (
     <section
-      className={`relative w-full overflow-hidden ${
-        embeddedInShell
-          ? 'border-b border-orange-900/30'
-          : 'border-b border-orange-900/30 bg-gradient-to-br from-[#C51C13] via-stone-900 to-amber-800'
-      }`}
+      className="relative w-full overflow-hidden bg-white dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800"
       id="landing-hero"
     >
-      {!embeddedInShell && (
-        <>
-          <div
-            className="absolute inset-0 bg-gradient-to-br from-[#C51C13] via-stone-900 to-amber-800"
-            aria-hidden
-          />
-          <div
-            className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(255,203,68,0.22)_0%,_transparent_55%)] pointer-events-none"
-            aria-hidden
-          />
-        </>
-      )}
       <HeroSkyline />
-      <div className="absolute top-8 left-[4%] pointer-events-none select-none z-0 opacity-[0.07]">
-        <RangoliMandala className="w-48 h-48 text-orange-300" />
+      <div className="absolute top-8 left-[4%] pointer-events-none select-none z-0 opacity-[0.03] dark:opacity-[0.07]">
+        <RangoliMandala className="w-48 h-48 text-stone-900 dark:text-stone-100" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_minmax(280px,42%)] gap-8 lg:gap-6 xl:gap-10 items-center py-10 sm:py-12 lg:py-14 min-h-[min(88vh,720px)] lg:min-h-[520px]">
           {/* Left: copy + search (Housing.com layout) */}
           <div className="text-left font-sans order-1">
-            <h1 className="hero-headline font-display text-3xl sm:text-4xl lg:text-[2.65rem] xl:text-5xl font-normal text-white leading-[1.12] tracking-tight max-w-xl">
+            <h1 className="hero-headline font-display text-3xl sm:text-4xl lg:text-[2.65rem] xl:text-5xl font-normal text-stone-900 dark:text-white leading-[1.12] tracking-tight max-w-xl">
               <span className="hero-headline-line line-clamp-1">
                 {activeTab === 'vendors'
                   ? 'Vendors & services'
                   : 'Plan your ceremony'}
               </span>
-              <span className="hero-headline-line hero-headline-accent line-clamp-1 mt-1 text-[#FFCB44]">
+              <span className="hero-headline-line hero-headline-accent line-clamp-1 mt-1 text-[#C51C13] dark:text-orange-400">
                 {activeTab === 'vendors' ? `in ${cityHeadline}` : `with ${APP_NAME}`}
               </span>
             </h1>
 
-            <p className="hero-headline-sub text-amber-50/95 text-sm sm:text-base max-w-lg mt-3 leading-relaxed line-clamp-2">
+            <p className="hero-headline-sub text-stone-600 dark:text-stone-400 text-sm sm:text-base max-w-lg mt-3 leading-relaxed line-clamp-2">
               {activeTab === 'vendors'
                 ? 'Thousands of trusted halwai, décor, venues & pandits — new listings added daily and verified for Mithila weddings.'
                 : 'Organise guests, budget, rituals and vendors in one place. Tell us your event details to get started.'}
@@ -439,20 +423,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
 
         {/* Bottom owner/vendor strip */}
-        <div className="border-t border-orange-200/20 py-3 sm:py-3.5 flex flex-wrap items-center justify-center sm:justify-start gap-2 text-center sm:text-left text-sm text-amber-100/90">
+        <div className="border-t border-stone-200 dark:border-stone-800 py-3 sm:py-3.5 flex flex-wrap items-center justify-center sm:justify-start gap-2 text-center sm:text-left text-sm text-stone-600 dark:text-stone-400">
           <span>Are you a ceremony vendor?</span>
           <button
             type="button"
             onClick={goToVendorRegistration}
-            className="font-bold text-[#FFCB44] hover:text-amber-200 underline-offset-2 hover:underline cursor-pointer"
+            className="font-bold text-[#C51C13] dark:text-orange-400 hover:underline cursor-pointer"
           >
             List your service on {APP_NAME}
           </button>
-          <span className="hidden sm:inline text-white/40">·</span>
+          <span className="hidden sm:inline text-stone-300 dark:text-stone-700">·</span>
           <button
             type="button"
             onClick={() => onNavigate('contact')}
-            className="text-white/70 hover:text-white text-sm cursor-pointer"
+            className="text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200 text-sm cursor-pointer"
           >
             Talk to our team
           </button>

@@ -14,7 +14,7 @@ import {
   ChevronDown,
   Store,
 } from 'lucide-react';
-import LogoSvg from '../../assets/logo.svg';
+import LogoSvg from '../../assets/logo-light.svg';
 import LogoLightSvg from '../../assets/logo-light.svg';
 import { APP_NAME } from '../../brand';
 import { HERO_VENDOR_CITIES } from './LandingPage/heroVendorSearch';
@@ -71,8 +71,8 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
     minWidth: number;
   } | null>(null);
 
-  const onHeroGradient = blendWithHero && !scrolledPastHero;
-  const logoSrc = onHeroGradient ? LogoSvg : LogoLightSvg;
+  const onHeroGradient = false;
+  const logoSrc = LogoLightSvg;
 
   useEffect(() => {
     if (!blendWithHero) {
@@ -133,14 +133,14 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
     if (onHeroGradient) {
       return `relative px-3 py-5 text-sm font-semibold transition-colors cursor-pointer ${
         active
-          ? 'text-[#FFCB44] after:absolute after:bottom-0 after:left-3 after:right-3 after:h-0.5 after:bg-[#FFCB44] after:rounded-full'
+          ? 'text-secondary after:absolute after:bottom-0 after:left-3 after:right-3 after:h-0.5 after:bg-secondary after:rounded-full'
           : 'text-amber-100/75 hover:text-white'
       }`;
     }
     return `relative px-3 py-5 text-sm font-semibold transition-colors cursor-pointer ${
       active
-        ? 'text-[#C51C13] dark:text-orange-400 after:absolute after:bottom-0 after:left-3 after:right-3 after:h-0.5 after:bg-[#C51C13] dark:after:bg-orange-400 after:rounded-full'
-        : 'text-stone-700 dark:text-stone-300 hover:text-[#C51C13] dark:hover:text-orange-400'
+        ? 'text-primary dark:text-orange-400 after:absolute after:bottom-0 after:left-3 after:right-3 after:h-0.5 after:bg-primary dark:after:bg-orange-400 after:rounded-full'
+        : 'text-stone-700 dark:text-stone-300 hover:text-primary dark:hover:text-orange-400'
     }`;
   };
 
@@ -227,7 +227,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
                 aria-haspopup="listbox"
               >
                 <MapPin
-                  className={`w-4 h-4 shrink-0 ${onHeroGradient ? 'text-[#FFCB44]' : 'text-[#C51C13]'}`}
+                  className={`w-4 h-4 shrink-0 ${onHeroGradient ? 'text-secondary' : 'text-primary'}`}
                 />
                 <span
                   className={`text-sm font-bold truncate max-w-[7rem] lg:max-w-none ${
@@ -314,13 +314,13 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
               id="header-list-service-btn"
             >
               <Store
-                className={`w-4 h-4 shrink-0 ${onHeroGradient ? 'text-[#FFCB44]' : 'text-[#C51C13]'}`}
+                className={`w-4 h-4 shrink-0 ${onHeroGradient ? 'text-secondary' : 'text-primary'}`}
               />
               <span className="hidden xl:inline">
                 {isVendorLoggedIn ? 'Vendor dashboard' : 'List your service'}
               </span>
               <span className="xl:hidden">{isVendorLoggedIn ? 'Dashboard' : 'List service'}</span>
-              <span className="text-[10px] font-black bg-[#FFCB44] text-red-950 px-1.5 py-0.5 rounded">
+              <span className="text-[10px] font-black bg-primary text-white px-1.5 py-0.5 rounded-md">
                 Free
               </span>
             </button>
@@ -329,7 +329,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
               type="button"
               onClick={goToEventPlanning}
               id="header-event-planning-btn"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 lg:px-4 py-2 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold shadow-md hover:shadow-lg transition-all cursor-pointer"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 lg:px-4 py-2 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-semibold shadow-md hover:shadow-lg transition-all cursor-pointer"
             >
               <CalendarPlus className="w-4 h-4 shrink-0" />
               <span className="hidden lg:inline">
@@ -349,7 +349,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
                 }`}
                 title="Vendor dashboard"
               >
-                <Store className={`w-4 h-4 ${onHeroGradient ? 'text-[#FFCB44]' : 'text-[#C51C13]'}`} />
+                <Store className={`w-4 h-4 ${onHeroGradient ? 'text-secondary' : 'text-primary'}`} />
               </button>
             )}
             {isLoggedIn ? (
@@ -363,7 +363,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
                 }`}
                 title={`${userProfile.name} — planner workspace`}
               >
-                <User className={`w-4 h-4 ${onHeroGradient ? 'text-[#FFCB44]' : 'text-[#C51C13]'}`} />
+                <User className={`w-4 h-4 ${onHeroGradient ? 'text-secondary' : 'text-primary'}`} />
               </button>
             ) : (
               !isVendorLoggedIn && (
@@ -373,7 +373,7 @@ export const CustomerHeader: React.FC<CustomerHeaderProps> = ({
                   className={`hidden sm:inline-flex px-3 py-2 text-sm font-semibold cursor-pointer ${
                     onHeroGradient
                       ? 'text-amber-100 hover:text-white'
-                      : 'text-[#C51C13] hover:text-[#A2110A]'
+                      : 'text-primary hover:text-primary-hover'
                   }`}
                 >
                   Sign in

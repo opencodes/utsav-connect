@@ -185,7 +185,7 @@ export const VendorReviewsSection: React.FC<VendorReviewsSectionProps> = ({
 
       <div
         id="vendor-review-form"
-        className="bg-gradient-to-br from-orange-50 to-amber-50/50 dark:from-stone-900 dark:to-stone-900/80 rounded-2xl border border-orange-100 dark:border-stone-800 p-5 sm:p-6 space-y-4"
+        className="bg-stone-50 dark:bg-stone-900 rounded-2xl border border-stone-200 dark:border-stone-800 p-5 sm:p-6 space-y-4"
       >
         <h4 className="font-bold text-sm text-stone-900 dark:text-white">Share your experience</h4>
         <p className="text-xs text-stone-500 dark:text-stone-400">

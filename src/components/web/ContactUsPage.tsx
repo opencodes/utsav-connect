@@ -73,7 +73,7 @@ export const ContactUsPage: React.FC<ContactUsPageProps> = ({ onNavigate }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFDF7] dark:bg-stone-900" id="contact-us-page">
+    <div className="min-h-screen bg-white dark:bg-stone-900" id="contact-us-page">
       <PageBanner
         id="contact-page-banner"
         variant="contact"

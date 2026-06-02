@@ -3,7 +3,7 @@ import React from 'react';
 // Hanging Marigold Toran / Garlands
 export const MarigoldToran: React.FC = () => {
   return (
-    <div className="w-full overflow-hidden leading-none pointer-events-none select-none relative h-4 bg-gradient-to-r from-[#C51C13] via-[#FFCB44] to-[#C51C13] flex justify-around items-end opacity-90 drop-shadow-md">
+    <div className="w-full overflow-hidden leading-none pointer-events-none select-none relative h-4 bg-transparent flex justify-around items-end opacity-90 drop-shadow-md">
       {[...Array(24)].map((_, i) => (
         <span key={i} className="inline-block text-[10px] md:text-xs animate-bounce" style={{ animationDelay: `${i * 150}ms`, animationDuration: '3s' }}>
           🏮
@@ -138,12 +138,12 @@ export const MithilaPaintingDivider: React.FC<{ className?: string }> = ({ class
 // Mithila Painting Frame Border wrapper for cards
 export const MithilaFrameCard: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => {
   return (
-    <div className={`relative p-5 bg-[#FAF8F5] text-stone-900 border-4 border-double border-[#C51C13]/85 rounded-2xl shadow-md ${className}`}>
+    <div className={`relative p-5 bg-[#FAF8F5] text-stone-900 border-4 border-double border-primary/85 rounded-2xl shadow-md ${className}`}>
       {/* Decorative corners */}
-      <span className="absolute top-1 left-1 font-serif text-[10px] text-[#C51C13] select-none">❖</span>
-      <span className="absolute top-1 right-1 font-serif text-[10px] text-[#C51C13] select-none">❖</span>
-      <span className="absolute bottom-1 left-1 font-serif text-[10px] text-[#C51C13] select-none">❖</span>
-      <span className="absolute bottom-1 right-1 font-serif text-[10px] text-[#C51C13] select-none">❖</span>
+      <span className="absolute top-1 left-1 font-serif text-[10px] text-primary select-none">❖</span>
+      <span className="absolute top-1 right-1 font-serif text-[10px] text-primary select-none">❖</span>
+      <span className="absolute bottom-1 left-1 font-serif text-[10px] text-primary select-none">❖</span>
+      <span className="absolute bottom-1 right-1 font-serif text-[10px] text-primary select-none">❖</span>
       <div className="relative z-10">
         {children}
       </div>

@@ -18,31 +18,31 @@ const STAT_CARDS = [
     label: 'Gross revenue today',
     value: (s: Stats) => `₹${s.totalRevenue.toLocaleString('en-IN')}`,
     icon: IndianRupee,
-    iconClass: 'from-orange-600 to-orange-700',
+    iconClass: 'bg-[#C51C13]',
   },
   {
     label: 'Orders',
     value: (s: Stats) => String(s.totalOrders),
     icon: ShoppingCart,
-    iconClass: 'from-red-500 to-rose-600',
+    iconClass: 'bg-[#C51C13]',
   },
   {
     label: 'Active customers',
     value: (s: Stats) => String(s.activeCustomers),
     icon: Users,
-    iconClass: 'from-stone-700 to-stone-900',
+    iconClass: 'bg-stone-800 dark:bg-stone-700',
   },
   {
     label: 'Approved kitchens',
     value: (s: Stats) => String(s.activeRestaurants),
     icon: Store,
-    iconClass: 'from-violet-600 to-pink-600',
+    iconClass: 'bg-stone-800 dark:bg-stone-700',
   },
   {
     label: 'Vendors pending review',
     value: (s: Stats) => String(s.pendingVendors ?? 0),
     icon: UserCheck,
-    iconClass: 'from-amber-500 to-orange-600',
+    iconClass: 'bg-[#C51C13]',
   },
 ] as const;
 
@@ -57,12 +57,12 @@ export const DashboardStatsGrid: React.FC<DashboardStatsGridProps> = ({ stats })
             className="admin-card p-5 flex items-center justify-between gap-4"
           >
             <div className="text-left min-w-0">
-              <span className="admin-stat-label">{card.label}</span>
-              <p className="admin-stat-value">{card.value(stats)}</p>
-              <span className="text-xs text-stone-400">Live from platform</span>
+               <span className="admin-stat-label">{card.label}</span>
+               <p className="admin-stat-value">{card.value(stats)}</p>
+               <span className="text-xs text-stone-400">Live from platform</span>
             </div>
             <div
-              className={`p-3 rounded-xl text-white bg-gradient-to-tr shrink-0 ${card.iconClass}`}
+              className={`p-3 rounded-xl text-white shrink-0 ${card.iconClass}`}
             >
               <Icon className="w-5 h-5" aria-hidden />
             </div>

@@ -252,7 +252,7 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFDF7] dark:bg-stone-900" id="event-planner-registration-page">
+    <div className="min-h-screen bg-white dark:bg-stone-900" id="event-planner-registration-page">
       <PageBanner
         id="event-planner-register-banner"
         variant="planner"
@@ -289,7 +289,7 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
                 {BENEFITS.map((item) => (
                   <li key={item} className="flex items-start gap-2.5">
                     <CheckCircle2
-                      className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5"
+                      className="w-5 h-5 text-primary dark:text-orange-400 shrink-0 mt-0.5"
                       aria-hidden
                     />
                     {item}
@@ -298,9 +298,9 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
               </ul>
             </div>
 
-            <div className="rounded-2xl border border-orange-100 dark:border-stone-700 bg-orange-50/50 dark:bg-stone-800/50 p-5 space-y-3 text-sm text-stone-600 dark:text-stone-400">
+            <div className="rounded-2xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-800/50 p-5 space-y-3 text-sm text-stone-600 dark:text-stone-400">
               <p className="font-semibold text-stone-900 dark:text-white flex items-center gap-2">
-                <LayoutDashboard className="w-5 h-5 text-[#C51C13] dark:text-orange-400" aria-hidden />
+                <LayoutDashboard className="w-5 h-5 text-primary dark:text-orange-400" aria-hidden />
                 Two quick steps
               </p>
               <ol className="space-y-2 list-decimal list-inside text-xs leading-relaxed">
@@ -329,7 +329,7 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
                         key={label}
                         className={`flex items-center gap-2 text-xs sm:text-sm font-semibold ${
                           isActive
-                            ? 'text-[#C51C13] dark:text-orange-400'
+                            ? 'text-primary dark:text-orange-400'
                             : isDone
                               ? 'text-stone-600 dark:text-stone-400'
                               : 'text-stone-400 dark:text-stone-500'
@@ -338,7 +338,7 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
                         <span
                           className={`flex h-7 w-7 items-center justify-center rounded-full text-xs shrink-0 ${
                             isActive
-                              ? 'bg-[#C51C13] text-white'
+                              ? 'bg-primary text-white'
                               : isDone
                                 ? 'bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-400'
                                 : 'bg-stone-100 dark:bg-stone-700 text-stone-500'
@@ -366,7 +366,7 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
                     <div className="space-y-5">
                       <div>
                         <h2 className="heading-card text-xl text-stone-900 dark:text-white flex items-center gap-2">
-                          <CalendarPlus className="w-5 h-5 text-[#C51C13] dark:text-orange-400" aria-hidden />
+                          <CalendarPlus className="w-5 h-5 text-primary dark:text-orange-400" aria-hidden />
                           Enter event details
                         </h2>
                         <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
@@ -472,12 +472,12 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
                   {step === 1 && (
                     <div className="space-y-5">
                       {startAtAccountStep && (
-                        <p className="text-sm text-stone-600 dark:text-stone-400 rounded-lg bg-orange-50/80 dark:bg-stone-900/50 border border-orange-100 dark:border-stone-700 px-3 py-2">
+                        <p className="text-sm text-stone-600 dark:text-stone-400 rounded-lg bg-stone-55 dark:bg-stone-900/50 border border-stone-200 dark:border-stone-700 px-3 py-2">
                           Event details from the homepage are saved. Complete your account below, or{' '}
                           <button
                             type="button"
                             onClick={() => setStep(0)}
-                            className="font-semibold text-[#C51C13] hover:underline cursor-pointer"
+                            className="font-semibold text-primary hover:underline cursor-pointer"
                           >
                             edit event details
                           </button>
@@ -509,7 +509,7 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
 
                       <div>
                         <h2 className="heading-card text-xl text-stone-900 dark:text-white flex items-center gap-2">
-                          <Lock className="w-5 h-5 text-[#C51C13] dark:text-orange-400" aria-hidden />
+                          <Lock className="w-5 h-5 text-primary dark:text-orange-400" aria-hidden />
                           Create your account
                         </h2>
                         <p className="text-sm text-stone-500 dark:text-stone-400 mt-1">
@@ -615,7 +615,7 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
                           name="agreeTerms"
                           checked={formData.agreeTerms}
                           onChange={handleChange}
-                          className="mt-1 rounded border-stone-300 text-[#C51C13] focus:ring-orange-500"
+                          className="mt-1 rounded border-stone-300 text-primary focus:ring-orange-500"
                         />
                         <span>
                           I agree to {APP_NAME}&apos;s terms and want to create my customer account
@@ -639,7 +639,7 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
                       <button
                         type="button"
                         onClick={goNext}
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer sm:ml-auto"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-semibold transition-colors cursor-pointer sm:ml-auto"
                       >
                         Continue to create account
                         <ChevronRight className="w-4 h-4" aria-hidden />
@@ -648,7 +648,7 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
                       <button
                         type="submit"
                         disabled={isSubmitting || isRegistering}
-                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] disabled:opacity-60 text-white text-sm font-semibold transition-colors cursor-pointer sm:ml-auto"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary hover:bg-primary-hover disabled:opacity-60 text-white text-sm font-semibold transition-colors cursor-pointer sm:ml-auto"
                       >
                         <Send className="w-4 h-4" aria-hidden />
                         {isSubmitting || isRegistering
@@ -693,7 +693,7 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
                   <button
                     type="button"
                     onClick={goToPlannerSignIn}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-semibold transition-colors cursor-pointer"
                   >
                     <LayoutDashboard className="w-4 h-4" aria-hidden />
                     Sign in to planner workspace
@@ -719,13 +719,13 @@ export const EventPlannerRegistrationPage: React.FC<EventPlannerRegistrationPage
       <LandingSection tone="blush" showTexture={false} showMandala={false} innerClassName="py-8">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-stone-600 dark:text-stone-400 flex items-center gap-2">
-            <CalendarPlus className="w-4 h-4 text-[#C51C13]" aria-hidden />
+            <CalendarPlus className="w-4 h-4 text-primary" aria-hidden />
             Already have an account?
           </p>
           <button
             type="button"
             onClick={goToPlannerSignIn}
-            className="text-sm font-semibold text-[#C51C13] dark:text-orange-400 hover:underline cursor-pointer"
+            className="text-sm font-semibold text-primary dark:text-orange-400 hover:underline cursor-pointer"
           >
             Sign in
           </button>

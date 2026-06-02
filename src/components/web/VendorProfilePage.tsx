@@ -318,7 +318,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
 
   if (listingLoading) {
     return (
-      <div className="min-h-screen bg-[#FFFDF7] dark:bg-stone-900 px-4 pt-28 pb-16 text-center">
+      <div className="min-h-screen bg-white dark:bg-stone-900 px-4 pt-28 pb-16 text-center">
         <p className="text-stone-600 dark:text-stone-400">Loading your listing…</p>
       </div>
     );
@@ -326,7 +326,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
 
   if (!vendor) {
     return (
-      <div className="min-h-screen bg-[#FFFDF7] dark:bg-stone-900 px-4 pt-28 pb-16 text-center">
+      <div className="min-h-screen bg-white dark:bg-stone-900 px-4 pt-28 pb-16 text-center">
         <p className="text-stone-600 dark:text-stone-400">
           {!session.vendorId
             ? 'Sign in again to load your vendor dashboard.'
@@ -335,7 +335,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
         <button
           type="button"
           onClick={() => onNavigate('list-your-service')}
-          className="mt-4 text-[#C51C13] font-semibold hover:underline cursor-pointer"
+          className="mt-4 text-primary font-semibold hover:underline cursor-pointer"
         >
           Register your business
         </button>
@@ -344,7 +344,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFDF7] dark:bg-stone-900" id="vendor-profile-page">
+    <div className="min-h-screen bg-white dark:bg-stone-900" id="vendor-profile-page">
       {listingStatus === 'pending_review' && (
         <div
           className="bg-amber-50 dark:bg-amber-950/40 border-b border-amber-200 dark:border-amber-800 px-4 py-3 text-center text-sm text-amber-900 dark:text-amber-100"
@@ -366,14 +366,14 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
           referrerPolicy="no-referrer"
         />
         <div
-          className="absolute inset-0 bg-gradient-to-r from-[#C51C13]/95 via-stone-900/85 to-stone-900/75"
+          className="absolute inset-0 bg-stone-900/85"
           aria-hidden
         />
         <div className="absolute inset-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-20 sm:pt-24 flex flex-col justify-end pb-5 sm:pb-6">
-          <span className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-semibold tracking-[0.2em] text-amber-200/90 mb-2">
-            <span className="h-px w-6 bg-amber-300/80" aria-hidden />
+          <span className="inline-flex items-center gap-2 text-[10px] sm:text-xs font-semibold tracking-[0.2em] text-stone-300 mb-2">
+            <span className="h-px w-6 bg-stone-500" aria-hidden />
             Vendor dashboard
-            <span className="h-px w-6 bg-amber-300/80" aria-hidden />
+            <span className="h-px w-6 bg-stone-500" aria-hidden />
           </span>
           <h1 className="heading-page text-2xl sm:text-3xl md:text-4xl text-white drop-shadow-sm">
             {session.businessName}
@@ -398,7 +398,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
           onClick={() => profileImageInputRef.current?.click()}
           className="absolute bottom-4 right-4 sm:right-6 lg:right-10 z-10 inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white/95 dark:bg-stone-900/95 text-stone-900 dark:text-white text-xs font-semibold shadow-lg hover:bg-white transition-colors cursor-pointer"
         >
-          <Camera className="w-4 h-4 text-[#C51C13]" aria-hidden />
+          <Camera className="w-4 h-4 text-primary" aria-hidden />
           Change cover photo
         </button>
         <input
@@ -423,7 +423,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
 
       {/* Sticky action banner — stays below site header while scrolling */}
       <div
-        className="sticky top-16 sm:top-[4.25rem] z-40 border-b border-orange-900/40 bg-gradient-to-r from-[#C51C13] via-[#A2110A] to-amber-900 shadow-md"
+        className="sticky top-16 sm:top-[4.25rem] z-40 border-b border-stone-800 bg-stone-900 shadow-md"
         id="vendor-profile-sticky-banner"
         role="region"
         aria-label="Dashboard actions"
@@ -432,7 +432,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
           <p className="text-sm text-white/95 font-medium text-left">
             {newEnquiryCount > 0 ? (
               <>
-                <span className="font-bold text-[#FFCB44]">{newEnquiryCount} new</span> guest{' '}
+                <span className="font-bold text-orange-400">{newEnquiryCount} new</span> guest{' '}
                 {newEnquiryCount === 1 ? 'enquiry' : 'enquiries'} — reply to grow bookings on{' '}
                 {APP_NAME}
               </>
@@ -442,7 +442,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                 <button
                   type="button"
                   onClick={() => setActiveTab('settings')}
-                  className="font-bold text-[#FFCB44] underline cursor-pointer"
+                  className="font-bold text-orange-400 underline cursor-pointer"
                 >
                   business address &amp; villages
                 </button>{' '}
@@ -475,7 +475,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
         </div>
       </div>
 
-      <section className="border-b border-stone-200/80 dark:border-stone-800 bg-[#FFFDF7] dark:bg-stone-900">
+      <section className="border-b border-stone-200/80 dark:border-stone-800 bg-white dark:bg-stone-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-8">
           <div className="flex flex-col lg:flex-row lg:items-center gap-4 lg:justify-between">
             <div className="flex flex-wrap items-center gap-2">
@@ -522,7 +522,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                 className="rounded-xl border border-stone-200/80 dark:border-stone-700 bg-white dark:bg-stone-800 p-4"
               >
                 <stat.icon
-                  className="w-4 h-4 text-[#C51C13] dark:text-orange-400 mb-2"
+                  className="w-4 h-4 text-primary dark:text-orange-400 mb-2"
                   aria-hidden
                 />
                 <p className="text-xl font-bold text-stone-900 dark:text-white">{stat.value}</p>
@@ -547,7 +547,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                   activeTab === tab.id
-                    ? 'bg-[#C51C13] text-white'
+                    ? 'bg-primary text-white'
                     : 'text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800'
                 }`}
               >
@@ -581,7 +581,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                       onClick={() => setActiveTab('enquiries')}
                       className="flex items-center gap-3 p-4 rounded-xl border border-stone-200 dark:border-stone-600 bg-white dark:bg-stone-800 text-left hover:border-orange-300 transition-colors cursor-pointer"
                     >
-                      <Inbox className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0" />
+                      <Inbox className="w-5 h-5 text-primary dark:text-orange-400 shrink-0" />
                       <div>
                         <p className="text-sm font-semibold text-stone-900 dark:text-white">
                           Reply to enquiries
@@ -599,7 +599,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                       }
                       className="flex items-center gap-3 p-4 rounded-xl border border-stone-200 dark:border-stone-600 bg-white dark:bg-stone-800 text-left hover:border-orange-300 transition-colors cursor-pointer"
                     >
-                      <Eye className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0" />
+                      <Eye className="w-5 h-5 text-primary dark:text-orange-400 shrink-0" />
                       <div>
                         <p className="text-sm font-semibold text-stone-900 dark:text-white">
                           Preview listing
@@ -618,7 +618,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                       }}
                       className="flex items-center gap-3 p-4 rounded-xl border border-dashed border-orange-300 dark:border-orange-800 bg-orange-50/50 dark:bg-stone-800 text-left hover:border-orange-400 transition-colors cursor-pointer sm:col-span-2"
                     >
-                      <Plus className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0" />
+                      <Plus className="w-5 h-5 text-primary dark:text-orange-400 shrink-0" />
                       <div>
                         <p className="text-sm font-semibold text-stone-900 dark:text-white">
                           Add a service
@@ -658,7 +658,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                   <button
                     type="button"
                     onClick={() => setActiveTab('enquiries')}
-                    className="mt-3 text-sm font-semibold text-[#C51C13] dark:text-orange-400 hover:underline cursor-pointer"
+                    className="mt-3 text-sm font-semibold text-primary dark:text-orange-400 hover:underline cursor-pointer"
                   >
                     View all enquiries
                   </button>
@@ -700,7 +700,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                       </div>
                       <button
                         type="button"
-                        className="text-sm font-semibold text-[#C51C13] dark:text-orange-400 hover:underline cursor-pointer"
+                        className="text-sm font-semibold text-primary dark:text-orange-400 hover:underline cursor-pointer"
                         onClick={() =>
                           alert(`Demo: reply to ${enq.guestName}. Messaging will be available in the app.`)
                         }
@@ -735,7 +735,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                   <button
                     type="button"
                     onClick={() => setShowAddService(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-semibold transition-colors cursor-pointer"
                   >
                     <Plus className="w-4 h-4" aria-hidden />
                     Add service
@@ -798,7 +798,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                           <p className="text-xs text-stone-500 dark:text-stone-400 line-clamp-2">
                             {service.description}
                           </p>
-                          <p className="text-sm font-bold text-[#C51C13] dark:text-orange-400">
+                          <p className="text-sm font-bold text-primary dark:text-orange-400">
                             ₹{service.price.toLocaleString('en-IN')}
                           </p>
                         </li>
@@ -812,7 +812,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
             {activeTab === 'settings' && (
               <div className="space-y-6 max-w-xl">
                 <h2 className="heading-card text-lg text-stone-900 dark:text-white flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-[#C51C13] dark:text-orange-400" />
+                  <Building2 className="w-5 h-5 text-primary dark:text-orange-400" />
                   Business settings
                 </h2>
                 <p className="text-sm text-stone-500 dark:text-stone-400">
@@ -894,7 +894,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                     <button
                       type="submit"
                       disabled={savingPassword}
-                      className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer disabled:opacity-60"
+                      className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-semibold transition-colors cursor-pointer disabled:opacity-60"
                     >
                       {savingPassword ? 'Updating…' : 'Update password'}
                     </button>
@@ -958,7 +958,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
 
                   <div className="rounded-xl border border-stone-200 dark:border-stone-700 p-4 space-y-4 bg-stone-50/50 dark:bg-stone-900/40">
                     <p className="text-sm font-semibold text-stone-800 dark:text-stone-200 flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-[#C51C13] shrink-0" aria-hidden />
+                      <MapPin className="w-4 h-4 text-primary shrink-0" aria-hidden />
                       Full business address *
                     </p>
 
@@ -1048,7 +1048,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({ onNavigate
                   <button
                     type="submit"
                     disabled={savingSettings}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer disabled:opacity-60"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-semibold transition-colors cursor-pointer disabled:opacity-60"
                   >
                     {savingSettings ? 'Saving…' : 'Save settings'}
                   </button>

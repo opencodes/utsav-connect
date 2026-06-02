@@ -15,44 +15,55 @@
 /* Class-based dark mode (toggle via `dark` on <html>) */
 @custom-variant dark (&:where(.dark, .dark *));
 
+:root {
+  --primary: #111827; /* Sophisticated Slate Black */
+  --primary-hover: #1f2937; /* Clean Charcoal */
+  --secondary: #4b5563; /* Slate/Zinc Gray */
+  --secondary-hover: #374151; /* Medium Dark Gray */
+}
+
 @theme {
   --font-display: "DM Serif Display", Georgia, "Times New Roman", serif;
   --font-serif: "DM Serif Display", Georgia, "Times New Roman", serif;
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
-  --color-festive-orange: #C51C13;
-  --color-festive-gold: #FFCB44;
-  --color-gold-deco: #FFCB44;
-  --color-brand-bg: #FFFDF7;
-  --color-brand-dark: #1a1a1a;
+  --color-festive-orange: var(--primary);
+  --color-festive-gold: var(--secondary);
+  --color-gold-deco: var(--secondary);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-brand-bg: #ffffff;
+  --color-brand-dark: #111827;
   --color-brand-dark-bg: #1c1917;
-  --color-gold-metallic: #D4AF37;
+  --color-gold-metallic: #94a3b8; /* Neutral silver/slate metallic instead of yellow gold */
 
-  /* Redefine orange utility classes to primary #C51C13 (Festive Royal Red) */
-  --color-orange-50: #FFF5F4;
-  --color-orange-100: #FFEAE8;
-  --color-orange-200: #FFCDCB;
-  --color-orange-300: #FFA29D;
-  --color-orange-400: #FD6B63;
-  --color-orange-500: #E52A20;
-  --color-orange-600: #C51C13; /* Primary */
-  --color-orange-700: #A2110A;
-  --color-orange-850: #8C0D09;
-  --color-orange-800: #7F0B05;
-  --color-orange-900: #550200;
+  /* Redefine orange utility classes to neutral shades for the clean white theme */
+  --color-orange-50: #f9fafb;
+  --color-orange-100: #f3f4f6;
+  --color-orange-200: #e5e7eb;
+  --color-orange-300: #d1d5db;
+  --color-orange-400: #9ca3af;
+  --color-orange-500: #6b7280;
+  --color-orange-600: var(--primary); /* Deep Elegant Black */
+  --color-orange-700: var(--primary-hover);
+  --color-orange-850: #111827;
+  --color-orange-800: #111827;
+  --color-orange-900: #030712;
 
-  /* Redefine amber utility classes to secondary #FFCB44 */
-  --color-amber-50: #FFFBF0;
-  --color-amber-100: #FFF5D0;
-  --color-amber-200: #FFEAA0;
-  --color-amber-300: #FFDF70;
-  --color-amber-400: #FFD450;
-  --color-amber-500: #FFCB44; /* Secondary */
-  --color-amber-600: #E6B530;
-  --color-amber-700: #C4961E;
-  --color-amber-800: #9B7010;
-  --color-amber-900: #6D4D05;
+  /* Redefine amber utility classes to neutral gray shades */
+  --color-amber-50: #f9fafb;
+  --color-amber-100: #f3f4f6;
+  --color-amber-200: #e5e7eb;
+  --color-amber-300: #d1d5db;
+  --color-amber-400: #9ca3af;
+  --color-amber-500: var(--secondary); /* Slate gray */
+  --color-amber-600: var(--secondary-hover);
+  --color-amber-700: #1f2937;
+  --color-amber-800: #111827;
+  --color-amber-900: #030712;
 }
 
 /* ── Font family utilities ── */
@@ -218,7 +229,7 @@ textarea:focus {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at top, rgba(255, 203, 68, 0.22) 0%, transparent 55%);
+  background: none;
   pointer-events: none;
   z-index: 0;
 }
@@ -253,68 +264,44 @@ textarea:focus {
   display: none;
 }
 
-/* Cream — fine rangoli dot grid + soft marigold glow */
+/* Cream — pure white */
 .landing-section-tone--cream {
-  background-color: #fff8f0;
+  background-color: #ffffff;
 }
 
 .landing-section-tone--cream::before {
-  background-image:
-    radial-gradient(ellipse 90% 55% at 50% 0%, rgba(255, 203, 68, 0.2), transparent 62%),
-    radial-gradient(circle at 50% 50%, rgba(197, 28, 19, 0.09) 1px, transparent 1px),
-    radial-gradient(circle at 50% 50%, rgba(255, 203, 68, 0.06) 1px, transparent 1px);
-  background-size: 100% 100%, 22px 22px, 22px 22px;
-  background-position: 0 0, 0 0, 11px 11px;
+  content: none !important;
+  display: none !important;
 }
 
-/* Marigold — floral ring repeat */
+/* Marigold — subtle clean soft gray */
 .landing-section-tone--marigold {
-  background-color: #ffefc8;
+  background-color: #fafafa;
 }
 
 .landing-section-tone--marigold::before {
-  background-image:
-    radial-gradient(circle at 50% 50%, transparent 58%, rgba(197, 28, 19, 0.07) 59%, rgba(197, 28, 19, 0.07) 62%, transparent 63%),
-    radial-gradient(circle at 50% 50%, rgba(255, 203, 68, 0.35) 0%, rgba(255, 203, 68, 0.12) 18%, transparent 42%);
-  background-size: 48px 48px, 48px 48px;
+  content: none !important;
+  display: none !important;
 }
 
-/* Sand — woven linen crosshatch */
+/* Sand — pure white */
 .landing-section-tone--sand {
-  background-color: #e6dfd4;
+  background-color: #ffffff;
 }
 
 .landing-section-tone--sand::before {
-  background-image:
-    linear-gradient(
-      45deg,
-      rgba(120, 83, 48, 0.07) 25%,
-      transparent 25%,
-      transparent 75%,
-      rgba(120, 83, 48, 0.07) 75%
-    ),
-    linear-gradient(
-      -45deg,
-      rgba(120, 83, 48, 0.07) 25%,
-      transparent 25%,
-      transparent 75%,
-      rgba(120, 83, 48, 0.07) 75%
-    );
-  background-size: 14px 14px;
+  content: none !important;
+  display: none !important;
 }
 
-/* Blush — soft petal blooms */
+/* Blush — pure white */
 .landing-section-tone--blush {
-  background-color: #ffe3d9;
+  background-color: #ffffff;
 }
 
 .landing-section-tone--blush::before {
-  background-image:
-    radial-gradient(ellipse 55% 45% at 18% 28%, rgba(197, 28, 19, 0.09), transparent 72%),
-    radial-gradient(ellipse 50% 40% at 82% 68%, rgba(255, 203, 68, 0.14), transparent 70%),
-    radial-gradient(ellipse 45% 38% at 62% 18%, rgba(229, 42, 32, 0.06), transparent 68%),
-    radial-gradient(ellipse 48% 42% at 28% 78%, rgba(255, 203, 68, 0.1), transparent 70%);
-  background-size: 140px 140px;
+  content: none !important;
+  display: none !important;
 }
 
 /* Banner — photographic section background (banner-bg-sec-2.png) */
@@ -377,29 +364,14 @@ html.dark .landing-section-tone--banner::before {
   content: none;
 }
 
-/* Parchment — manuscript lines + thread grain */
+/* Parchment — pure white */
 .landing-section-tone--parchment {
-  background-color: #f0eae0;
+  background-color: #ffffff;
 }
 
 .landing-section-tone--parchment::before {
-  background-image:
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 31px,
-      rgba(120, 83, 48, 0.07) 31px,
-      rgba(120, 83, 48, 0.07) 32px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 47px,
-      rgba(197, 28, 19, 0.04) 47px,
-      rgba(197, 28, 19, 0.04) 48px
-    ),
-    radial-gradient(rgba(120, 83, 48, 0.05) 0.6px, transparent 0.6px);
-  background-size: 100% 32px, 48px 100%, 8px 8px;
+  content: none !important;
+  display: none !important;
 }
 
 /* Dark mode — toned-down textures on deep bases */

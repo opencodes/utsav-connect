@@ -29,7 +29,7 @@ export const VendorListItemCard: React.FC<VendorListItemCardProps> = ({ vendor, 
           referrerPolicy="no-referrer"
         />
         {vendor.offerText && (
-          <div className="absolute bottom-2 left-2 bg-gradient-to-r from-red-600 to-orange-500 text-white font-bold text-[10px] px-2 py-1 rounded shadow line-clamp-2 max-w-[90%]">
+          <div className="absolute bottom-2 left-2 bg-[#C51C13] text-white font-bold text-[10px] px-2 py-1 rounded shadow line-clamp-2 max-w-[90%]">
             {vendor.offerText}
           </div>
         )}

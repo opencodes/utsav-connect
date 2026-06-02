@@ -56,24 +56,24 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 min-h-screen bg-stone-50 dark:bg-stone-900 text-left" id="profile-container">
       
       {/* 1. TOP USER HERO BLOCK */}
-      <div className="bg-gradient-to-r from-stone-900 to-stone-800 rounded-2xl p-6 sm:p-8 text-white flex flex-col sm:flex-row justify-between items-center gap-6 border border-stone-700 shadow-xl" id="profile-header-card">
+      <div className="bg-white dark:bg-stone-900 rounded-2xl p-6 sm:p-8 text-stone-900 dark:text-white flex flex-col sm:flex-row justify-between items-center gap-6 border border-stone-200 dark:border-stone-800 shadow-sm" id="profile-header-card">
         <div className="flex items-center gap-4 text-left">
-          <div className="w-16 h-16 bg-gradient-to-tr from-orange-500 to-red-600 rounded-full flex items-center justify-center text-3xl font-bold shadow-lg shrink-0">
+          <div className="w-16 h-16 bg-stone-100 dark:bg-stone-800 rounded-full flex items-center justify-center text-3xl font-bold shrink-0">
             🦁
           </div>
           <div>
-            <h2 className="text-2xl font-extrabold tracking-tight">{userProfile.name}</h2>
-            <p className="text-stone-400 text-xs sm:text-sm font-semibold">{userProfile.email} | {userProfile.phone}</p>
+            <h2 className="text-2xl font-extrabold tracking-tight text-stone-900 dark:text-white">{userProfile.name}</h2>
+            <p className="text-stone-500 dark:text-stone-400 text-xs sm:text-sm font-semibold">{userProfile.email} | {userProfile.phone}</p>
             <div className="flex flex-wrap items-center gap-3 mt-2 text-xs">
               {isEventPlannerCustomer && (
-                <span className="bg-rose-600 px-2 py-0.5 rounded font-bold font-mono text-white">
+                <span className="bg-stone-100 dark:bg-stone-850 px-2 py-0.5 rounded font-bold font-mono text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-800">
                   Event planning customer
                 </span>
               )}
-              <span className="bg-orange-600 px-2 py-0.5 rounded font-bold font-mono text-white">
+              <span className="bg-stone-100 dark:bg-stone-850 px-2 py-0.5 rounded font-bold font-mono text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-800">
                 Festive Premium Member
               </span>
-              <span className="text-amber-400 font-bold">
+              <span className="text-primary dark:text-orange-400 font-bold">
                 ⭐ Verified Account Verified
               </span>
             </div>
@@ -82,29 +82,29 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
 
         {/* Live Wallet & Loyalty display widgets */}
         <div className="flex items-center gap-4 shrink-0">
-          <div className="text-center bg-stone-850 p-3 sm:p-4 rounded-xl border border-stone-700 text-stone-200">
-            <div className="text-[10px] font-bold text-amber-500 font-mono">
+          <div className="text-center bg-stone-50 dark:bg-stone-850 p-3 sm:p-4 rounded-xl border border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-200">
+            <div className="text-[10px] font-bold text-primary dark:text-orange-400 font-mono">
               Shree Wallet
             </div>
-            <div className="text-xl font-black text-white mt-0.5">₹{userProfile.walletBalance}</div>
-            <div className="text-[9px] text-stone-400">Primary Balance</div>
+            <div className="text-xl font-black text-stone-900 dark:text-white mt-0.5">₹{userProfile.walletBalance}</div>
+            <div className="text-[9px] text-stone-500 dark:text-stone-400">Primary Balance</div>
           </div>
 
-          <div className="text-center bg-stone-850 p-3 sm:p-4 rounded-xl border border-stone-700 text-stone-200">
-            <div className="text-[10px] font-bold text-amber-500 font-mono">
+          <div className="text-center bg-stone-50 dark:bg-stone-850 p-3 sm:p-4 rounded-xl border border-stone-200 dark:border-stone-800 text-stone-700 dark:text-stone-200">
+            <div className="text-[10px] font-bold text-primary dark:text-orange-400 font-mono">
               Utsav Points
             </div>
-            <div className="text-xl font-black text-amber-400 mt-0.5">{userProfile.royaltyPoints} pts</div>
-            <div className="text-[9px] text-stone-400">Loyalty Rewards</div>
+            <div className="text-xl font-black text-primary dark:text-orange-400 mt-0.5">{userProfile.royaltyPoints} pts</div>
+            <div className="text-[9px] text-stone-500 dark:text-stone-400">Loyalty Rewards</div>
           </div>
         </div>
       </div>
 
       {isEventPlannerCustomer && onOpenPlannerWorkspace && (
-        <div className="rounded-2xl border border-orange-200 bg-gradient-to-r from-orange-50 to-amber-50 dark:from-stone-800 dark:to-stone-850 dark:border-orange-900/40 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="rounded-2xl border border-stone-250 dark:border-stone-805 bg-white dark:bg-stone-900 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="text-left">
             <h3 className="text-lg font-bold text-stone-900 dark:text-white flex items-center gap-2">
-              <CalendarPlus className="w-5 h-5 text-[#C51C13]" aria-hidden />
+              <CalendarPlus className="w-5 h-5 text-primary" aria-hidden />
               Event planning workspace
             </h3>
             <p className="text-sm text-stone-600 dark:text-stone-400 mt-1 max-w-xl">
@@ -114,7 +114,7 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
           <button
             type="button"
             onClick={onOpenPlannerWorkspace}
-            className="shrink-0 px-5 py-2.5 rounded-xl bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold cursor-pointer"
+            className="shrink-0 px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-semibold cursor-pointer"
           >
             Open planning workspace
           </button>
@@ -284,16 +284,16 @@ export const UserProfilePage: React.FC<UserProfilePageProps> = ({
               <div className="grid sm:grid-cols-2 gap-6 items-start">
                 {/* Balance display details */}
                 <div className="space-y-4">
-                  <div className="bg-gradient-to-br from-amber-500 via-orange-500 to-red-600 p-5 rounded-xl text-white shadow-md relative overflow-hidden">
+                  <div className="bg-stone-900 border border-stone-800 p-5 rounded-xl text-white shadow-sm relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-24 h-24 opacity-10 pointer-events-none">
                       <AnimatedDiya className="w-full h-full" />
                     </div>
                     
-                    <span className="text-[10px] font-bold text-[#FFDFB2]">UTSAV CREDITS DEBIT CHIP</span>
+                    <span className="text-[10px] font-bold text-stone-400">UTSAV CREDITS DEBIT CHIP</span>
                     <h4 className="text-2xl font-black mt-2">₹{userProfile.walletBalance}</h4>
-                    <p className="text-[11px] text-[#FFA26B] mt-1">Certified Satvik Food Limit</p>
+                    <p className="text-[11px] text-stone-400 mt-1">Certified Satvik Food Limit</p>
                     
-                    <div className="mt-4 flex items-center justify-between text-xs font-mono font-black border-t border-white/20 pt-2">
+                    <div className="mt-4 flex items-center justify-between text-xs font-mono font-black border-t border-white/10 pt-2">
                       <span>GAURAV SHARMA</span>
                       <span>12 / 2030 Exp</span>
                     </div>

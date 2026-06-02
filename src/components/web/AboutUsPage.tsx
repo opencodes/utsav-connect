@@ -37,7 +37,7 @@ const VALUES = [
 
 export const AboutUsPage: React.FC<AboutUsPageProps> = ({ onNavigate }) => {
   return (
-    <div className="min-h-screen bg-[#FFFDF7] dark:bg-stone-900" id="about-us-page">
+    <div className="min-h-screen bg-white dark:bg-stone-900" id="about-us-page">
       <PageBanner
         id="about-page-banner"
         variant="celebration"
@@ -108,10 +108,10 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({ onNavigate }) => {
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <div className="order-2 lg:order-1 space-y-5 text-left">
             <div className="space-y-3">
-              <span className="text-[10px] sm:text-xs font-semibold tracking-[0.2em] text-orange-600 dark:text-amber-400">
+              <span className="text-[10px] sm:text-xs font-semibold tracking-[0.2em] text-secondary dark:text-amber-400">
                 Our story
               </span>
-              <h2 className="heading-section text-2xl sm:text-3xl text-[#C51C13] dark:text-white">
+              <h2 className="heading-section text-2xl sm:text-3xl text-primary dark:text-white">
                 From WhatsApp forwards to a real marketplace
               </h2>
               <p className="text-sm sm:text-base text-stone-600 dark:text-stone-400 leading-relaxed">
@@ -127,7 +127,7 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({ onNavigate }) => {
             </p>
             <a
               href={`mailto:${SUPPORT_EMAIL}`}
-              className="inline-flex items-center gap-2 text-sm font-semibold text-[#C51C13] dark:text-orange-400 hover:underline"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-primary dark:text-orange-400 hover:underline"
             >
               <Mail className="w-4 h-4 shrink-0" aria-hidden />
               {SUPPORT_EMAIL}
@@ -149,7 +149,7 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({ onNavigate }) => {
         <div className="rounded-2xl bg-white dark:bg-stone-800 border border-orange-100/80 dark:border-stone-700 p-6 sm:p-10 lg:p-12">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div className="space-y-4 text-left">
-              <h2 className="heading-section text-2xl sm:text-3xl text-[#C51C13] dark:text-white">
+              <h2 className="heading-section text-2xl sm:text-3xl text-primary dark:text-white">
                 Explore the platform
               </h2>
               <p className="text-sm text-stone-600 dark:text-stone-400 leading-relaxed">
@@ -158,15 +158,15 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({ onNavigate }) => {
               </p>
               <ul className="space-y-3 text-sm text-stone-700 dark:text-stone-300">
                 <li className="flex gap-3">
-                  <Search className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
+                  <Search className="w-5 h-5 text-primary dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
                   <span>Search by category, city, rating, and offers</span>
                 </li>
                 <li className="flex gap-3">
-                  <Users className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
+                  <Users className="w-5 h-5 text-primary dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
                   <span>Compare vendors side by side before you enquire</span>
                 </li>
                 <li className="flex gap-3">
-                  <Sparkles className="w-5 h-5 text-[#C51C13] dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
+                  <Sparkles className="w-5 h-5 text-primary dark:text-orange-400 shrink-0 mt-0.5" aria-hidden />
                   <span>Plan events with tools built for hosts and vendors</span>
                 </li>
               </ul>
@@ -175,14 +175,14 @@ export const AboutUsPage: React.FC<AboutUsPageProps> = ({ onNavigate }) => {
               <button
                 type="button"
                 onClick={() => onNavigate('vendor-categories')}
-                className="w-full px-5 py-3 rounded-lg bg-[#C51C13] hover:bg-[#A2110A] text-white text-sm font-semibold transition-colors cursor-pointer"
+                className="w-full px-5 py-3 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-semibold transition-colors cursor-pointer"
               >
                 Find vendors
               </button>
               <button
                 type="button"
                 onClick={() => onNavigate('celebrations')}
-                className="w-full px-5 py-3 rounded-lg border border-[#C51C13] text-[#C51C13] dark:text-orange-400 dark:border-orange-500 hover:bg-orange-50 dark:hover:bg-stone-900 text-sm font-semibold transition-colors cursor-pointer"
+                className="w-full px-5 py-3 rounded-lg border border-primary text-primary dark:text-orange-400 dark:border-orange-500 hover:bg-orange-50 dark:hover:bg-stone-900 text-sm font-semibold transition-colors cursor-pointer"
               >
                 Plan an event
               </button>

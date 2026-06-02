@@ -5,7 +5,7 @@ export const FESTIVE_COLORS = {
   marigold: '#FFCB44',
   red: '#E53935',
   green: '#2E7D32',
-  bg: '#FFFDF7',
+  bg: '#ffffff',
 };
 
 /** Empty profile used before login or after logout — no demo customer data. */

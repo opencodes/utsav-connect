@@ -105,9 +105,9 @@ export const CancellationPolicyPage: React.FC = () => {
             </div>
 
             {/* FORCE MAJEURE SPECIFIC CLAUSE */}
-            <div className="bg-gradient-to-r from-orange-600/15 via-transparent to-transparent p-5 rounded-r-2xl border-l-4 border-orange-600 shadow-sm space-y-2">
+            <div className="bg-stone-50 dark:bg-stone-900/40 p-5 rounded-r-2xl border-l-4 border-stone-400 dark:border-stone-600 shadow-sm space-y-2">
               <h4 className="text-xs font-black text-stone-900 dark:text-white flex items-center gap-2">
-                <RefreshCw className="w-3.5 h-3.5 text-orange-600 animate-spin-slow" />
+                <RefreshCw className="w-3.5 h-3.5 text-stone-500 animate-spin-slow" />
                 <span>Our Free Rescheduling Option</span>
               </h4>
               <p className="text-[11px] text-stone-500 dark:text-stone-400 leading-relaxed font-sans">

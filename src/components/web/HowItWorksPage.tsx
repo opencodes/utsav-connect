@@ -139,7 +139,7 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
             </ul>
           </div>
 
-          <div className="md:col-span-12 lg:col-span-5 bg-gradient-to-br from-orange-500 to-red-600 p-8 rounded-2.5xl text-white relative overflow-hidden flex flex-col justify-between aspect-square min-h-[250px]" id="step-accent-badge">
+          <div className="md:col-span-12 lg:col-span-5 bg-stone-900 border border-stone-800 p-8 rounded-2.5xl text-white relative overflow-hidden flex flex-col justify-between aspect-square min-h-[250px]" id="step-accent-badge">
             <div className="absolute top-[-30px] right-[-30px] w-36 h-36 opacity-10 pointer-events-none">
               <RangoliMandala className="w-full h-full text-white" />
             </div>
@@ -147,13 +147,13 @@ export const HowItWorksPage: React.FC<HowItWorksPageProps> = ({ onNavigate }) =>
             <div className="space-y-2">
               <div className="text-4xl">{steps[activeStep].emoji}</div>
               <h4 className="text-lg font-serif font-bold tracking-wide">Phase {activeStep + 1} Cleared</h4>
-              <p className="text-[11px] text-orange-100 leading-relaxed font-sans">
+              <p className="text-[11px] text-stone-300 leading-relaxed font-sans">
                 Each operational phase utilizes strict verification checks. We back every wedding vendor milestone with written collateral deposits.
               </p>
             </div>
 
             <div className="flex items-center gap-1.5 text-xs border-t border-white/20 pt-4 mt-4">
-              <Award className="w-4 h-4 text-amber-300" />
+              <Award className="w-4 h-4 text-stone-300" />
               <span className="font-mono text-[10px] font-bold">Certified Ceremony Guarantee</span>
             </div>
           </div>

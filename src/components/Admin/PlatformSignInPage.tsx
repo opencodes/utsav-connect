@@ -45,7 +45,7 @@ export const PlatformSignInPage: React.FC<PlatformSignInPageProps> = ({
     <div className="min-h-[calc(100vh-4rem)] bg-stone-100 dark:bg-stone-950 px-4 py-12">
       <div className="mx-auto max-w-md">
         <div className="text-center mb-8">
-          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-[#C51C13] bg-white dark:bg-stone-900 px-3 py-1 rounded-full border border-stone-200 dark:border-stone-800">
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-primary bg-white dark:bg-stone-900 px-3 py-1 rounded-full border border-stone-200 dark:border-stone-800">
             <Shield className="w-3 h-3" aria-hidden />
             Platform access
           </span>
@@ -109,7 +109,7 @@ export const PlatformSignInPage: React.FC<PlatformSignInPageProps> = ({
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#C51C13] hover:bg-[#A2110A] disabled:opacity-60 text-white font-semibold text-sm"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-primary hover:bg-primary-hover disabled:opacity-60 text-white font-semibold text-sm"
           >
             {loading ? 'Signing in…' : 'Sign in'}
             <ArrowRight className="w-4 h-4" />

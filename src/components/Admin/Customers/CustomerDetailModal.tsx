@@ -38,7 +38,7 @@ export const CustomerDetailModal: React.FC<CustomerDetailModalProps> = ({
 
         <div className="space-y-4">
           <div className="flex items-center gap-3 border-b pb-4 dark:border-stone-800">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-orange-500 to-red-600 flex items-center justify-center text-xl">
+            <div className="w-12 h-12 rounded-full bg-[#C51C13] text-white flex items-center justify-center text-xl">
               🎖️
             </div>
             <div>

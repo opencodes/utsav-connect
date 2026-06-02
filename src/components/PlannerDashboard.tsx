@@ -52,7 +52,7 @@ export const PlannerDashboard: React.FC<PlannerDashboardProps> = ({ onNavigateTa
     const subEvents = readPlannerStorage<unknown[]>(PLANNER_STORAGE_KEYS.subEvents, []);
     const rituals = readPlannerStorage<unknown[]>(PLANNER_STORAGE_KEYS.rituals, []);
     const ritualCountFromSubs = Array.isArray(subEvents)
-      ? subEvents.reduce(
+      ? subEvents.reduce<number>(
           (n, row) =>
             n +
             (Array.isArray((row as { rituals?: unknown[] }).rituals)
@@ -100,7 +100,7 @@ export const PlannerDashboard: React.FC<PlannerDashboardProps> = ({ onNavigateTa
     <div className="space-y-6 text-left animate-in fade-in duration-300" id="planner-dashboard-tab">
       <div className="admin-card p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-[#C51C13] mb-1">
+          <div className="flex items-center gap-2 text-primary mb-1">
             <LayoutDashboard className="w-4 h-4" aria-hidden />
             <span className="text-xs font-semibold">Planner overview</span>
           </div>
@@ -251,7 +251,7 @@ export const PlannerDashboard: React.FC<PlannerDashboardProps> = ({ onNavigateTa
                   key={link.tab}
                   type="button"
                   onClick={() => onNavigateTab(link.tab)}
-                  className="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl border border-stone-200/80 dark:border-stone-700 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-orange-50 dark:hover:bg-orange-950/20 hover:text-[#C51C13] transition-colors cursor-pointer"
+                  className="w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl border border-stone-200/80 dark:border-stone-700 text-sm font-medium text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 hover:text-primary transition-colors cursor-pointer"
                 >
                   <span className="flex items-center gap-2">
                     <Icon className="w-4 h-4 shrink-0" aria-hidden />

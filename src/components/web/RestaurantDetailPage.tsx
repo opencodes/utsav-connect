@@ -103,7 +103,7 @@ export const RestaurantDetailPage: React.FC<RestaurantDetailPageProps> = ({
 
       {/* Active Promotion message */}
       {restaurant.offerText && (
-        <div className="bg-gradient-to-r from-red-500/10 to-orange-500/10 dark:from-red-950/20 dark:to-orange-950/20 rounded-2xl p-4 border border-orange-200 dark:border-stone-850 flex items-center justify-between gap-4 animate-pulse-subtle" id="details-discount-banner">
+        <div className="bg-stone-50 dark:bg-stone-900 rounded-2xl p-4 border border-stone-200 dark:border-stone-800 flex items-center justify-between gap-4 animate-pulse-subtle" id="details-discount-banner">
           <div className="flex items-center gap-2">
             <span className="text-2xl">🪔</span>
             <div>
@@ -111,7 +111,7 @@ export const RestaurantDetailPage: React.FC<RestaurantDetailPageProps> = ({
               <p className="text-xs text-stone-500 dark:text-stone-400">{restaurant.offerText}</p>
             </div>
           </div>
-          <span className="text-xs font-mono font-bold bg-orange-600 text-white px-3 py-1 rounded">ACTIVE</span>
+          <span className="text-xs font-mono font-bold bg-primary text-white px-3 py-1 rounded-md">ACTIVE</span>
         </div>
       )}
 

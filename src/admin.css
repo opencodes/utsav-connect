@@ -1,15 +1,15 @@
 /* Admin workspace — scoped to #admin-portal-view */
 
 #admin-portal-view {
-  --admin-bg: #f4f4f5;
+  --admin-bg: #ffffff;
   --admin-surface: #ffffff;
-  --admin-border: #e7e5e4;
-  --admin-border-strong: #d6d3d1;
-  --admin-text: #1c1917;
-  --admin-text-muted: #78716c;
-  --admin-text-subtle: #a8a29e;
-  --admin-accent: #c51c13;
-  --admin-accent-soft: #fff5f4;
+  --admin-border: #f3f4f6;
+  --admin-border-strong: #e5e7eb;
+  --admin-text: #111827;
+  --admin-text-muted: #4b5563;
+  --admin-text-subtle: #9ca3af;
+  --admin-accent: #111827;
+  --admin-accent-soft: #f3f4f6;
   --admin-radius: 0.75rem;
   --admin-radius-lg: 1rem;
   /* Shared top chrome row — sidebar brand + main header must match */
@@ -34,7 +34,7 @@ html.dark #admin-portal-view {
   --admin-text: #fafaf9;
   --admin-text-muted: #a8a29e;
   --admin-text-subtle: #78716c;
-  --admin-accent-soft: rgba(197, 28, 19, 0.12);
+  --admin-accent-soft: rgba(255, 255, 255, 0.08);
 }
 
 /* Typography scale (in-content headings; chrome titles use component classes) */
@@ -210,7 +210,7 @@ html.dark #admin-portal-view {
 }
 
 #admin-sidebar .admin-nav-item:hover {
-  background: #fafaf9;
+  background: #f9fafb;
   color: var(--admin-text);
 }
 
@@ -251,7 +251,7 @@ html.dark #admin-sidebar .admin-nav-item:hover {
   padding: 0.5rem 0.75rem;
   border-radius: var(--admin-radius);
   border: 1px solid var(--admin-border);
-  background: #fafaf9;
+  background: #ffffff;
   font-size: 0.75rem;
   color: var(--admin-text-muted);
   line-height: 1.4;
@@ -279,7 +279,7 @@ html.dark #admin-sidebar .admin-role-badge {
 }
 
 #admin-sidebar .admin-exit-btn:hover {
-  background: #fafaf9;
+  background: #f9fafb;
   border-color: var(--admin-border-strong);
   color: var(--admin-text);
 }
@@ -345,7 +345,7 @@ html.dark #admin-top-header {
   line-height: 2.25rem;
   border-radius: var(--admin-radius);
   border: 1px solid var(--admin-border);
-  background: #fafaf9;
+  background: #ffffff;
   color: var(--admin-text);
 }
 
@@ -561,7 +561,7 @@ html.dark #admin-top-header .admin-user-status {
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--admin-text-subtle);
-  background: #fafaf9;
+  background: #f9fafb;
 }
 
 html.dark #admin-portal-view thead {
@@ -576,7 +576,7 @@ html.dark #admin-portal-view thead {
 }
 
 #admin-portal-view tbody tr:hover {
-  background: #fafaf9;
+  background: #f9fafb;
 }
 
 html.dark #admin-portal-view tbody tr:hover {
@@ -642,7 +642,7 @@ html.dark #admin-portal-view tbody tr:hover {
   color: var(--admin-text);
   border-radius: var(--admin-radius);
   border: 1px solid var(--admin-border);
-  background: #fafaf9;
+  background: #ffffff;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
@@ -707,7 +707,7 @@ html.dark #admin-portal-view .planner-textarea {
 }
 
 #admin-portal-view .planner-btn-secondary:hover {
-  background: #fafaf9;
+  background: #f9fafb;
 }
 
 html.dark #admin-portal-view .planner-btn-secondary:hover {
@@ -782,7 +782,7 @@ html.dark #admin-portal-view .planner-event-panel {
   border-width: 0 !important;
   box-shadow: none !important;
   outline: none !important;
-  background: #fafaf9;
+  background: #ffffff;
 }
 
 html.dark #admin-portal-view #planner-events-root input.planner-input,

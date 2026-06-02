@@ -8,7 +8,7 @@ interface VendorProfileGateProps {
 
 /** Shown at /profile when the user is not signed in as a vendor. */
 export const VendorProfileGate: React.FC<VendorProfileGateProps> = ({ onNavigate }) => (
-  <div className="min-h-screen bg-[#FFFDF7] dark:bg-stone-900" id="vendor-profile-gate">
+  <div className="min-h-screen bg-white dark:bg-stone-900" id="vendor-profile-gate">
     <div className="max-w-lg mx-auto px-4 pt-32 pb-16 text-center space-y-6">
       <div className="w-14 h-14 mx-auto rounded-2xl bg-orange-100 dark:bg-orange-950/50 flex items-center justify-center">
         <Store className="w-7 h-7 text-[#C51C13] dark:text-orange-400" aria-hidden />

@@ -26,7 +26,7 @@ export const VendorDetailHero: React.FC<VendorDetailHeroProps> = ({
       className="bg-white dark:bg-stone-850 rounded-3xl overflow-hidden shadow-lg border border-orange-100/30 dark:border-stone-800"
       id="detail-vendor-hero"
     >
-      <div className="h-48 relative bg-gradient-to-br from-orange-500 via-rose-600 to-stone-900">
+      <div className="h-48 relative bg-stone-900">
         {vendor.image ? (
           <img
             src={vendor.image}
@@ -36,7 +36,7 @@ export const VendorDetailHero: React.FC<VendorDetailHeroProps> = ({
           />
         ) : (
           <div
-            className="w-full h-full bg-gradient-to-br from-orange-500 via-rose-600 to-stone-900"
+            className="w-full h-full bg-stone-900"
             aria-hidden="true"
           />
         )}

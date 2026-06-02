@@ -103,7 +103,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           {platformAdmin && (
             <>
               <span className="admin-nav-section">Commerce</span>
-              {menuItems.map(renderNavItem)}
+              {menuItems.map((item) => renderNavItem(item))}
             </>
           )}
 

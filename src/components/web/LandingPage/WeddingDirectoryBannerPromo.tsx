@@ -10,14 +10,9 @@ interface WeddingDirectoryBannerPromoProps {
 
 export const WeddingDirectoryBannerPromo: React.FC<WeddingDirectoryBannerPromoProps> = ({ onNavigate }) => {
   return (
-    <LandingSection id="wedding-directory-banner-promo" tone="wine" showMandala={false}>
+    <LandingSection id="wedding-directory-banner-promo" tone="cream" showMandala={false} showTexture={false}>
       <div className="relative flex flex-col items-center text-center gap-8">
-        <div className="absolute right-0 bottom-0 w-72 h-72 opacity-[0.12] pointer-events-none select-none">
-          <RangoliMandala className="w-full h-full text-[#FFCB44]" />
-        </div>
-
         <LandingSectionHeader
-          light
           eyebrow="Vendor directory"
           title="Search vendors by ritual & region"
           description="Browse 15+ categories — venues, catering, décor, photography, music, pandits, and more. Filter by city, budget, and reviews when you plan your next event."

@@ -242,17 +242,17 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
 
       {/* HEADER HERO CONTENT */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8">
-        <div className="bg-gradient-to-r from-stone-900 via-stone-850 to-[#C51C13] rounded-3xl p-6 sm:p-12 text-white shadow-xl relative overflow-hidden border-b-4 border-[#FFCB44]">
+        <div className="bg-stone-900 border border-stone-800 rounded-3xl p-6 sm:p-12 text-white shadow-sm relative overflow-hidden">
           <div className="absolute right-[-20px] bottom-[-20px] opacity-10 pointer-events-none select-none">
             <span className="text-[200px]">🏮</span>
           </div>
 
           <div className="relative z-10 max-w-4xl space-y-4">
             <div className="flex items-center gap-1.5">
-              <span className="px-3 py-1 text-[10px] font-black bg-[#FFCB44] text-red-950 rounded-full font-mono">
+              <span className="px-3 py-1 text-[10px] font-black bg-primary text-white rounded-full font-mono">
                 AURA PORTFOLIO
               </span>
-              <span className="text-xs text-amber-300 font-extrabold flex items-center gap-1">
+              <span className="text-xs text-stone-300 font-extrabold flex items-center gap-1">
                 <Sparkles className="w-3.5 h-3.5" />
                 Proven Traditional Legacy
               </span>
@@ -273,42 +273,42 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4" id="portfolio-stats-banner">
           
-          <div className="bg-white dark:bg-stone-850 p-4 rounded-2xl border border-orange-100/40 dark:border-stone-800 shadow-sm flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-950/20 text-[#C51C13] dark:text-orange-400 flex items-center justify-center shrink-0">
-              <Heart className="w-5 h-5 fill-[#C51C13] dark:fill-orange-400" />
+          <div className="bg-white dark:bg-stone-850 p-4 rounded-2xl border border-stone-200/40 dark:border-stone-800 shadow-sm flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-stone-50 dark:bg-stone-950/20 text-primary dark:text-orange-400 flex items-center justify-center shrink-0">
+              <Heart className="w-5 h-5 fill-primary dark:fill-orange-400" />
             </div>
             <div>
-              <span className="text-xl sm:text-2xl font-black block leading-none font-mono text-[#C51C13]">150+</span>
+              <span className="text-xl sm:text-2xl font-black block leading-none font-mono text-primary">150+</span>
               <span className="text-[10px] font-bold text-stone-400">Weddings Managed</span>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-stone-850 p-4 rounded-2xl border border-orange-100/40 dark:border-stone-800 shadow-sm flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-950/20 text-[#C51C13] dark:text-orange-400 flex items-center justify-center shrink-0">
+          <div className="bg-white dark:bg-stone-850 p-4 rounded-2xl border border-stone-200/40 dark:border-stone-800 shadow-sm flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-stone-50 dark:bg-stone-950/20 text-primary dark:text-orange-400 flex items-center justify-center shrink-0">
               <Utensils className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-xl sm:text-2xl font-black block leading-none font-mono text-[#C51C13]">22k+</span>
+              <span className="text-xl sm:text-2xl font-black block leading-none font-mono text-primary">22k+</span>
               <span className="text-[10px] font-bold text-stone-400">Satvik Bowls Served</span>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-stone-850 p-4 rounded-2xl border border-orange-100/40 dark:border-stone-800 shadow-sm flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-950/20 text-[#C51C13] dark:text-orange-400 flex items-center justify-center shrink-0">
+          <div className="bg-white dark:bg-stone-850 p-4 rounded-2xl border border-stone-200/40 dark:border-stone-800 shadow-sm flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-stone-50 dark:bg-stone-950/20 text-primary dark:text-orange-400 flex items-center justify-center shrink-0">
               <Award className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-xl sm:text-2xl font-black block leading-none font-mono text-[#C51C13]">4.92</span>
+              <span className="text-xl sm:text-2xl font-black block leading-none font-mono text-primary">4.92</span>
               <span className="text-[10px] font-bold text-stone-400">Pure Veg Score</span>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-stone-850 p-4 rounded-2xl border border-orange-100/40 dark:border-stone-800 shadow-sm flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-950/20 text-[#C51C13] dark:text-orange-400 flex items-center justify-center shrink-0">
+          <div className="bg-white dark:bg-stone-850 p-4 rounded-2xl border border-stone-200/40 dark:border-stone-800 shadow-sm flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-stone-50 dark:bg-stone-950/20 text-primary dark:text-orange-400 flex items-center justify-center shrink-0">
               <Users className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-xl sm:text-2xl font-black block leading-none font-mono text-[#C51C13]">120+</span>
+              <span className="text-xl sm:text-2xl font-black block leading-none font-mono text-primary">120+</span>
               <span className="text-[10px] font-bold text-stone-400">Vetted Top Vendors</span>
             </div>
           </div>
@@ -327,7 +327,7 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
               placeholder="Search by celebrity name or theme..."
               value={searchWord}
               onChange={(e) => setSearchWord(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border bg-stone-50 dark:bg-stone-900 border-stone-200 dark:border-stone-800 text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-[#C51C13]"
+              className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border bg-stone-50 dark:bg-stone-900 border-stone-200 dark:border-stone-800 text-stone-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-primary"
             />
             <Search className="absolute left-3 top-3 w-4 h-4 text-stone-400" />
           </div>
@@ -348,7 +348,7 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
                 }}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   selectedCategory === cat
-                    ? 'bg-[#C51C13] text-white shadow-sm'
+                    ? 'bg-primary text-white shadow-sm'
                     : 'bg-stone-100 dark:bg-stone-800 text-stone-500 hover:text-stone-900 dark:hover:text-white'
                 }`}
               >
@@ -378,7 +378,7 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
                   onClick={() => setSelectedItem(item)}
                   className={`group rounded-3xl border text-left cursor-pointer transition-all bg-white dark:bg-stone-850 overflow-hidden relative ${
                     itemIsSelected
-                      ? 'border-[#C51C13] ring-1 ring-[#C51C13]/40 shadow-md scale-[1.01]'
+                      ? 'border-primary ring-1 ring-primary/40 shadow-md scale-[1.01]'
                       : 'border-stone-150 dark:border-stone-800 hover:border-orange-200 hover:shadow-md'
                   }`}
                   id={`portfolio-card-${item.id}`}
@@ -398,18 +398,18 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
 
                     {/* Guest Count sticker right-bottom */}
                     <span className="absolute bottom-3 right-3 bg-white/95 text-stone-950 font-bold font-mono text-[10px] px-2 py-0.5 rounded-lg shadow-sm flex items-center gap-1">
-                      <Users className="w-3 h-3 text-[#C51C13]" />
+                      <Users className="w-3 h-3 text-primary" />
                       <span>{item.guestCount} Guests</span>
                     </span>
                   </div>
 
                   <div className="p-4 sm:p-5 space-y-2">
                     <div className="flex items-center gap-1 text-stone-400 text-[10px]">
-                      <MapPin className="w-3 h-3 text-[#C51C13]" />
+                      <MapPin className="w-3 h-3 text-primary" />
                       <span>{item.location}</span>
                     </div>
 
-                    <h4 className="font-extrabold text-[#C51C13] dark:text-orange-400 text-sm sm:text-base leading-tight">
+                    <h4 className="font-extrabold text-primary dark:text-orange-400 text-sm sm:text-base leading-tight">
                       {item.title}
                     </h4>
 
@@ -419,7 +419,7 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
 
                     <div className="flex justify-between items-center pt-3 border-t border-dashed dark:border-stone-800 text-[10px] text-stone-400 font-mono">
                       <span>Celebrants: <b>{item.celebrants}</b></span>
-                      <span className="text-[#C51C13] hover:underline flex items-center font-bold">
+                      <span className="text-primary hover:underline flex items-center font-bold">
                         Read Case Analysis &rarr;
                       </span>
                     </div>
@@ -448,9 +448,9 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
 
       {/* COMPACT DECORATIVE BOTTOM GALLERY BANNER */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12">
-        <div className="bg-[#FFFDF7] dark:bg-stone-850 p-6 sm:p-8 rounded-3xl border border-orange-150/40 dark:border-stone-800 flex flex-col md:flex-row items-center justify-between gap-6" id="portfolio-planning-cta">
+        <div className="bg-white dark:bg-stone-850 p-6 sm:p-8 rounded-3xl border border-stone-200/60 dark:border-stone-800 flex flex-col md:flex-row items-center justify-between gap-6" id="portfolio-planning-cta">
           <div className="text-left space-y-2 max-w-2xl">
-            <h3 className="serif text-xl sm:text-2xl font-black text-[#C51C13] dark:text-orange-400 leading-none">
+            <h3 className="serif text-xl sm:text-2xl font-black text-primary dark:text-orange-400 leading-none">
               Plan Your Marriage Ceremony Custom
             </h3>
             <p className="text-xs sm:text-xs text-stone-500 font-semibold leading-relaxed">
@@ -460,9 +460,9 @@ export const PortfolioPage: React.FC<{ onNavigate: (page: string, data?: any) =>
 
           <button
             onClick={() => {
-              alert('Redirecting to the Admin Center. Switch to "Admin Center" using the navbar button at top level to open Mithila Setup Planner, manage live wedding timelines, adjust satvik menu options, and register user profiles!');
+              onNavigate('admin');
             }}
-            className="w-full md:w-auto px-6 py-3 bg-[#C51C13] hover:bg-orange-750 text-white font-black text-xs rounded-xl transition shadow hover:scale-[1.02] cursor-pointer"
+            className="w-full md:w-auto px-6 py-3 bg-primary hover:bg-primary-hover text-white font-black text-xs rounded-xl transition shadow hover:scale-[1.02] cursor-pointer"
           >
             Go To Admin Center Setup
           </button>

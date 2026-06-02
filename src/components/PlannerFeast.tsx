@@ -263,19 +263,19 @@ export const PlannerFeast: React.FC = () => {
     <div className="space-y-8 pb-12" id="planner-feast-root">
       
       {/* Ingredient Autocalculator Display Board */}
-      <div className="bg-white dark:bg-stone-800 border bg-gradient-to-br from-white to-stone-50/10 dark:from-stone-800 dark:to-stone-900 border-orange-600/30 rounded-3xl p-6 text-stone-900 dark:text-white shadow-sm relative overflow-hidden" id="ingredient-autocalc-board">
+      <div className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-3xl p-6 text-stone-900 dark:text-white shadow-sm relative overflow-hidden" id="ingredient-autocalc-board">
         <div className="absolute top-0 right-0 w-48 h-48 opacity-[0.03] dark:opacity-5 pointer-events-none">
-          <ChefHat className="w-full h-full text-orange-600" />
+          <ChefHat className="w-full h-full text-primary" />
         </div>
         
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4 border-b border-stone-100 dark:border-stone-700/60 pb-4 mb-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 bg-orange-600 text-white font-semibold text-[9px] rounded-md">
+              <span className="px-2 py-0.5 bg-primary text-white font-semibold text-[9px] rounded-md">
                 Master Auto-calc engine
               </span>
-              <span className="text-orange-600 font-mono text-[10px] font-bold flex items-center gap-1">
-                <Sparkles className="w-3 h-3 animate-spin text-orange-600" />
+              <span className="text-primary font-mono text-[10px] font-bold flex items-center gap-1">
+                <Sparkles className="w-3 h-3 animate-spin text-primary" />
                 Raw Ingredient Demand Chart
               </span>
             </div>
